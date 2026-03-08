@@ -51,4 +51,14 @@ public function __construct($twig) {
         echo $this->twig->render('rechercher.twig');
     
     }
+
+    public function index() {
+    echo $this->twig->render('index.twig');
+    }
+
+    public function offre_index() {
+    echo $this->twig->render('offre-index.twig');
+    
+}
+
 }

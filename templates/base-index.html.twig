@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Stagio{% endblock %}</title>
+    <link rel="stylesheet" href="{{ base_url }}style.css" />
+    <meta name="description" {% block description %} content="Stagio"{% endblock %} />
+  </head>
+  <body>
+
+    {% block header %}
+      {% include 'partials/header-index.html.twig' %}
+    {% endblock %}
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+    {% include 'partials/footer.html.twig' %}
+
+  </body>
+</html>

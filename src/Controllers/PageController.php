@@ -58,6 +58,10 @@ public function __construct($twig) {
 
     public function offre_index() {
     echo $this->twig->render('offre-index.twig');
+    }
+
+    public function a_propos() {
+    echo $this->twig->render('a-propos.twig');
     
 }
 

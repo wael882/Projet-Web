@@ -1,27 +1,10 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Stagio - Entreprise</title>
-    <meta
-      name="description"
-      content="Stagio - Rechercher une offre de stage."
-    />
-  </head>
-  <body>
-    <header>
-      <nav>
-        <img src="image/logo.webp" alt="Logo Stagio" />
-        <a href="{{ base_url }}acceuil">Accueil</a>
-        <a href="{{ base_url }}rechercher">Rechercher</a>
-        <a href="{{ base_url }}favoris">Favoris</a>
-        <a href="{{ base_url }}candidature">Mes candidatures</a>
-        <!-- Nom de l'utilisateur connecté (sera dynamique en PHP) -->
-        <span>Bonjour, Jean Dupont</span>
-        <a href="{{ base_url }}index">Se déconnecter</a>
-      </nav>
-    </header>
+{% extends 'base.html.twig' %}
+
+{% block title %}Stagio - Accueil{% endblock %}
+
+{% block description %}content="Stagio - Acceuil"{% endblock %}
+
+{% block content %}
     <section>
       <h2>Offres d'emploi</h2>
       <span>Chercher une offre:</span><br />
@@ -55,18 +38,4 @@
       </div>
     </section>
 
-    <footer>
-      <table>
-        <tr>
-          <td>&copy; 2024 Stagio - CESI. Tous droits réservés.</td>
-        </tr>
-        <tr>
-          <td><a href="{{base_url}}mention-legal">Mentions légales</a></td>
-          <td><a href="{{base_url}}offre">Offres</a></td>
-          <td><a href="{{base_url}}contact">Contact</a></td>
-          <td><a href="{{base_url}}entreprise">Entreprises</a></td>
-        </tr>
-      </table>
-    </footer>
-  </body>
-</html>
+{% endblock %}

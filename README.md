@@ -359,6 +359,88 @@ Navigateur → .htaccess → index.php → PageController → Twig → HTML
 
 ---
 
+## Etape 3.2 — Routeur HTTP
+
+### Fichiers créés
+
+| Fichier          | Rôle                                              |
+| ---------------- | ------------------------------------------------- |
+| `src/Router.php` | Classe Router : enregistre et dispatche les routes |
+| `src/routes.php` | Liste de toutes les routes GET du site             |
+
+### Fonctionnement
+
+- `Router::add($method, $path, $action)` — enregistre une route dans un tableau
+- `Router::dispatch($method, $uri)` — parcourt les routes et appelle la bonne méthode
+- `index.php` instancie le Router, charge `routes.php`, puis appelle `dispatch()`
+
+### Flux d'une requête
+
+```
+Navigateur → .htaccess → index.php → Router → routes.php → PageController → Twig → HTML
+```
+
+---
+
+## Etape 3.3 — Installation et configuration de Twig
+
+### Fichiers créés
+
+| Fichier                                  | Rôle                                              |
+| ---------------------------------------- | ------------------------------------------------- |
+| `templates/base.html.twig`               | Template parent : squelette HTML + blocs          |
+| `templates/partials/header.html.twig`    | Header réutilisable (inclus dans base)            |
+| `templates/partials/footer.html.twig`    | Footer réutilisable (inclus dans base)            |
+| `templates/partials/pagination.html.twig`| Composant pagination réutilisable                 |
+
+### Héritage Twig
+
+```
+base.html.twig
+├── {% include 'partials/header.html.twig' %}
+├── {% block content %}  ← remplacé par chaque page enfant
+└── {% include 'partials/footer.html.twig' %}
+```
+
+Chaque template enfant utilise :
+```twig
+{% extends 'base.html.twig' %}
+{% block title %}Titre de la page{% endblock %}
+{% block content %}
+  <!-- contenu spécifique à la page -->
+{% endblock %}
+```
+
+### Structure templates
+
+```
+templates/
+├── base.html.twig
+├── base-index.html.twig
+├── partials/
+│   ├── header.html.twig
+│   ├── header-index.html.twig
+│   ├── footer.html.twig
+│   └── pagination.html.twig
+├── auth/
+├── offres/
+├── entreprises/
+├── acceuil.twig
+├── identification.twig
+├── inscription.twig
+├── rechercher.twig
+├── offre.twig
+├── offre-index.twig
+├── entreprise.twig
+├── candidature.twig
+├── profil.twig
+├── favoris.twig
+├── index.twig
+└── a-propos.twig
+```
+
+---
+
 ## Verification finale
 
 | Test                 | Commande / URL                   | Résultat attendu              |

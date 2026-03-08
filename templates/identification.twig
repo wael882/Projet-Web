@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stagio -S'inscrire</title>
+    <meta
+      name="description"
+      content="Stagio - Identifiez vous afin d'accéder à des offres de stage."
+    />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <img src="image/logo.webp" alt="Logo Stagio" />
+        <a href="{{base_url}}acceuil">Accueil</a>
+        <a href="{{base_url}}offre">Offres</a>
+        <a href="{{base_url}}a propos">A propos</a>
+      </nav>
+    </header>
+
+    <main>
+      <section>
+        <form action="">
+          <h1>S'identifier</h1>
+          <span>Email</span><br />
+          <input
+            type="email"
+            id="email"
+            placeholder="monstage@monstage.fr"
+          /><br />
+          <span>Mot de passe</span><br />
+          <input type="password" id="password" /><br />
+          <button type="submit">S'inscrire</button>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <table>
+        <tr>
+          <td>&copy; 2024 Stagio - CESI. Tous droits réservés.</td>
+        </tr>
+        <tr>
+          <td><a href="{{base_url}}mention-legal">Mentions légales</a></td>
+          <td><a href="{{base_url}}offre">Offres</a></td>
+          <td><a href="{{base_url}}contact">Contact</a></td>
+          <td><a href="{{base_url}}entreprise">Entreprises</a></td>
+        </tr>
+      </table>
+    </footer>
+  </body>
+</html>

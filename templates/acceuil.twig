@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Stagio - Votre tableau de bord étudiant."
+    />
+    <title>Stagio - Accueil</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <img src="image/logo.webp" alt="Logo Stagio" />
+        <a href="{{ base_url }}acceuil">Accueil</a>
+        <a href="{{ base_url }}rechercher">Rechercher</a>
+        <a href="{{ base_url }}favoris">Favoris</a>
+        <a href="{{ base_url }}candidature">Mes candidatures</a>
+        <!-- Nom de l'utilisateur connecté (sera dynamique en PHP) -->
+        <span>Bonjour, Jean Dupont</span>
+        <a href="{{bas_url}}index">Se déconnecter</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Section de bienvenue personnalisée -->
+      <section id="bienvenue">
+        <h1>Bonjour Jean 👋</h1>
+        <p>Voici un résumé de votre activité sur Stagio.</p>
+      </section>
+
+      <!-- Résumé rapide de l'activité -->
+      <section id="resume">
+        <h2>Votre activité</h2>
+
+        <div class="stat-card">
+          <strong>3</strong>
+          <p>Candidatures envoyées</p>
+          <a href="{{ base_url }}candidature">Voir mes candidatures</a>
+        </div>
+
+        <div class="stat-card">
+          <strong>5</strong>
+          <p>Offres en wishlist</p>
+          <a href="{{ base_url }}favoris">Voir mes favoris</a>
+        </div>
+
+        <div class="stat-card">
+          <strong>1</strong>
+          <p>Réponse en attente</p>
+        </div>
+      </section>
+
+      <!-- Dernières candidatures -->
+      <section id="dernières-candidatures">
+        <h2>Mes dernières candidatures</h2>
+
+        <article>
+          <h3>Développeur Web — Thales</h3>
+          <p>Envoyée le 01/03/2024</p>
+          <p>Statut : <strong>En attente</strong></p>
+          <a href="{{ base_url }}offre">>Voir l'offre</a>
+        </article>
+
+        <article>
+          <h3>Data Analyst — Airbus</h3>
+          <p>Envoyée le 28/02/2024</p>
+          <p>Statut : <strong>Refusée</strong></p>
+          <a href="{{ base_url }}offre">Voir l'offre</a>
+        </article>
+
+        <a href="{{ base_url }}candidature">Voir toutes mes candidatures</a>
+      </section>
+    </main>
+
+    <aside>
+      <h2>Mon profil</h2>
+      <p>Jean Dupont</p>
+      <p>Formation : Informatique — Campus Paris</p>
+      <p>Promotion : 2024</p>
+      <a href="{{ base_url }}profil">Modifier mon profil</a>
+    </aside>
+
+    <footer>
+      <table>
+        <tr>
+          <td>&copy; 2024 Stagio - CESI. Tous droits réservés.</td>
+        </tr>
+        <tr>
+          <td><a href="{{base_url}}mention-legal">Mentions légales</a></td>
+          <td><a href="{{base_url}}offre">Offres</a></td>
+          <td><a href="{{base_url}}contact">Contact</a></td>
+          <td><a href="{{base_url}}entreprise">Entreprises</a></td>
+        </tr>
+      </table>
+    </footer>
+  </body>
+</html>
+

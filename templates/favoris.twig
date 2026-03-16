@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stagio - Accueil{% endblock %}
+
+{% block description %}content="Stagio - Acceuil"{% endblock %}
+
+{% block content %}
+    <section>
+      <h2>Offres Enregistrées</h2>
+
+      <div class="card">
+        <img src="" alt="Logo Thales" />
+        <h3>Thales</h3>
+        <p>Cannes - 06</p>
+        <p>Durée du stage : 4 mois</p>
+        <a href="{{ base_url }}identification">Voir l'offre</a>
+        <!-- dois etre connecté pour acceder a l'ofre -->
+      </div>
+    </section>
+
+{% endblock %}

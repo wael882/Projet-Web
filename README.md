@@ -28,6 +28,10 @@ Projet-Web-main/
 │   └── seed.sql                ← Données de test
 ├── public/                     ← DocumentRoot Apache (point d'entrée)
 │   ├── index.php               ← Front Controller
+│   ├── css/
+│   │   ├── main.css            ← Styles globaux (variables, reset, typographie)
+│   │   ├── components/         ← Composants réutilisables (boutons, cards, formulaires)
+│   │   └── pages/              ← Styles spécifiques à chaque page
 │   └── .htaccess               ← Redirige tout vers index.php
 ├── src/
 │   ├── Controllers/
@@ -116,6 +120,15 @@ Pointer le `DocumentRoot` vers le dossier `public/` du projet.
 ```
 Navigateur → .htaccess → public/index.php → Router → PageController → Model → Twig → HTML
 ```
+
+---
+
+## Authentification
+
+- Inscription avec vérification d'email existant et hashage du mot de passe (`password_hash`)
+- Connexion avec vérification (`password_verify`) et stockage en `$_SESSION`
+- Limite de 3 tentatives de connexion avant redirection vers `/oubliMdp`
+- Messages de succès/erreur via session flash
 
 ---
 

@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 use App\Models\UtilisateurModel;
-
+use App\Models\OffreModel;
 class PageController {
 
 private $twig;
@@ -48,12 +48,26 @@ public function __construct($twig) {
     }
 
     public function offre(){
-        echo $this->twig->render('offre.twig');
-    
+        $model = new OffreModel();
+        $offre = $model->findById($_GET['id']);
+        if($offre){
+            echo $this->twig->render('offre.twig',['offre' => $offre]);
+        }else{
+            $_SESSION['error'] = "Un probleme est survenu au niveau de l'affichage de l'offre";
+            echo $this->twig->render('rechercher.twig',['offre' => $offre]);
+        }
     }
 
     public function rechercher(){
-        echo $this->twig->render('rechercher.twig');
+        $model = new OffreModel();
+        $recherche = $model->findAll();
+        if ($recherche){
+            echo $this->twig->render('rechercher.twig',['rechercher' => $recherche]);
+        }else{
+            $_SESSION['error'] = "Un probleme est survenu au niveau de l'affichage des offres";
+            echo $this->twig->render('rechercher.twig',['rechercher' => $recherche]);
+
+        }
     
     }
 

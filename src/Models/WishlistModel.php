@@ -4,15 +4,21 @@ namespace App\Models;
 
 use App\Database;
 
-class WishlistModel {
-
+class WishlistModel
+{
     private $pdo;
 
-    public function __construct() {
-        $this->pdo = Database::getInstance()->getPdo();
+    public function __construct($pdo = null)
+    {
+        if ($pdo === null) {
+            $this->pdo = Database::getInstance()->getPdo();
+        } else {
+            $this->pdo = $pdo;
+        }
     }
 
-    public function findByEtudiant(int $idEtudiant): array {
+    public function findByEtudiant(int $idEtudiant): array
+    {
         $stmt = $this->pdo->prepare('
             SELECT w.*, o.titre AS titre_offre, e.nom AS nom_entreprise
             FROM WISHLIST w
@@ -25,17 +31,27 @@ class WishlistModel {
         return $stmt->fetchAll();
     }
 
-    public function add(int $idEtudiant, int $idOffre): void {
+    public function add(int $idEtudiant, int $idOffre): void
+    {
         $stmt = $this->pdo->prepare('
-            INSERT IGNORE INTO WISHLIST (id_etudiant, id_offre) VALUES (:etudiant, :offre)
+            INSERT IGNORE INTO WISHLIST (id_etudiant, id_offre)
+            VALUES (:etudiant, :offre)
         ');
-        $stmt->execute([':etudiant' => $idEtudiant, ':offre' => $idOffre]);
+        $stmt->execute([
+            ':etudiant' => $idEtudiant,
+            ':offre' => $idOffre
+        ]);
     }
 
-    public function remove(int $idEtudiant, int $idOffre): void {
+    public function remove(int $idEtudiant, int $idOffre): void
+    {
         $stmt = $this->pdo->prepare('
-            DELETE FROM WISHLIST WHERE id_etudiant = :etudiant AND id_offre = :offre
+            DELETE FROM WISHLIST
+            WHERE id_etudiant = :etudiant AND id_offre = :offre
         ');
-        $stmt->execute([':etudiant' => $idEtudiant, ':offre' => $idOffre]);
+        $stmt->execute([
+            ':etudiant' => $idEtudiant,
+            ':offre' => $idOffre
+        ]);
     }
 }

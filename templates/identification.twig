@@ -8,18 +8,32 @@
 
     <main>
       <section>
-        <form action="">
+
+        <form method="POST" action="/identification">
+        
+          
+
           <h1>S'identifier</h1>
           <span>Email</span><br />
           <input
+            name="email"
             type="email"
             id="email"
             placeholder="monstage@monstage.fr"
           /><br />
           <span>Mot de passe</span><br />
-          <input type="password" id="password" /><br />
+          <input name="password" type="password" id="password" /><br />
+
+          {% if success %}
+           <p>{{ success }}</p>
+          {% endif %}
+          {% if error %}
+          <p>{{ error }}</p>
+          {% endif %}
+
           <button type="submit">S'inscrire</button>
         </form>
+
       </section>
     </main>
 

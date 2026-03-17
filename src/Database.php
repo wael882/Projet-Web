@@ -2,6 +2,7 @@
 
 namespace App;
 
+
 class Database {
 
     private static $instance = null;
@@ -12,6 +13,8 @@ class Database {
         $this->pdo = new \PDO($dsn, DB_USER, DB_PASSWORD, [
             \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
             \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+            \PDO::ATTR_PERSISTENT => true
+
         ]);
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controllers;
+use App\Models\UtilisateurModel;
 
 class PageController {
 
@@ -9,8 +10,6 @@ private $twig;
 public function __construct($twig) {
     $this->twig = $twig;
 }
-
-
     public function acceuil() {
         echo $this->twig->render('acceuil.twig');
     
@@ -25,11 +24,17 @@ public function __construct($twig) {
     }
 
     public function inscription(){
-        echo $this->twig->render('inscription.twig');
+        echo $this->twig->render('inscription.twig',[
+        'error' => $_SESSION['error'] ?? null]);
+        unset($_SESSION['error']);
     }
 
     public function identification(){
-        echo $this->twig->render('identification.twig');
+        echo $this->twig->render('identification.twig',[
+        'success' => $_SESSION['success'] ?? null,
+        'error' => $_SESSION['error'] ?? null]);
+        unset($_SESSION['success']);
+        unset($_SESSION['error']);
     }
 
     public function profil(){
@@ -62,7 +67,54 @@ public function __construct($twig) {
 
     public function a_propos() {
     echo $this->twig->render('a-propos.twig');
+    }
+
     
-}
+    public function login() {
+
+    $model = new  UtilisateurModel();
+    $utilisateur = $model->findByEmail($_POST['email']);
+
+    if (password_verify($_POST['password'], $utilisateur['mot_de_passe_hash'])) {
+        $_SESSION['user'] = $utilisateur;
+        $_SESSION['tentative'] = 0;
+        header("location:/acceuil");
+        exit;
+    } else {
+        echo $this->twig->render('identification.twig',['erreur'=> 'Email ou mot de passe incorect']);
+        $_SESSION['tentative'] += 1;
+        if($_SESSION['tentative'] == 3){
+            header("location:/oubliMdp");
+            exit;
+        }else {
+            return;
+        }
+
+    }
+
+    }
+
+    public function inscriptionPost() {
+        $model = new UtilisateurModel();
+        $password = password_hash($_POST['password'],PASSWORD_DEFAULT);
+        $existe = $model->findByEmail($_POST['email']);
+        if(!$existe){
+        $utilisateur = $model->create($_POST['nom'],$_POST['prenom'],$_POST['email'],$password,3,$_POST['ecole']);
+
+        if($utilisateur){
+            $_SESSION['success'] = 'Inscription réussite, connectez vous';
+            header("location:/identification");
+            exit;
+        }else{
+        echo $this->twig->render('inscription.twig',['erreur'=> 'Erreur lors de la création du compte']);
+            
+        }
+        }else{
+            $_SESSION['error'] = 'Un compte est deja associé a cette adress email';
+            header("location:/identification");
+            exit;
+        }
+    }
 
 }
+

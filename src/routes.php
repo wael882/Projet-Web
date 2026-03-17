@@ -19,3 +19,4 @@ $router->add('GET', '/offre-index',    [$controller, 'offre_index']);
 $router->add('GET', '/a-propos',       [$controller, 'a_propos']);
 $router->add('POST', '/inscription',   [$controller, 'inscriptionPost']);
 $router->add('POST', '/identification',   [$controller, 'login']);
+$router->add('GET',  '/logout',           [$controller, 'logout']);

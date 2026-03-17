@@ -110,6 +110,12 @@ public function __construct($twig) {
 
     }
 
+    public function logout() {
+        session_destroy();
+        header("location:/");
+        exit;
+    }
+
     public function inscriptionPost() {
         $model = new UtilisateurModel();
         $password = password_hash($_POST['password'],PASSWORD_DEFAULT);

@@ -60,15 +60,17 @@ public function __construct($twig) {
 
     public function rechercher(){
         $model = new OffreModel();
-        $recherche = $model->findAll();
-        if ($recherche){
-            echo $this->twig->render('rechercher.twig',['rechercher' => $recherche]);
-        }else{
-            $_SESSION['error'] = "Un probleme est survenu au niveau de l'affichage des offres";
-            echo $this->twig->render('rechercher.twig',['rechercher' => $recherche]);
-
-        }
-    
+        $page = $_GET['page'] ?? 1;
+        $limite = 10;
+        $offset = ($page - 1) * $limite;
+        $rechercher = $model->findAll($limite, $offset);
+        $total = $model->count();
+        $totalPages = ceil($total / $limite);
+        echo $this->twig->render('rechercher.twig', [
+            'rechercher' => $rechercher,
+            'page' => $page,
+            'totalPages' => $totalPages
+        ]);
     }
 
     public function index() {

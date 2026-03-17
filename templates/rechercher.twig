@@ -13,5 +13,12 @@
     {{recherche.duree_stage}}
 
     {% endfor %}
+    
+    {% if page > 1 %}
+    <a href="/rechercher?page={{ page - 1 }}">← Précédent</a>
+    {% endif %}
+    {% if page < totalPages %}
+    <a href="/rechercher?page={{ page + 1 }}">Suivant →</a>
+    {% endif %}
 
 {% endblock %}

@@ -4,12 +4,17 @@ namespace App\Models;
 
 use App\Database;
 
-class OffreModel {
-
+class OffreModel
+{
     private $pdo;
 
-    public function __construct() {
-        $this->pdo = Database::getInstance()->getPdo();
+    public function __construct($pdo = null)
+    {
+        if ($pdo === null) {
+            $this->pdo = Database::getInstance()->getPdo();
+        } else {
+            $this->pdo = $pdo;
+        }
     }
 
     public function findAll(int $limite = 10, int $offset = 0): array {

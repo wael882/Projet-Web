@@ -4,15 +4,21 @@ namespace App\Models;
 
 use App\Database;
 
-class CandidatureModel {
-
+class CandidatureModel
+{
     private $pdo;
 
-    public function __construct() {
-        $this->pdo = Database::getInstance()->getPdo();
+    public function __construct($pdo = null)
+    {
+        if ($pdo === null) {
+            $this->pdo = Database::getInstance()->getPdo();
+        } else {
+            $this->pdo = $pdo;
+        }
     }
 
-    public function findByEtudiant(int $idEtudiant): array {
+    public function findByEtudiant(int $idEtudiant): array
+    {
         $stmt = $this->pdo->prepare('
             SELECT c.*, o.titre AS titre_offre, e.nom AS nom_entreprise
             FROM CANDIDATURE c
@@ -25,7 +31,8 @@ class CandidatureModel {
         return $stmt->fetchAll();
     }
 
-    public function create(int $idEtudiant, int $idOffre, string $lettre, ?string $cvFichier): void {
+    public function create(int $idEtudiant, int $idOffre, string $lettre, $cvFichier = null): void
+    {
         $stmt = $this->pdo->prepare('
             INSERT INTO CANDIDATURE (id_etudiant, id_offre, lettre_motivation, cv_fichier)
             VALUES (:etudiant, :offre, :lettre, :cv)

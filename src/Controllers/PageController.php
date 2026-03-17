@@ -49,7 +49,7 @@ public function __construct($twig) {
 
     public function offre(){
         $model = new OffreModel();
-        $offre = $model->findById($_GET['id']);
+        $offre = $model->findById((int) $_GET['id']);
         if($offre){
             echo $this->twig->render('offre.twig',['offre' => $offre]);
         }else{

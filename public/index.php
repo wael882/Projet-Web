@@ -1,5 +1,6 @@
 <?php
 
+session_start();
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once dirname(__DIR__) . '/config/config.php';
 
@@ -9,7 +10,7 @@ use App\Controllers\PageController;
 
 // Twig
 $loader = new \Twig\Loader\FilesystemLoader(dirname(__DIR__) . '/templates');
-$twig   = new \Twig\Environment($loader);
+$twig = new \Twig\Environment($loader, ['cache' => dirname(__DIR__) . '/cache/twig', 'auto_reload' => true]);
 
 // Test connexion BDD
 $db = Database::getInstance()->getPdo();

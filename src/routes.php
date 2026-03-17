@@ -16,5 +16,6 @@ $router->add('GET', '/candidature',    [$controller, 'candidature']);
 $router->add('GET', '/profil',         [$controller, 'profil']);
 $router->add('GET', '/favoris',        [$controller, 'favoris']);
 $router->add('GET', '/offre-index',    [$controller, 'offre_index']);
-$router->add('GET', '/a-propos',[$controller, 'a_propos']);
-
+$router->add('GET', '/a-propos',       [$controller, 'a_propos']);
+$router->add('POST', '/inscription',   [$controller, 'inscriptionPost']);
+$router->add('POST', '/identification',   [$controller, 'login']);

@@ -23,10 +23,10 @@ class UtilisateurModel {
         return $stmt->fetch();
     }
 
-    public function create(string $nom, string $prenom, string $email, string $motDePasseHash, int $idRole): int {
+    public function create(string $nom, string $prenom, string $email, string $motDePasseHash, int $idRole, string $ecole): int {
         $stmt = $this->pdo->prepare('
-            INSERT INTO UTILISATEUR (nom, prenom, email, mot_de_passe_hash, id_role)
-            VALUES (:nom, :prenom, :email, :hash, :id_role)
+            INSERT INTO UTILISATEUR (nom, prenom, email, mot_de_passe_hash, id_role, ecole)
+            VALUES (:nom, :prenom, :email, :hash, :id_role, :ecole)
         ');
         $stmt->execute([
             ':nom'     => $nom,
@@ -34,6 +34,7 @@ class UtilisateurModel {
             ':email'   => $email,
             ':hash'    => $motDePasseHash,
             ':id_role' => $idRole,
+            ':ecole'   =>$ecole,
         ]);
         return (int) $this->pdo->lastInsertId();
     }

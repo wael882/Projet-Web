@@ -13,6 +13,18 @@
     {{recherche.duree_stage}}
     <a href="/offre?id={{recherche.id_offre}}">Voir l'offre</a>
 
+    {% if recherche.id_offre in favorisIds %}
+    <form method="POST" action="{{base_url}}favoris/supprimer">
+        <input type="hidden" name="id_offre" value="{{recherche.id_offre}}">
+        <button type="submit">&#10084;</button>
+    </form>
+    {% else %}
+    <form method="POST" action="{{base_url}}favoris">
+        <input type="hidden" name="id_offre" value="{{recherche.id_offre}}">
+        <button type="submit">&#9825;</button>
+    </form>
+    {% endif %}
+
     {% endfor %}
     
     {% if page > 1 %}

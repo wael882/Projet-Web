@@ -3,6 +3,8 @@
 namespace App\Controllers;
 use App\Models\UtilisateurModel;
 use App\Models\OffreModel;
+use App\Models\WishlistModel;
+
 class PageController {
 
 private $twig;
@@ -43,15 +45,32 @@ public function __construct($twig) {
     }
 
     public function favoris(){
-        echo $this->twig->render('favoris.twig');
-    
+        $model = new WishlistModel();
+        $favoris = $model->findByUtilisateur((int) $_SESSION['user']['id_utilisateur']);
+        echo $this->twig->render('favoris.twig',['favoris' => $favoris]);
+    }
+
+    public function favorisPost(){
+        $model = new WishlistModel();
+        $model->add((int) $_SESSION['user']['id_utilisateur'], (int) $_POST['id_offre']);
+        header("location:" . $_SERVER['HTTP_REFERER']);
+        exit;
+    }
+
+    public function favorisDelete(){
+        $model = new WishlistModel();
+        $model->remove((int) $_SESSION['user']['id_utilisateur'], (int) $_POST['id_offre']);
+        header("location:" . $_SERVER['HTTP_REFERER']);
+        exit;
     }
 
     public function offre(){
         $model = new OffreModel();
         $offre = $model->findById((int) $_GET['id']);
         if($offre){
-            echo $this->twig->render('offre.twig',['offre' => $offre]);
+            $wishlist = new WishlistModel();
+            $favorisIds = isset($_SESSION['user']) ? $wishlist->getIdOffres((int) $_SESSION['user']['id_utilisateur']) : [];
+            echo $this->twig->render('offre.twig', ['offre' => $offre, 'favorisIds' => $favorisIds]);
         }else{
             $_SESSION['error'] = "Un probleme est survenu au niveau de l'affichage de l'offre";
             echo $this->twig->render('rechercher.twig',['offre' => $offre]);
@@ -60,16 +79,19 @@ public function __construct($twig) {
 
     public function rechercher(){
         $model = new OffreModel();
+        $wishlist = new WishlistModel();
         $page = $_GET['page'] ?? 1;
         $limite = 10;
         $offset = ($page - 1) * $limite;
         $rechercher = $model->findAll($limite, $offset);
         $total = $model->count();
         $totalPages = ceil($total / $limite);
+        $favorisIds = isset($_SESSION['user']) ? $wishlist->getIdOffres((int) $_SESSION['user']['id_utilisateur']) : [];
         echo $this->twig->render('rechercher.twig', [
             'rechercher' => $rechercher,
             'page' => $page,
-            'totalPages' => $totalPages
+            'totalPages' => $totalPages,
+            'favorisIds' => $favorisIds
         ]);
     }
 

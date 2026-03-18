@@ -14,9 +14,10 @@ class UtilisateurModel {
 
     public function findByEmail(string $email): array|false {
         $stmt = $this->pdo->prepare('
-            SELECT u.*, r.libelle AS role
+            SELECT u.*, r.libelle AS role, e.id_etudiant
             FROM UTILISATEUR u
             JOIN ROLE r ON u.id_role = r.id_role
+            LEFT JOIN ETUDIANT e ON e.id_utilisateur = u.id_utilisateur
             WHERE u.email = :email AND u.actif = TRUE
         ');
         $stmt->execute([':email' => $email]);

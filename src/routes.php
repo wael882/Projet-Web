@@ -20,3 +20,5 @@ $router->add('GET', '/a-propos',       [$controller, 'a_propos']);
 $router->add('POST', '/inscription',   [$controller, 'inscriptionPost']);
 $router->add('POST', '/identification',   [$controller, 'login']);
 $router->add('GET',  '/logout',           [$controller, 'logout']);
+$router->add('POST', '/favoris',           [$controller, 'favorisPost']);
+$router->add('POST', '/favoris/supprimer', [$controller, 'favorisDelete']);

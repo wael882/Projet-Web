@@ -4,48 +4,35 @@
 
 {% block description %}content="Stagio - Acceuil"{% endblock %}
 
-{% block styles %}
-  {{ parent() }}
-  <style>
-    .recherche-container {
-      padding: 2rem 0;
-    }
-    .results-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-    .recherche-item {
-      background: #ffffff;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 12px rgba(28, 55, 91, 0.08);
-      border-left: 5px solid #FF5722;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      transition: transform 0.3s ease;
-    }
-    .recherche-item:hover {
-      transform: translateY(-5px);
-    }
-    .recherche-item-titre {
-      font-weight: 700;
-      color: #1C375B;
-      font-size: 1.1rem;
-    }
-    .recherche-item-desc {
-      margin: 0.5rem 0;
-      font-size: 0.9rem;
-      color: #5A6A7A;
-    }
-    .recherche-item-meta {
-      font-size: 0.82rem;
-      color: #7A8A9A;
-    }
-  </style>
-{% endblock %}
+{% block content %}
+    
+    {% for recherche in rechercher %}
+    {{recherche.titre}}
+    {{recherche.description}}
+    {{recherche.date_offre}}
+    {{recherche.duree_stage}}
+    <a href="/offre?id={{recherche.id_offre}}">Voir l'offre</a>
+
+    {% if recherche.id_offre in favorisIds %}
+    <form method="POST" action="{{base_url}}favoris/supprimer">
+        <input type="hidden" name="id_offre" value="{{recherche.id_offre}}">
+        <button type="submit">&#10084;</button>
+    </form>
+    {% else %}
+    <form method="POST" action="{{base_url}}favoris">
+        <input type="hidden" name="id_offre" value="{{recherche.id_offre}}">
+        <button type="submit">&#9825;</button>
+    </form>
+    {% endif %}
+
+    {% endfor %}
+    
+    {% if page > 1 %}
+    <a href="/rechercher?page={{ page - 1 }}">← Précédent</a>
+    {% endif %}
+    {% if page < totalPages %}
+    <a href="/rechercher?page={{ page + 1 }}">Suivant →</a>
+    {% endif %}
 
 {% block content %}
     <div class="recherche-container">

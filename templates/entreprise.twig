@@ -4,8 +4,33 @@
 
 {% block description %}content="Stagio - Acceuil"{% endblock %}
 
+{% block styles %}
+  {{ parent() }}
+  <style>
+    #entreprise-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2rem;
+    }
+    @media (max-width: 768px) {
+      #entreprise-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    #identite {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      padding: 3rem;
+    }
+    #identite img {
+      width: 120px;
+      height: 120px;
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
-    <main>
       <!-- En-tête de la fiche entreprise -->
       <section id="identite">
         <img src="" alt="Logo Thales" />

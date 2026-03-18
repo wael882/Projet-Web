@@ -4,6 +4,11 @@
 
 {% block description %}content="Stagio - Crée un compte"{% endblock %}
 
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}src/css/components/form.css" />
+{% endblock %}
+
 {% block content %}
 
     <main>

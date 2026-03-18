@@ -2,8 +2,8 @@
 
 //variable "d'environnement" a utiliser plus tard dans le code 
 
-define('BASE_URL', 'https://cesi-site.local/');
-define('DB_HOST', 'localhost');
+define('BASE_URL', 'http://localhost:8000/');
+define('DB_HOST', '127.0.0.1');
 define('DB_USER', 'root');
 define('DB_PASSWORD', 'Admin1234!');
 define('DB_NAME', 'cesi_db');

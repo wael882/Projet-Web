@@ -34,4 +34,17 @@
     <a href="/rechercher?page={{ page + 1 }}">Suivant →</a>
     {% endif %}
 
+{% block content %}
+    <div class="recherche-container">
+      <div class="results-grid">
+        {% for recherche in rechercher %}
+          <div class="recherche-item">
+            <div class="recherche-item-titre">{{recherche.titre}}</div>
+            <div class="recherche-item-desc">{{recherche.description}}</div>
+            <div class="recherche-item-meta">{{recherche.date_offre}}</div>
+            <div class="recherche-item-meta">{{recherche.duree_stage}}</div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
 {% endblock %}

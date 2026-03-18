@@ -1,3 +1,29 @@
+<style>
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 3rem 0;
+    font-weight: 500;
+  }
+  .pagination a {
+    padding: 0.6rem 1.2rem;
+    background: #E0EFFF;
+    color: #1C375B;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  .pagination a:hover {
+    background: #1C375B;
+    color: #ffffff;
+  }
+  .pagination span {
+    color: #1C375B;
+    font-weight: 700;
+  }
+</style>
 <nav class="pagination">
   <a href="?page={{ page - 1 }}">&laquo; Précédent</a>
   <span>Page {{ page }}</span>

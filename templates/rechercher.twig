@@ -5,36 +5,6 @@
 {% block description %}content="Stagio - Acceuil"{% endblock %}
 
 {% block content %}
-    
-    {% for recherche in rechercher %}
-    {{recherche.titre}}
-    {{recherche.description}}
-    {{recherche.date_offre}}
-    {{recherche.duree_stage}}
-    <a href="/offre?id={{recherche.id_offre}}">Voir l'offre</a>
-
-    {% if recherche.id_offre in favorisIds %}
-    <form method="POST" action="{{base_url}}favoris/supprimer">
-        <input type="hidden" name="id_offre" value="{{recherche.id_offre}}">
-        <button type="submit">&#10084;</button>
-    </form>
-    {% else %}
-    <form method="POST" action="{{base_url}}favoris">
-        <input type="hidden" name="id_offre" value="{{recherche.id_offre}}">
-        <button type="submit">&#9825;</button>
-    </form>
-    {% endif %}
-
-    {% endfor %}
-    
-    {% if page > 1 %}
-    <a href="/rechercher?page={{ page - 1 }}">← Précédent</a>
-    {% endif %}
-    {% if page < totalPages %}
-    <a href="/rechercher?page={{ page + 1 }}">Suivant →</a>
-    {% endif %}
-
-{% block content %}
     <div class="recherche-container">
       <div class="results-grid">
         {% for recherche in rechercher %}
@@ -43,8 +13,28 @@
             <div class="recherche-item-desc">{{recherche.description}}</div>
             <div class="recherche-item-meta">{{recherche.date_offre}}</div>
             <div class="recherche-item-meta">{{recherche.duree_stage}}</div>
+            <a href="/offre?id={{recherche.id_offre}}">Voir l'offre</a>
+
+            {% if recherche.id_offre in favorisIds %}
+            <form method="POST" action="{{base_url}}favoris/supprimer">
+                <input type="hidden" name="id_offre" value="{{recherche.id_offre}}">
+                <button type="submit">&#10084;</button>
+            </form>
+            {% else %}
+            <form method="POST" action="{{base_url}}favoris">
+                <input type="hidden" name="id_offre" value="{{recherche.id_offre}}">
+                <button type="submit">&#9825;</button>
+            </form>
+            {% endif %}
           </div>
         {% endfor %}
       </div>
     </div>
+
+    {% if page > 1 %}
+    <a href="/rechercher?page={{ page - 1 }}">← Précédent</a>
+    {% endif %}
+    {% if page < totalPages %}
+    <a href="/rechercher?page={{ page + 1 }}">Suivant →</a>
+    {% endif %}
 {% endblock %}

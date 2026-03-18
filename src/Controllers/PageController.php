@@ -6,8 +6,6 @@ use App\Models\UtilisateurModel;
 use App\Models\OffreModel;
 use App\Models\WishlistModel;
 
-class PageController {
-
 class PageController
 {
 

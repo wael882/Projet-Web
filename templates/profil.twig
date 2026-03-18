@@ -1,11 +1,46 @@
-<!doctype html>
 {% extends 'base.html.twig' %}
 
 {% block title %}Stagio - Accueil{% endblock %}
 
 {% block description %}content="Stagio - Acceuil"{% endblock %}
 
+{% block styles %}
+  {{ parent() }}
+  <style>
+    .profil-section {
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(28, 55, 91, 0.08);
+    }
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      background: #E0EFFF;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2.5rem;
+      color: #1C375B;
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
-
-
+  <div class="profil-section">
+    <div class="profile-header">
+       <div class="profile-avatar"></div>
+    </div>
+    <div class="profile-body">
+    </div>
+  </div>
 {% endblock %}

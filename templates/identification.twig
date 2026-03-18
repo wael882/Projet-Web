@@ -4,6 +4,11 @@
 
 {% block description %}content="Stagio - Acceuil"{% endblock %}
 
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/identification.css" />
+{% endblock %}
+
 {% block content %}
 
     <main>

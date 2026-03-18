@@ -183,6 +183,10 @@ section { margin-bottom: 5rem; }
 
 /* Chiffres : ligne horizontale avec séparateurs */
 #chiffres {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   border-top: 1.5px solid var(--ligne);
   border-bottom: 1.5px solid var(--ligne);
   padding: 3rem 0;
@@ -223,6 +227,12 @@ section { margin-bottom: 5rem; }
 .chiffres-grid p { font-size: 0.88rem; color: var(--gris); }
 
 /* Comment ça marche : timeline */
+#comment-ca-marche {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 #comment-ca-marche h2 { margin-bottom: 2.5rem; }
 
 .timeline {
@@ -282,32 +292,34 @@ section { margin-bottom: 5rem; }
 #offres h2 { margin-bottom: 2rem; }
 
 .offres-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-width: 700px;
 }
 
 .offres-grid .card {
   background: var(--blanc);
   border-radius: 10px;
-  padding: 1.4rem 1.5rem;
+  padding: 1.1rem 1.5rem;
   border: 1px solid var(--ligne);
   border-left: 4px solid var(--bleu);
   display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
   transition: border-left-color 0.2s, transform 0.15s;
 }
 
 .offres-grid .card:hover {
   border-left-color: var(--orange);
-  transform: translateX(3px);
+  transform: translateX(4px);
 }
 
-.offres-grid .card h3 { font-size: 1rem; margin-bottom: 0.1rem; }
+.offres-grid .card h3 { font-size: 1rem; margin-bottom: 0; min-width: 130px; }
 
 .offres-grid .card a {
-  margin-top: 0.9rem;
+  margin-left: auto;
   font-size: 0.85rem;
   color: var(--orange);
   font-weight: 600;

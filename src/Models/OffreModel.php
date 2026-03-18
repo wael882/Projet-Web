@@ -4,15 +4,18 @@ namespace App\Models;
 
 use App\Database;
 
-class OffreModel {
+class OffreModel
+{
 
     private $pdo;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->pdo = Database::getInstance()->getPdo();
     }
 
-    public function findAll(): array {
+    public function findAll(): array
+    {
         $stmt = $this->pdo->query('
             SELECT o.*, e.nom AS nom_entreprise
             FROM OFFRE o
@@ -23,7 +26,8 @@ class OffreModel {
         return $stmt->fetchAll();
     }
 
-    public function findById(int $id): array|false {
+    public function findById(int $id): array |false
+    {
         $stmt = $this->pdo->prepare('
             SELECT o.*, e.nom AS nom_entreprise, e.email_contact, e.telephone_contact
             FROM OFFRE o

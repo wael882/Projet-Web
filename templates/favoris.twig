@@ -4,17 +4,56 @@
 
 {% block description %}content="Stagio - Acceuil"{% endblock %}
 
+{% block styles %}
+  {{ parent() }}
+  <style>
+    section {
+      padding: 2rem 0;
+    }
+    section h2 {
+      margin-bottom: 2rem;
+      padding-left: 0.5rem;
+      border-left: 4px solid #FF5722;
+    }
+    .favoris-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .card {
+      background: #E0EFFF;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(28, 55, 91, 0.08);
+      transition: transform 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card img {
+      width: 60px;
+      height: 60px;
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      object-fit: contain;
+      padding: 5px;
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
     <section>
       <h2>Offres Enregistrées</h2>
-
-      <div class="card">
-        <img src="" alt="Logo Thales" />
-        <h3>Thales</h3>
-        <p>Cannes - 06</p>
-        <p>Durée du stage : 4 mois</p>
-        <a href="{{ base_url }}identification">Voir l'offre</a>
-        <!-- dois etre connecté pour acceder a l'ofre -->
+      <div class="favoris-grid">
+        <div class="card">
+          <img src="" alt="Logo Thales" />
+          <h3>Thales</h3>
+          <p>Cannes - 06</p>
+          <p>Durée du stage : 4 mois</p>
+          <a href="{{ base_url }}identification">Voir l'offre</a>
+          <!-- dois etre connecté pour acceder a l'ofre -->
+        </div>
       </div>
     </section>
 

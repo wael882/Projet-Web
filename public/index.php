@@ -11,6 +11,7 @@ use App\Controllers\PageController;
 // Twig
 $loader = new \Twig\Loader\FilesystemLoader(dirname(__DIR__) . '/templates');
 $twig   = new \Twig\Environment($loader);
+$twig->addGlobal('base_url', BASE_URL);
 
 // Test connexion BDD
 $db = Database::getInstance()->getPdo();

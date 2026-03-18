@@ -4,9 +4,36 @@
 
 {% block description %}content="Stagio - Acceuil"{% endblock %}
 
+{% block styles %}
+  {{ parent() }}
+  <style>
+    .offer-detail {
+      background: white;
+      border-radius: 16px;
+      padding: 3rem;
+      box-shadow: 0 4px 20px rgba(28, 55, 91, 0.1);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .offer-header {
+      border-bottom: 2px solid #F0F7FF;
+      padding-bottom: 2rem;
+      margin-bottom: 2rem;
+    }
+    .apply-section {
+      margin-top: 3rem;
+      border-top: 2px solid #F0F7FF;
+      padding-top: 2rem;
+      text-align: center;
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
-
-
-
-
+  <div class="offer-detail">
+    <div class="offer-header">
+    </div>
+    <div class="apply-section">
+    </div>
+  </div>
 {% endblock %}

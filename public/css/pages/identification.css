@@ -1,12 +1,7 @@
-/* ===========================================
-   IDENTIFICATION.CSS — Page de connexion Stagio
-   =========================================== */
-
-/* ---- Import des composants nécessaires ---- */
 @import '../main.css';
 @import '../components/form.css';
 
-/* ---- Layout centré pleine page ---- */
+
 #form,
 main {
   display: flex;
@@ -16,15 +11,15 @@ main {
   padding: 2rem;
 }
 
-/* ---- Container de la section ---- */
-main > section {
+
+main>section {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
 }
 
-/* ---- Décoration de fond ---- */
+
 main::before {
   content: '';
   position: fixed;
@@ -51,7 +46,6 @@ main::after {
   z-index: 0;
 }
 
-/* ---- Formulaire spécifique identification ---- */
 main form {
   position: relative;
   z-index: 1;
@@ -64,6 +58,7 @@ main form {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -72,6 +67,7 @@ main form {
 
 /* ---- Responsive ---- */
 @media (max-width: 480px) {
+
   #form,
   main {
     padding: 1.5rem 1rem;

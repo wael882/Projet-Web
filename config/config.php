@@ -6,6 +6,6 @@ define('BASE_URL', 'http://localhost:8000/');
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASSWORD', 'Admin1234!');
-define('DB_NAME', 'cesi_db');
+define('DB_NAME', 'stagio');
 define('ROOT_PATH', dirname(__DIR__));
 define('UPLOAD_PATH', ROOT_PATH . '/public/uploads');

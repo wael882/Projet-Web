@@ -1,0 +1,40 @@
+.offer-detail {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.offer-header {
+  background: var(--blanc);
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid var(--ligne);
+  border-left: 4px solid var(--bleu);
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.apply-section {
+  background: var(--blanc);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--ligne);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.apply-section button {
+  font-size: 1.3rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--orange);
+  padding: 0.3rem;
+  transition: transform 0.2s;
+}
+
+.apply-section button:hover {
+  transform: scale(1.2);
+}

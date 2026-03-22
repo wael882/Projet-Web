@@ -137,11 +137,16 @@ button {
   border: none;
   border-radius: 7px;
   cursor: pointer;
-  background: var(--orange);
-  color: var(--blanc);
   transition: background 0.2s, transform 0.15s;
 }
-button:hover { background: var(--orange-2); transform: translateY(-1px); }
+button:not([class]) ,
+button.btn-default {
+  background: var(--orange);
+  color: var(--blanc);
+  border: none;
+}
+button:not([class]):hover,
+button.btn-default:hover { background: var(--orange-2); transform: translateY(-1px); }
 button a { color: var(--blanc); }
 
 /* ---- Footer ---- */

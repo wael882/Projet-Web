@@ -22,6 +22,8 @@ $router->add('POST', '/identification',   [$controller, 'login']);
 $router->add('GET',  '/logout',           [$controller, 'logout']);
 $router->add('POST', '/favoris',           [$controller, 'favorisPost']);
 $router->add('POST', '/favoris/supprimer', [$controller, 'favorisDelete']);
+$router->add('GET',  '/postuler',          [$controller, 'postuler']);
+$router->add('POST', '/candidature',       [$controller, 'candidaturePost']);
 $router->add('GET',  '/oubliMdp',          [$controller, 'oubliMdp']);
 $router->add('POST', '/oubliMdp',          [$controller, 'oubliMdpPost']);
 $router->add('GET',  '/reinitMdp',         [$controller, 'reinitMdp']);

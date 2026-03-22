@@ -88,4 +88,15 @@ class OffreModel
         $stmt->execute([':id' => $id]);
         return $stmt->fetch();
     }
+
+    public function findCompetencesByOffre(int $id): array {
+        $stmt = $this->pdo->prepare('
+            SELECT c.libelle
+            FROM offre_competence oc
+            JOIN COMPETENCE c ON oc.id_competence = c.id_competence
+            WHERE oc.id_offre = :id
+        ');
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+    }
 }

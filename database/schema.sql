@@ -178,14 +178,14 @@ CREATE TABLE EVALUATION_ENTREPRISE (
 -- ------------------------------------------------------------
 CREATE TABLE CANDIDATURE (
     id_candidature      INT AUTO_INCREMENT PRIMARY KEY,
-    id_etudiant         INT          NOT NULL,
+    id_utilisateur      INT          NOT NULL,
     id_offre            INT          NOT NULL,
     cv_fichier          VARCHAR(255) NULL,
     lettre_motivation   TEXT         NULL,
     date_candidature    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     statut              VARCHAR(50)  NOT NULL DEFAULT 'envoyee',
-    CONSTRAINT fk_cand_etudiant
-        FOREIGN KEY (id_etudiant) REFERENCES ETUDIANT(id_etudiant)
+    CONSTRAINT fk_cand_utilisateur
+        FOREIGN KEY (id_utilisateur) REFERENCES UTILISATEUR(id_utilisateur)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
     CONSTRAINT fk_cand_offre

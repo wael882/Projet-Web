@@ -7,6 +7,7 @@ use App\Models\OffreModel;
 use App\Models\WishlistModel;
 use App\Models\EtudiantModel;
 use App\Models\EntrepriseModel;
+use App\Models\CandidatureModel;
 
 class PageController
 {
@@ -108,14 +109,122 @@ class PageController
     {
         $model = new OffreModel();
         $offre = $model->findById((int) $_GET['id']);
-        if($offre){
-            $wishlist = new WishlistModel();
-            $favorisIds = isset($_SESSION['user']) ? $wishlist->getIdOffres((int) $_SESSION['user']['id_utilisateur']) : [];
-            echo $this->twig->render('offre.twig', ['offre' => $offre, 'favorisIds' => $favorisIds]);
-        }else{
+        if ($offre) {
+            $wishlist    = new WishlistModel();
+            $candidature = new CandidatureModel();
+            $favorisIds  = isset($_SESSION['user']) ? $wishlist->getIdOffres((int) $_SESSION['user']['id_utilisateur']) : [];
+            $dejaPostule = isset($_SESSION['user']['id_utilisateur'])
+                ? $candidature->dejaPostule((int) $_SESSION['user']['id_utilisateur'], (int) $offre['id_offre'])
+                : false;
+            $competences = $model->findCompetencesByOffre((int) $offre['id_offre']);
+            echo $this->twig->render('offre.twig', [
+                'offre'       => $offre,
+                'favorisIds'  => $favorisIds,
+                'dejaPostule' => $dejaPostule,
+                'competences' => $competences,
+                'success'     => $_SESSION['success'] ?? null,
+                'error'       => $_SESSION['error'] ?? null,
+            ]);
+            unset($_SESSION['success'], $_SESSION['error']);
+        } else {
             $_SESSION['error'] = "Un probleme est survenu au niveau de l'affichage de l'offre";
             echo $this->twig->render('rechercher.twig', ['offre' => $offre]);
         }
+    }
+
+    public function postuler()
+    {
+        $this->requireAuth();
+
+        $model = new OffreModel();
+        $offre = $model->findById((int) ($_GET['id'] ?? 0));
+
+        if (!$offre) {
+            $_SESSION['error'] = 'Offre introuvable.';
+            header('Location: /rechercher');
+            exit;
+        }
+
+        $candidature = new CandidatureModel();
+        if ($candidature->dejaPostule((int) $_SESSION['user']['id_utilisateur'], (int) $offre['id_offre'])) {
+            $_SESSION['error'] = 'Vous avez déjà postulé à cette offre.';
+            header('Location: /offre?id=' . $offre['id_offre']);
+            exit;
+        }
+
+        echo $this->twig->render('postuler.twig', [
+            'offre' => $offre,
+            'error' => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['error']);
+    }
+
+    public function candidaturePost()
+    {
+        $this->requireAuth();
+
+        $idUtilisateur = (int) ($_SESSION['user']['id_utilisateur'] ?? 0);
+        $idOffre       = (int) ($_POST['id_offre'] ?? 0);
+        $lettre        = trim($_POST['lettre_motivation'] ?? '');
+
+        if (!$idUtilisateur || !$idOffre) {
+            $_SESSION['error'] = 'Données invalides.';
+            header('Location: /offre?id=' . $idOffre);
+            exit;
+        }
+
+        $model = new CandidatureModel();
+
+        if ($model->dejaPostule($idUtilisateur, $idOffre)) {
+            $_SESSION['error'] = 'Vous avez déjà postulé à cette offre.';
+            header('Location: /offre?id=' . $idOffre);
+            exit;
+        }
+
+        // Gestion du CV
+        $cvPath = null;
+        if (!empty($_FILES['cv']['name'])) {
+            $fichier = $_FILES['cv'];
+            $maxSize = 2 * 1024 * 1024; // 2 Mo
+
+            if ($fichier['error'] !== UPLOAD_ERR_OK) {
+                $_SESSION['error'] = 'Erreur lors de l\'envoi du fichier.';
+                header('Location: /postuler?id=' . $idOffre);
+                exit;
+            }
+
+            if ($fichier['size'] > $maxSize) {
+                $_SESSION['error'] = 'Le CV ne doit pas dépasser 2 Mo.';
+                header('Location: /postuler?id=' . $idOffre);
+                exit;
+            }
+
+            $ext = strtolower(pathinfo($fichier['name'], PATHINFO_EXTENSION));
+            $finfo = new \finfo(FILEINFO_MIME_TYPE);
+            $mimeReel = $finfo->file($fichier['tmp_name']);
+
+            if ($ext !== 'pdf' || $mimeReel !== 'application/pdf') {
+                $_SESSION['error'] = 'Le CV doit être au format PDF.';
+                header('Location: /postuler?id=' . $idOffre);
+                exit;
+            }
+
+            $nomFichier = 'cv_' . $idUtilisateur . '_' . $idOffre . '_' . time() . '.pdf';
+            $destination = UPLOAD_PATH . '/cv/' . $nomFichier;
+
+            if (!move_uploaded_file($fichier['tmp_name'], $destination)) {
+                $_SESSION['error'] = 'Impossible de sauvegarder le fichier.';
+                header('Location: /postuler?id=' . $idOffre);
+                exit;
+            }
+
+            $cvPath = 'uploads/cv/' . $nomFichier;
+        }
+
+        $model->create($idUtilisateur, $idOffre, $lettre, $cvPath);
+        $_SESSION['success'] = 'Votre candidature a bien été envoyée !';
+        header('Location: /offre?id=' . $idOffre);
+        exit;
     }
 
     public function rechercher()

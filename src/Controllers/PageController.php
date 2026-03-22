@@ -6,6 +6,7 @@ use App\Models\UtilisateurModel;
 use App\Models\OffreModel;
 use App\Models\WishlistModel;
 use App\Models\EtudiantModel;
+use App\Models\EntrepriseModel;
 
 class PageController
 {
@@ -39,7 +40,23 @@ class PageController
 
     public function entreprise()
     {
-        echo $this->twig->render('entreprise.twig');
+        $entrepriseModel = new EntrepriseModel();
+        $offreModel = new OffreModel();
+
+        $entreprise = $entrepriseModel->findById((int) $_GET['id']);
+
+        if (!$entreprise) {
+            $_SESSION['error'] = "Entreprise introuvable.";
+            header('Location: /rechercher');
+            exit;
+        }
+
+        $offresEntreprise = $offreModel->findByEntreprise((int) $_GET['id']);
+
+        echo $this->twig->render('entreprise.twig', [
+            'entreprise' => $entreprise,
+            'offresEntreprise' => $offresEntreprise
+        ]);
     }
 
     public function inscription()

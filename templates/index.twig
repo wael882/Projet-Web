@@ -2,6 +2,11 @@
 
 {% block title %}Stagio - Accueil{% endblock %}
 
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/index.css" />
+{% endblock %}
+
 {% block content %}
 
   <section id="hero">

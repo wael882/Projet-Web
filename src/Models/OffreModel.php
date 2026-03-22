@@ -67,6 +67,17 @@ class OffreModel
         return (int) $stmt->fetchColumn();
     }
 
+    public function findByEntreprise(int $idEntreprise): array {
+        $stmt = $this->pdo->prepare('
+            SELECT o.*
+            FROM OFFRE o
+            WHERE o.id_entreprise = :idEntreprise AND o.active = TRUE
+            ORDER BY o.date_offre DESC
+        ');
+        $stmt->execute([':idEntreprise' => $idEntreprise]);
+        return $stmt->fetchAll();
+    }
+
     public function findById(int $id): array|false {
         $stmt = $this->pdo->prepare('
             SELECT o.*, e.nom AS nom_entreprise, e.email_contact, e.telephone_contact

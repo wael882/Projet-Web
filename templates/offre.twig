@@ -4,6 +4,11 @@
 
 {% block description %}content="Stagio - Acceuil"{% endblock %}
 
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/offre.css" />
+{% endblock %}
+
 {% block content %}
   <div class="offer-detail">
     <div class="offer-header">
@@ -11,7 +16,7 @@
       {{ offre.description }}
       {{ offre.date_offre }}
       {{ offre.duree_stage }}
-      {{ offre.nom_entreprise }}
+      <a href="/entreprise?id={{ offre.id_entreprise }}">{{ offre.nom_entreprise }}</a>
       {{ offre.email_contact }}
       {{ offre.telephone_contact }}
     </div>

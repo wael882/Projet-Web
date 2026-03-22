@@ -1,0 +1,25 @@
+/* ===========================================
+   OFFRE.CSS — Page détail d'une offre
+   =========================================== */
+
+.offer-detail {
+  background: var(--blanc);
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid var(--ligne);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.offer-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.apply-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--ligne);
+}

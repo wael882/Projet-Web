@@ -1,0 +1,41 @@
+/* ===========================================
+   FAVORIS.CSS — Page wishlist étudiant
+   =========================================== */
+
+section {
+  padding: 2rem 0;
+}
+
+section h2 {
+  margin-bottom: 2rem;
+  padding-left: 0.5rem;
+  border-left: 4px solid var(--orange);
+}
+
+.favoris-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.card {
+  background: var(--carte);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(28, 55, 91, 0.08);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card img {
+  width: 60px;
+  height: 60px;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  object-fit: contain;
+  padding: 5px;
+}

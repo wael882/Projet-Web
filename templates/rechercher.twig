@@ -4,6 +4,11 @@
 
 {% block description %}content="Stagio - Acceuil"{% endblock %}
 
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/rechercher.css" />
+{% endblock %}
+
 {% block content %}
     <div class="recherche-container">
 
@@ -14,8 +19,10 @@
 
       <div class="results-grid">
         {% for offre in offres %}
+        
           <div class="recherche-item">
             <div class="recherche-item-titre">{{ offre.titre }}</div>
+            <div class="recherche-item-entreprise"><a href="/entreprise?id={{ offre.id_entreprise }}">{{ offre.nom_entreprise }}</a></div>
             <div class="recherche-item-desc">{{ offre.description }}</div>
             <div class="recherche-item-meta">{{ offre.date_offre }}</div>
             <div class="recherche-item-meta">{{ offre.duree_stage }}</div>
@@ -32,6 +39,7 @@
                 <button type="submit">&#9825;</button>
             </form>
             {% endif %}
+
           </div>
         {% endfor %}
       </div>

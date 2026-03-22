@@ -1,0 +1,32 @@
+/* ===========================================
+   INSCRIPTION.CSS — Page d'inscription
+   =========================================== */
+
+#form,
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 2rem;
+}
+
+main > section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+main form {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 480px) {
+  #form,
+  main {
+    padding: 1.5rem 1rem;
+    min-height: 70vh;
+  }
+}

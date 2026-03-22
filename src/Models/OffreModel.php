@@ -17,23 +17,53 @@ class OffreModel
         }
     }
 
-    public function findAll(int $limite = 10, int $offset = 0): array {
+    public function findAll(int $nombreParPage = 10, int $debutListe = 0): array {
         $stmt = $this->pdo->prepare('
             SELECT o.*, e.nom AS nom_entreprise
             FROM OFFRE o
             JOIN ENTREPRISE e ON o.id_entreprise = e.id_entreprise
             WHERE o.active = TRUE
             ORDER BY o.date_offre DESC
-            LIMIT :limite OFFSET :offset
+            LIMIT :nombreParPage OFFSET :debutListe
         ');
-        $stmt->bindValue(':limite', $limite, \PDO::PARAM_INT);
-        $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+        $stmt->bindValue(':nombreParPage', $nombreParPage, \PDO::PARAM_INT);
+        $stmt->bindValue(':debutListe', $debutListe, \PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll();
     }
 
     public function count(): int {
         $stmt = $this->pdo->query('SELECT COUNT(*) FROM OFFRE WHERE active = TRUE');
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function search(string $motCle, int $nombreParPage = 10, int $debutListe = 0): array {
+        $stmt = $this->pdo->prepare('
+            SELECT o.*, e.nom AS nom_entreprise
+            FROM OFFRE o
+            JOIN ENTREPRISE e ON o.id_entreprise = e.id_entreprise
+            WHERE o.active = TRUE
+              AND (o.titre LIKE :motCle OR e.nom LIKE :motCle)
+            ORDER BY o.date_offre DESC
+            LIMIT :nombreParPage OFFSET :debutListe
+        ');
+        $stmt->bindValue(':motCle', '%' . $motCle . '%');
+        $stmt->bindValue(':nombreParPage', $nombreParPage, \PDO::PARAM_INT);
+        $stmt->bindValue(':debutListe', $debutListe, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function countSearch(string $motCle): int {
+        $stmt = $this->pdo->prepare('
+            SELECT COUNT(*)
+            FROM OFFRE o
+            JOIN ENTREPRISE e ON o.id_entreprise = e.id_entreprise
+            WHERE o.active = TRUE
+              AND (o.titre LIKE :motCle OR e.nom LIKE :motCle)
+        ');
+        $stmt->bindValue(':motCle', '%' . $motCle . '%');
+        $stmt->execute();
         return (int) $stmt->fetchColumn();
     }
 

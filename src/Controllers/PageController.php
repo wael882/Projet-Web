@@ -105,18 +105,27 @@ class PageController
     {
         $model = new OffreModel();
         $wishlist = new WishlistModel();
-        $page = $_GET['page'] ?? 1;
-        $limite = 10;
-        $offset = ($page - 1) * $limite;
-        $rechercher = $model->findAll($limite, $offset);
-        $total = $model->count();
-        $totalPages = ceil($total / $limite);
+        $pageCourante = $_GET['page'] ?? 1;
+        $motCle = trim($_GET['motCle'] ?? '');
+        $nombreParPage = 10;
+        $debutListe = ($pageCourante - 1) * $nombreParPage;
+
+        if ($motCle !== '') {
+            $offres = $model->search($motCle, $nombreParPage, $debutListe);
+            $totalOffres = $model->countSearch($motCle);
+        } else {
+            $offres = $model->findAll($nombreParPage, $debutListe);
+            $totalOffres = $model->count();
+        }
+
+        $totalPages = ceil($totalOffres / $nombreParPage);
         $favorisIds = isset($_SESSION['user']) ? $wishlist->getIdOffres((int) $_SESSION['user']['id_utilisateur']) : [];
         echo $this->twig->render('rechercher.twig', [
-            'rechercher' => $rechercher,
-            'page' => $page,
+            'offres' => $offres,
+            'pageCourante' => $pageCourante,
             'totalPages' => $totalPages,
-            'favorisIds' => $favorisIds
+            'favorisIds' => $favorisIds,
+            'motCle' => $motCle
         ]);
     }
 

@@ -39,4 +39,33 @@ class UtilisateurModel {
         ]);
         return (int) $this->pdo->lastInsertId();
     }
+
+    public function saveResetToken(string $email, string $token, string $expiry): bool {
+        $stmt = $this->pdo->prepare('
+            UPDATE UTILISATEUR
+            SET reset_token = :token, reset_token_expiry = :expiry
+            WHERE email = :email AND actif = TRUE
+        ');
+        $stmt->execute([':token' => $token, ':expiry' => $expiry, ':email' => $email]);
+        return $stmt->rowCount() > 0;
+    }
+
+    public function findByResetToken(string $token): array|false {
+        $stmt = $this->pdo->prepare('
+            SELECT id_utilisateur, email, reset_token_expiry
+            FROM UTILISATEUR
+            WHERE reset_token = :token AND actif = TRUE
+        ');
+        $stmt->execute([':token' => $token]);
+        return $stmt->fetch();
+    }
+
+    public function updatePassword(int $idUtilisateur, string $motDePasseHash): void {
+        $stmt = $this->pdo->prepare('
+            UPDATE UTILISATEUR
+            SET mot_de_passe_hash = :hash, reset_token = NULL, reset_token_expiry = NULL
+            WHERE id_utilisateur = :id
+        ');
+        $stmt->execute([':hash' => $motDePasseHash, ':id' => $idUtilisateur]);
+    }
 }

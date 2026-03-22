@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stagio - Mot de passe oublié{% endblock %}
+
+{% block description %}content="Stagio - Réinitialiser son mot de passe"{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/identification.css" />
+{% endblock %}
+
+{% block content %}
+
+  <main>
+    <section>
+
+      <form method="POST" action="/oubliMdp">
+        <h1>Mot de passe oublié</h1>
+        <p>Entrez votre adresse email pour recevoir un lien de réinitialisation.</p>
+
+        <span>Email</span><br />
+        <input
+          name="email"
+          type="email"
+          id="email"
+          placeholder="monstage@monstage.fr"
+          required
+        /><br />
+
+        {% if success %}
+          <p class="success">{{ success }}</p>
+        {% endif %}
+        {% if error %}
+          <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if reset_link %}
+          <p><strong>Lien de réinitialisation (dev) :</strong><br />
+            <a href="{{ reset_link }}">{{ reset_link }}</a>
+          </p>
+        {% endif %}
+
+        <button type="submit">Envoyer le lien</button>
+        <a href="/identification">Retour à la connexion</a>
+      </form>
+
+    </section>
+  </main>
+
+{% endblock %}

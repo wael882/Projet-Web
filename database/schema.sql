@@ -29,6 +29,8 @@ CREATE TABLE UTILISATEUR (
     actif               BOOLEAN         NOT NULL DEFAULT TRUE,
     date_creation       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     id_role             INT             NOT NULL,
+    reset_token         VARCHAR(64)     NULL,
+    reset_token_expiry  DATETIME        NULL,
     CONSTRAINT fk_utilisateur_role
         FOREIGN KEY (id_role) REFERENCES ROLE(id_role)
         ON DELETE RESTRICT

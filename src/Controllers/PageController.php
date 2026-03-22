@@ -197,6 +197,86 @@ class PageController
         exit;
     }
 
+    public function oubliMdp() {
+        echo $this->twig->render('oubli-mdp.twig', [
+            'success'    => $_SESSION['success'] ?? null,
+            'error'      => $_SESSION['error'] ?? null,
+            'reset_link' => $_SESSION['reset_link'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error'], $_SESSION['reset_link']);
+    }
+
+    public function oubliMdpPost() {
+        $model = new UtilisateurModel();
+        $email = trim($_POST['email'] ?? '');
+
+        $utilisateur = $model->findByEmail($email);
+
+        // Message neutre même si l'email n'existe pas (sécurité)
+        if ($utilisateur) {
+            $token  = bin2hex(random_bytes(32));
+            $expiry = date('Y-m-d H:i:s', time() + 3600); // 1 heure
+            $model->saveResetToken($email, $token, $expiry);
+
+            // Pas de serveur mail en local : on affiche le lien directement
+            $lien = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/reinitMdp?token=' . $token;
+            $_SESSION['reset_link'] = $lien;
+        }
+
+        $_SESSION['success'] = 'Si cet email existe, un lien de réinitialisation a été généré.';
+        header('Location: /oubliMdp');
+        exit;
+    }
+
+    public function reinitMdp() {
+        $token = $_GET['token'] ?? '';
+        if (!$token) {
+            header('Location: /oubliMdp');
+            exit;
+        }
+
+        $model       = new UtilisateurModel();
+        $utilisateur = $model->findByResetToken($token);
+
+        if (!$utilisateur || strtotime($utilisateur['reset_token_expiry']) < time()) {
+            $_SESSION['error'] = 'Ce lien est invalide ou expiré.';
+            header('Location: /oubliMdp');
+            exit;
+        }
+
+        echo $this->twig->render('reinit-mdp.twig', [
+            'token' => $token,
+            'error' => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['error']);
+    }
+
+    public function reinitMdpPost() {
+        $token           = $_POST['token'] ?? '';
+        $motDePasse      = $_POST['password'] ?? '';
+        $confirmation    = $_POST['password_confirm'] ?? '';
+
+        if ($motDePasse !== $confirmation) {
+            $_SESSION['error'] = 'Les mots de passe ne correspondent pas.';
+            header('Location: /reinitMdp?token=' . urlencode($token));
+            exit;
+        }
+
+        $model       = new UtilisateurModel();
+        $utilisateur = $model->findByResetToken($token);
+
+        if (!$utilisateur || strtotime($utilisateur['reset_token_expiry']) < time()) {
+            $_SESSION['error'] = 'Ce lien est invalide ou expiré.';
+            header('Location: /oubliMdp');
+            exit;
+        }
+
+        $model->updatePassword($utilisateur['id_utilisateur'], password_hash($motDePasse, PASSWORD_DEFAULT));
+        $_SESSION['success'] = 'Mot de passe modifié avec succès. Connectez-vous.';
+        header('Location: /identification');
+        exit;
+    }
+
     public function inscriptionPost() {
         $model = new UtilisateurModel();
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);

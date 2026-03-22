@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\UtilisateurModel;
 use App\Models\OffreModel;
 use App\Models\WishlistModel;
+use App\Models\EtudiantModel;
 
 class PageController
 {
@@ -178,6 +179,8 @@ class PageController
             $utilisateur = $model->create($_POST['nom'], $_POST['prenom'], $_POST['email'], $password, 3, $_POST['ecole']);
 
             if ($utilisateur) {
+                $etudiantModel = new EtudiantModel();
+                $etudiantModel->create($utilisateur);
                 $_SESSION['success'] = 'Inscription réussite, connectez vous';
                 header("location:/identification");
                 exit;

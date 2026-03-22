@@ -36,7 +36,9 @@ class PageController
     public function candidature()
     {
         $this->requireAuth();
-        echo $this->twig->render('candidature.twig');
+        $model = new CandidatureModel();
+        $candidatures = $model->findByUtilisateur((int) $_SESSION['user']['id_utilisateur']);
+        echo $this->twig->render('candidature.twig', ['candidatures' => $candidatures]);
     }
 
     public function entreprise()

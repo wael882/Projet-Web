@@ -15,6 +15,15 @@ class PageController
     {
         $this->twig = $twig;
     }
+
+    private function requireAuth(): void
+    {
+        if (empty($_SESSION['user'])) {
+            $_SESSION['error'] = 'Vous devez être connecté pour accéder à cette page.';
+            header('Location: /identification');
+            exit;
+        }
+    }
     public function acceuil()
     {
         echo $this->twig->render('acceuil.twig');
@@ -23,6 +32,7 @@ class PageController
 
     public function candidature()
     {
+        $this->requireAuth();
         echo $this->twig->render('candidature.twig');
     }
 
@@ -49,17 +59,19 @@ class PageController
 
     public function profil()
     {
+        $this->requireAuth();
         echo $this->twig->render('profil.twig');
-
     }
 
     public function favoris(){
+        $this->requireAuth();
         $model = new WishlistModel();
         $favoris = $model->findByUtilisateur((int) $_SESSION['user']['id_utilisateur']);
         echo $this->twig->render('favoris.twig',['favoris' => $favoris]);
     }
 
     public function favorisPost(){
+        $this->requireAuth();
         $model = new WishlistModel();
         $model->add((int) $_SESSION['user']['id_utilisateur'], (int) $_POST['id_offre']);
         header("location:" . $_SERVER['HTTP_REFERER']);
@@ -67,6 +79,7 @@ class PageController
     }
 
     public function favorisDelete(){
+        $this->requireAuth();
         $model = new WishlistModel();
         $model->remove((int) $_SESSION['user']['id_utilisateur'], (int) $_POST['id_offre']);
         header("location:" . $_SERVER['HTTP_REFERER']);

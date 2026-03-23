@@ -59,6 +59,7 @@
 #apropos-valeurs {
   background: var(--carte);
   padding: 4rem 2rem;
+  border-radius: 20px;
 }
 
 #apropos-valeurs .container {
@@ -160,36 +161,55 @@
 /* ── Contact ───────────────────────────────────────── */
 
 #apropos-contact {
-  background: var(--bleu);
-  color: var(--blanc);
+  background: #FFF0EA;
+  border: 1.5px solid #f5d5c5;
   text-align: center;
-  padding: 4rem 2rem;
-  margin: 0 -2rem 0;
+  padding: 5rem 2rem;
+  border-radius: 20px;
+  margin: 2rem 0;
 }
 
-#apropos-contact h2 {
-  font-size: 1.8rem;
+#apropos-contact .contact-label {
+  font-size: 0.75rem;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--orange);
   margin-bottom: 1rem;
 }
 
+#apropos-contact h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--bleu);
+  margin-bottom: 0.8rem;
+}
+
 #apropos-contact p {
-  color: rgba(255,255,255,0.8);
+  color: var(--gris);
   margin-bottom: 2rem;
   font-size: 1rem;
 }
 
 #apropos-contact strong {
-  color: var(--blanc);
+  color: var(--bleu-clair);
 }
 
-#apropos-contact .btn-primary {
+.btn-contact {
+  display: inline-block;
   background: var(--orange);
   color: var(--blanc);
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background 0.2s, transform 0.15s;
 }
 
-#apropos-contact .btn-primary:hover {
+.btn-contact:hover {
   background: var(--orange-2);
+  color: var(--blanc);
+  transform: translateY(-2px);
 }
 
 /* ── Responsive ────────────────────────────────────── */

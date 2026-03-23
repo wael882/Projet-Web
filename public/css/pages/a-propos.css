@@ -59,6 +59,7 @@
 #apropos-valeurs {
   background: var(--carte);
   padding: 4rem 2rem;
+  border-radius: 20px;
 }
 
 #apropos-valeurs .container {

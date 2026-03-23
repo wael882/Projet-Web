@@ -1,0 +1,101 @@
+/* ===========================================
+   CANDIDATURE.CSS — Suivi des candidatures
+   =========================================== */
+
+.candidature-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.candidature-container h1 {
+  margin-bottom: 0;
+}
+
+.empty-msg {
+  color: var(--gris);
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.candidature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.candidature-card {
+  background: var(--blanc);
+  border: 1px solid var(--ligne);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.candidature-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.candidature-titre {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--bleu);
+  text-decoration: none;
+}
+
+.candidature-titre:hover {
+  text-decoration: underline;
+}
+
+.candidature-entreprise {
+  font-size: 0.88rem;
+  color: var(--gris);
+}
+
+.candidature-date {
+  font-size: 0.8rem;
+  color: var(--gris);
+}
+
+/* === BADGES STATUT === */
+.status-badge {
+  padding: 0.35rem 0.9rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.status-envoyee {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.status-vue {
+  background: #fefce8;
+  color: #ca8a04;
+}
+
+.status-acceptee {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.status-refusee {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+@media (max-width: 600px) {
+  .candidature-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

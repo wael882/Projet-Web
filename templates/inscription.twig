@@ -1,29 +1,41 @@
-{% extends 'base.html.twig' %}
+{% extends 'base-index.html.twig' %}
 
 {% block title %}Stagio - S'inscrire{% endblock %}
 
 {% block description %}content="Stagio - Crée un compte"{% endblock %}
 
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/components/form.css" />
+  <link rel="stylesheet" href="{{ base_url }}css/pages/inscription.css" />
+{% endblock %}
+
 {% block content %}
 
     <main>
       <section>
-        <form action="">
+        <form action="/inscription" method="POST">
           <h1>S'inscrire</h1>
           <span>Nom</span><br />
-          <input type="text" id="nom" placeholder="Nom" /><br />
+          <input name="nom" type="text" id="nom" placeholder="Nom" /><br />
           <span>Prenom</span><br />
-          <input type="text" id="prenom" placeholder="Prénom" /><br />
+          <input name="prenom" type="text" id="prenom" placeholder="Prénom" /><br />
           <span>Ecole</span><br />
-          <input type="text" id="ecole" placeholder="Ecole" /><br />
+          <input name="ecole" type="text" id="ecole" placeholder="Ecole" /><br />
           <span>Email</span><br />
           <input
+            name="email" 
             type="email"
             id="email"
             placeholder="monstage@monstage.fr"
           /><br />
           <span>Mot de passe</span><br />
-          <input type="password" id="password" /><br />
+          <input name="password" type="password" id="password" /><br />
+
+          {% if erreur %}
+           <p>{{ erreur }}</p>
+          {% endif %}
+
           <button type="submit">S'inscrire</button>
         </form>
       </section>

@@ -1,69 +1,32 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Stagio - Accueil{% endblock %}
+{% block title %}Stagio - {{ entreprise.nom ?? 'Entreprise' }}{% endblock %}
 
-{% block description %}content="Stagio - Acceuil"{% endblock %}
+{% block description %}content="Stagio - Détail entreprise"{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/entreprise.css" />
+{% endblock %}
 
 {% block content %}
-    <main>
-      <!-- En-tête de la fiche entreprise -->
-      <section id="identite">
-        <img src="" alt="Logo Thales" />
-        <h1>Thales</h1>
-        <p>Secteur : Défense, Aérospatial, Cybersécurité</p>
-        <p>Siège social : Courbevoie (92)</p>
-        <p>Site web : <a href="#">www.thalesgroup.com</a></p>
-      </section>
+  <section id="identite">
+    <h1>{{ entreprise.nom }}</h1>
+    <p>{{ entreprise.description }}</p>
+    <p>Email : {{ entreprise.email_contact }}</p>
+    <p>Téléphone : {{ entreprise.telephone_contact }}</p>
+  </section>
 
-      <!-- Informations rapides -->
-      <aside>
-        <h2>En bref</h2>
-        <p><strong>Taille :</strong> +80 000 employés</p>
-        <p><strong>Fondée en :</strong> 1893</p>
-        <p><strong>Chiffre d'affaires :</strong> 17,6 Mds €</p>
-        <p><strong>Présence :</strong> 68 pays</p>
-        <p><strong>Type :</strong> Multinationale</p>
-      </aside>
-
-      <!-- Description complète -->
-      <section id="description">
-        <h2>Présentation</h2>
-        <p>
-          Thales est un groupe industriel français de haute technologie
-          spécialisé dans l'aérospatial, la défense, la sécurité et le
-          transport. L'entreprise conçoit des systèmes, des équipements et des
-          services pour les marchés civils et militaires.
-        </p>
-        <p>
-          Présent dans 68 pays avec plus de 80 000 collaborateurs, Thales
-          investit massivement dans la recherche et développement, notamment
-          dans les domaines de l'intelligence artificielle, de la cybersécurité
-          et du spatial.
-        </p>
-      </section>
-
-      <!-- Offres de stage disponibles -->
-      <section id="offres">
-        <h2>Leurs offres disponibles</h2>
-
-        <article>
-          <h3>Ingénieur Cybersécurité — Stage 6 mois</h3>
-          <p>Sophia Antipolis (06) — Gratification : 1 200 €/mois</p>
-          <a href="{{ base_url }}offre">Voir l'offre</a>
-        </article>
-
-        <article>
-          <h3>Développeur Embarqué — Stage 4 mois</h3>
-          <p>Cannes (06) — Gratification : 1 000 €/mois</p>
-         <a href="{{ base_url }}offre">Voir l'offre</a>
-        </article>
-
-        <article>
-          <h3>Data Scientist — Alternance 2 ans</h3>
-          <p>Paris (75) — Rémunération selon profil</p>
-          <a href="{{ base_url }}offre">Voir l'offre</a>
-        </article>
-      </section>
-    </main>
-
+  <section id="offres">
+    <h2>Offres disponibles</h2>
+    {% for offre in offresEntreprise %}
+      <article>
+        <h3>{{ offre.titre }}</h3>
+        <p>Durée : {{ offre.duree_stage }} semaines — Rémunération : {{ offre.remuneration_base }} €</p>
+        <a href="/offre?id={{ offre.id_offre }}">Voir l'offre</a>
+      </article>
+    {% else %}
+      <p>Aucune offre disponible pour cette entreprise.</p>
+    {% endfor %}
+  </section>
 {% endblock %}

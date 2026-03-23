@@ -2,101 +2,92 @@
 
 {% block title %}Stagio - Accueil{% endblock %}
 
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/index.css" />
+{% endblock %}
+
 {% block content %}
 
-    <main>
-      <section id="hero">
-        <h1>Trouvez votre stage</h1>
-        <p>
-          Stagio est la plateforme officielle du CESI pour trouver votre stage.
-          Parcourez les offres de nos entreprises partenaires, postulez en
-          quelques clics et gérez vos candidatures depuis votre espace
-          personnel.
-        </p>
-        <button>
-          <a href="{{ base_url }}inscription">S'inscrire</a>
-        </button>
-        <button>
-          <a href="{{ base_url }}identification">S'identifier</a>
-        </button>
-      </section>
+  <section id="hero">
+    <h1>Décrochez<br><span class="accent">votre stage.</span></h1>
+    <p>
+      Stagio est la plateforme du CESI pour trouver votre stage.
+      Parcourez les offres, postulez et gérez vos candidatures
+      depuis un seul endroit.
+    </p>
+    <div class="hero-btns">
+      <a href="{{ base_url }}inscription" class="btn-principal">S'inscrire gratuitement</a>
+      <a href="{{ base_url }}identification" class="btn-secondaire">Déjà un compte ?</a>
+    </div>
+  </section>
 
-      <section id="chiffres">
-        <h2>Stagio en chiffres</h2>
+  <section id="chiffres">
+    <h2>Stagio en chiffres</h2>
+    <div class="chiffres-grid">
+      <div>
+        <strong>+500</strong>
+        <p>offres disponibles</p>
+      </div>
+      <div>
+        <strong>+120</strong>
+        <p>entreprises partenaires</p>
+      </div>
+      <div>
+        <strong>+1200</strong>
+        <p>étudiants inscrits</p>
+      </div>
+      <div>
+        <strong>92%</strong>
+        <p>taux de placement</p>
+      </div>
+    </div>
+  </section>
 
-        <div>
-          <strong>+500</strong>
-          <p>Offres de stage disponibles</p>
-        </div>
+  <section id="comment-ca-marche">
+    <h2>Comment ça marche ?</h2>
+    <div class="timeline">
+      <div class="timeline-line"></div>
+      <div class="timeline-step">
+        <div class="timeline-dot">1</div>
+        <h3>Créez votre profil</h3>
+        <p>Inscrivez-vous et renseignez vos informations étudiantes.</p>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-dot">2</div>
+        <h3>Parcourez les offres</h3>
+        <p>Filtrez par secteur, durée, localisation et type de contrat.</p>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-dot">3</div>
+        <h3>Postulez</h3>
+        <p>Envoyez votre candidature directement depuis la plateforme.</p>
+      </div>
+    </div>
+  </section>
 
-        <div>
-          <strong>+120</strong>
-          <p>Entreprises partenaires</p>
-        </div>
-
-        <div>
-          <strong>+1200</strong>
-          <p>Étudiants inscrits</p>
-        </div>
-
-        <div>
-          <strong>92%</strong>
-          <p>Taux de placement en stage</p>
-        </div>
-      </section>
-
-      <section id="comment-ca-marche">
-        <h2>Comment ça marche ?</h2>
-
-        <div>
-          <h3>1. Créez votre profil</h3>
-          <p>Inscrivez-vous et complétez votre profil étudiant.</p>
-        </div>
-
-        <div>
-          <h3>2. Parcourez les offres</h3>
-          <p>
-            Filtrez les offres par secteur, durée, localisation et type de
-            contrat.
-          </p>
-        </div>
-
-        <div>
-          <h3>3. Postulez en un clic</h3>
-          <p>Envoyez votre candidature directement depuis la plateforme.</p>
-        </div>
-      </section>
-
-      <section id="offres">
-        <h2>Offres d'emploi</h2>
-
-        <div class="card">
-          <img src="" alt="Logo Thales" />
-          <h3>Thales</h3>
-          <p>Cannes - 06</p>
-          <p>Durée du stage : 4 mois</p>
-          <a href="{{ base_url }}identification">Voir l'offre</a>
-          <!-- dois etre connecté pour acceder a l'ofre -->
-        </div>
-
-        <div class="card">
-          <img src="" alt="Logo Aibus" />
-          <h3>Aibus</h3>
-          <p>Paris - 94</p>
-          <p>Durée du stage : 6 mois</p>
-          <a href="{{ base_url }}identification">Voir l'offre</a>
-          <!-- dois etre connecté pour acceder a l'ofre -->
-        </div>
-
-        <div class="card">
-          <img src="" alt="Logo Naval Group" />
-          <h3>Naval Group</h3>
-          <p>Nantes - 44</p>
-          <p>Durée du stage : 3 mois</p>
-         <a href="{{ base_url }}identification">Voir l'offre</a>
-          <!-- dois etre connecté pour acceder a l'ofre -->
-        </div>
-      </section>
-    </main>
+  <section id="offres">
+    <h2>Offres récentes</h2>
+    <div class="offres-grid">
+      <div class="card">
+        <h3>Thales</h3>
+        <p>Cannes — 06</p>
+        <p>Durée : 4 mois</p>
+        <a href="{{ base_url }}identification">Voir l'offre →</a>
+      </div>
+      <div class="card">
+        <h3>Airbus</h3>
+        <p>Paris — 94</p>
+        <p>Durée : 6 mois</p>
+        <a href="{{ base_url }}identification">Voir l'offre →</a>
+      </div>
+      <div class="card">
+        <h3>Naval Group</h3>
+        <p>Nantes — 44</p>
+        <p>Durée : 3 mois</p>
+        <a href="{{ base_url }}identification">Voir l'offre →</a>
+      </div>
+    </div>
+  </section>
 
 {% endblock %}

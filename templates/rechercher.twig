@@ -4,38 +4,52 @@
 
 {% block description %}content="Stagio - Acceuil"{% endblock %}
 
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/rechercher.css" />
+{% endblock %}
+
 {% block content %}
-    <section>
-      <h2>Offres d'emploi</h2>
-      <span>Chercher une offre:</span><br />
-      <input type="search" placeholder="Chercher une offre" />
+    <div class="recherche-container">
 
-      <div class="card">
-        <img src="" alt="Logo Thales" />
-        <h3>Thales</h3>
-        <p>Cannes - 06</p>
-        <p>Durée du stage : 4 mois</p>
-        <a href="{{ base_url }}identification">Voir l'offre</a>
-        <!-- dois etre connecté pour acceder a l'ofre -->
+      <form method="GET" action="/rechercher">
+        <input type="text" name="motCle" value="{{ motCle }}" placeholder="Rechercher une offre ou une entreprise...">
+        <button type="submit">Rechercher</button>
+      </form>
+
+      <div class="results-grid">
+        {% for offre in offres %}
+        
+          <div class="recherche-item">
+            <div class="recherche-item-titre">{{ offre.titre }}</div>
+            <div class="recherche-item-entreprise"><a href="/entreprise?id={{ offre.id_entreprise }}">{{ offre.nom_entreprise }}</a></div>
+            <div class="recherche-item-desc">{{ offre.description }}</div>
+            <div class="recherche-item-meta">{{ offre.date_offre }}</div>
+            <div class="recherche-item-meta">{{ offre.duree_stage }}</div>
+            <a href="/offre?id={{ offre.id_offre }}">Voir l'offre</a>
+
+            {% if offre.id_offre in favorisIds %}
+            <form method="POST" action="{{ base_url }}favoris/supprimer">
+                <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
+                <button type="submit">&#10084;</button>
+            </form>
+            {% else %}
+            <form method="POST" action="{{ base_url }}favoris">
+                <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
+                <button type="submit">&#9825;</button>
+            </form>
+            {% endif %}
+
+          </div>
+        {% endfor %}
       </div>
 
-      <div class="card">
-        <img src="" alt="Logo Aibus" />
-        <h3>Aibus</h3>
-        <p>Paris - 94</p>
-        <p>Durée du stage : 6 mois</p>
-        <a href="{{ base_url }}identification">Voir l'offre</a>
-        <!-- dois etre connecté pour acceder a l'ofre -->
-      </div>
+      {% if pageCourante > 1 %}
+      <a href="/rechercher?page={{ pageCourante - 1 }}&motCle={{ motCle }}">← Précédent</a>
+      {% endif %}
+      {% if pageCourante < totalPages %}
+      <a href="/rechercher?page={{ pageCourante + 1 }}&motCle={{ motCle }}">Suivant →</a>
+      {% endif %}
 
-      <div class="card">
-        <img src="" alt="Logo Naval Group" />
-        <h3>Naval Group</h3>
-        <p>Nantes - 44</p>
-        <p>Durée du stage : 3 mois</p>
-        <a href="{{ base_url }}identification">Voir l'offre</a>
-        <!-- dois etre connecté pour acceder a l'ofre -->
-      </div>
-    </section>
-
+    </div>
 {% endblock %}

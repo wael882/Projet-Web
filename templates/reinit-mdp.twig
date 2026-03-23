@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stagio - Nouveau mot de passe{% endblock %}
+
+{% block description %}content="Stagio - Choisir un nouveau mot de passe"{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/identification.css" />
+{% endblock %}
+
+{% block content %}
+
+  <main>
+    <section>
+
+      <form method="POST" action="/reinitMdp">
+        <input type="hidden" name="token" value="{{ token }}" />
+
+        <h1>Nouveau mot de passe</h1>
+
+        <span>Nouveau mot de passe</span><br />
+        <input name="password" type="password" id="password" required /><br />
+
+        <span>Confirmer le mot de passe</span><br />
+        <input name="password_confirm" type="password" id="password_confirm" required /><br />
+
+        {% if error %}
+          <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <button type="submit">Réinitialiser</button>
+      </form>
+
+    </section>
+  </main>
+
+{% endblock %}

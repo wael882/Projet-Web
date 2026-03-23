@@ -4,7 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Stagio{% endblock %}</title>
-    <link rel="stylesheet" href="{{ base_url }}style.css" />
+    {% block styles %}
+      <link rel="stylesheet" href="{{ base_url }}css/main.css" />
+    {% endblock %}
     <meta name="description" {% block description %} content="Stagio"{% endblock %} />
   </head>
   <body>

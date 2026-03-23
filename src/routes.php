@@ -16,5 +16,15 @@ $router->add('GET', '/candidature',    [$controller, 'candidature']);
 $router->add('GET', '/profil',         [$controller, 'profil']);
 $router->add('GET', '/favoris',        [$controller, 'favoris']);
 $router->add('GET', '/offre-index',    [$controller, 'offre_index']);
-$router->add('GET', '/a-propos',[$controller, 'a_propos']);
-
+$router->add('GET', '/a-propos',       [$controller, 'a_propos']);
+$router->add('POST', '/inscription',   [$controller, 'inscriptionPost']);
+$router->add('POST', '/identification',   [$controller, 'login']);
+$router->add('GET',  '/logout',           [$controller, 'logout']);
+$router->add('POST', '/favoris',           [$controller, 'favorisPost']);
+$router->add('POST', '/favoris/supprimer', [$controller, 'favorisDelete']);
+$router->add('GET',  '/postuler',          [$controller, 'postuler']);
+$router->add('POST', '/candidature',       [$controller, 'candidaturePost']);
+$router->add('GET',  '/oubliMdp',          [$controller, 'oubliMdp']);
+$router->add('POST', '/oubliMdp',          [$controller, 'oubliMdpPost']);
+$router->add('GET',  '/reinitMdp',         [$controller, 'reinitMdp']);
+$router->add('POST', '/reinitMdp',         [$controller, 'reinitMdpPost']);

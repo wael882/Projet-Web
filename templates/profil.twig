@@ -1,11 +1,20 @@
-<!doctype html>
 {% extends 'base.html.twig' %}
 
-{% block title %}Stagio - Accueil{% endblock %}
+{% block title %}Stagio - Mon profil{% endblock %}
 
-{% block description %}content="Stagio - Acceuil"{% endblock %}
+{% block description %}content="Stagio - Mon profil"{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/profil.css" />
+{% endblock %}
 
 {% block content %}
-
-
+  <div class="profil-section">
+    <div class="profile-header">
+      <div class="profile-avatar"></div>
+    </div>
+    <div class="profile-body">
+    </div>
+  </div>
 {% endblock %}

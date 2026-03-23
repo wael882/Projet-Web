@@ -1,11 +1,47 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Stagio - Accueil{% endblock %}
+{% block title %}Stagio - Mes candidatures{% endblock %}
 
-{% block description %}content="Stagio - Suivie des candidatures"{% endblock %}
+{% block description %}content="Stagio - Suivi des candidatures"{% endblock %}
 
-{% block content %}
-
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/candidature.css" />
 {% endblock %}
 
-   
+{% block content %}
+  <div class="candidature-container">
+
+    <h1>Mes candidatures</h1>
+
+    {% if candidatures is empty %}
+      <p class="empty-msg">Vous n'avez pas encore postulé à une offre.</p>
+    {% else %}
+      <div class="candidature-list">
+        {% for c in candidatures %}
+          <div class="candidature-card">
+
+            <div class="candidature-info">
+              <a href="/offre?id={{ c.id_offre }}" class="candidature-titre">{{ c.titre_offre }}</a>
+              <span class="candidature-entreprise">{{ c.nom_entreprise }}</span>
+              <span class="candidature-date">Envoyée le {{ c.date_candidature|date('d/m/Y') }}</span>
+            </div>
+
+            <div class="candidature-statut">
+              <span class="status-badge status-{{ c.statut }}">
+                {% if c.statut == 'envoyee' %}Envoyée
+                {% elseif c.statut == 'vue' %}Vue
+                {% elseif c.statut == 'acceptee' %}Acceptée
+                {% elseif c.statut == 'refusee' %}Refusée
+                {% else %}{{ c.statut }}
+                {% endif %}
+              </span>
+            </div>
+
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+  </div>
+{% endblock %}

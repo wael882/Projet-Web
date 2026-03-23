@@ -1,4 +1,4 @@
-<!doctype html>
+  <!doctype html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -18,7 +18,7 @@
         <a href="{{ base_url }}favoris">Favoris</a>
         <a href="{{ base_url }}candidature">Mes candidatures</a>
         <!-- Nom de l'utilisateur connecté (sera dynamique en PHP) -->
-        <span>Bonjour, Jean Dupont</span>
+        <span>Bonjour, {{ user.prenom }} {{ user.nom }}</span>
         <a href="{{ base_url }}logout">Se déconnecter</a>
       </nav>
     </header>

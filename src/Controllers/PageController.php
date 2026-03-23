@@ -17,8 +17,9 @@ class PageController
     }
     public function acceuil()
     {
-        echo $this->twig->render('acceuil.twig');
-
+        echo $this->twig->render('acceuil.twig', [
+            'user' => $_SESSION['user'] ?? null
+        ]);
     }
 
     public function candidature()

@@ -8,8 +8,12 @@ class UtilisateurModel {
 
     private $pdo;
 
-    public function __construct() {
-        $this->pdo = Database::getInstance()->getPdo();
+    public function __construct($pdo = null) {
+        if ($pdo !== null) {
+            $this->pdo = $pdo;
+        } else {
+            $this->pdo = Database::getInstance()->getPdo();
+        }
     }
 
     public function findByEmail(string $email): array|false {

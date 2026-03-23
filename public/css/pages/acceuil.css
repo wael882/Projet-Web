@@ -1,7 +1,3 @@
-/* ===========================================
-   ACCEUIL.CSS — Dashboard étudiant connecté
-   =========================================== */
-
 #acceuil-layout {
   display: grid;
   grid-template-columns: 1fr 300px;
@@ -9,47 +5,10 @@
   align-items: start;
 }
 
-#resume {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-}
-
-#dernières-candidatures article {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 1rem;
-  background: #f8faff;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-}
-
-/* ---- Section bienvenue ---- */
-#bienvenue {
-  background: var(--bleu);
-  padding: 2.5rem;
-  border-radius: 14px;
-  color: var(--blanc);
-  margin-bottom: 2rem;
-}
-#bienvenue h1 { color: var(--blanc); font-size: 1.9rem; }
-#bienvenue p  { color: rgba(255,255,255,0.75); }
-
-/* ---- Cartes statistiques ---- */
-.stat-card {
-  background: var(--blanc);
-  border-radius: 10px;
-  padding: 1.5rem;
-  border: 1px solid var(--ligne);
-  text-align: center;
-}
-.stat-card strong {
-  display: block;
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--orange);
-  margin-bottom: 0.3rem;
+@media (max-width: 992px) {
+  #acceuil-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 .stats-grid {
@@ -58,17 +17,73 @@
   gap: 1rem;
 }
 
-/* ---- Sidebar profil ---- */
-.sidebar {
-  background: white;
-  padding: 2rem;
+.stat-card {
+  background: var(--blanc);
+  padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  text-align: center;
 }
 
-/* ---- Responsive ---- */
-@media (max-width: 992px) {
-  #acceuil-layout {
-    grid-template-columns: 1fr;
-  }
+.stat-card strong {
+  display: block;
+  font-size: 2rem;
+  color: var(--bleu);
+  margin-bottom: 0.3rem;
+}
+
+.sidebar {
+  background: var(--blanc);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar hr {
+  margin: 1.5rem 0;
+  border: 0;
+  border-top: 1px solid var(--ligne);
+}
+
+.sidebar a.btn-primary {
+  display: block;
+  text-align: center;
+  background: var(--orange);
+  color: var(--blanc);
+  padding: 0.6rem 1.4rem;
+  border-radius: 7px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.sidebar a.btn-primary:hover {
+  background: var(--orange-2);
+}
+
+#dernières-candidatures article {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: var(--fond);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.btn-secondary {
+  display: inline-block;
+  color: var(--bleu);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  border: 1.5px solid var(--ligne);
+  background: transparent;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--bleu);
+  background: var(--carte);
 }

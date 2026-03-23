@@ -2,6 +2,57 @@
 
 {% block title %}Stagio - À propos{% endblock %}
 
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/a-propos.css" />
+{% endblock %}
+
 {% block content %}
+
+<section id="apropos-hero">
+  <h1>À propos de <span>Stagio</span></h1>
+  <p>La plateforme qui aide les étudiants du CESI à trouver et décrocher les meilleures opportunités de stage.</p>
+</section>
+
+<section id="apropos-mission">
+  <div class="container">
+    <h2>Notre mission</h2>
+    <p>Stagio a été créé par des étudiants du CESI pour simplifier la recherche de stage. La plateforme met en relation les étudiants avec des entreprises partenaires de qualité, partout en France.</p>
+    <p>Notre objectif : que chaque étudiant trouve son stage dans les meilleures conditions, en passant moins de temps à chercher et plus de temps à apprendre.</p>
+  </div>
+</section>
+
+<section id="apropos-valeurs">
+  <div class="container">
+    <h2>Nos valeurs</h2>
+    <div class="valeurs-grid">
+      <div class="valeur-card">
+        <div class="valeur-icon"></div>
+        <h3>Accessibilité</h3>
+        <p>Une plateforme simple, rapide et accessible à tous les étudiants CESI, peu importe leur campus.</p>
+      </div>
+      <div class="valeur-card">
+        <div class="valeur-icon"></div>
+        <h3>Partenariat</h3>
+        <p>Des entreprises soigneusement sélectionnées pour garantir des expériences de stage enrichissantes.</p>
+      </div>
+      <div class="valeur-card">
+        <div class="valeur-icon"></div>
+        <h3>Réussite</h3>
+        <p>92 % de nos étudiants trouvent un stage via Stagio. Notre succès, c'est le vôtre.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section id="apropos-contact">
+  <div class="container">
+    <h2>Une question ?</h2>
+    <p>Pour toute demande, contactez notre équipe à <strong>stagio@cesi.fr</strong>.</p>
+    <a href="{{ base_url }}inscription" class="btn-primary">Rejoindre Stagio</a>
+  </div>
+</section>
 
 {% endblock %}

@@ -11,7 +11,7 @@
 <div id="acceuil-layout">
 	<div class="main-content">
 		<section id="bienvenue">
-			<h1>Bonjour Jean 👋</h1>
+			<h1>Bonjour {{ user.prenom }} 👋</h1>
 			<p>Voici un résumé de votre activité sur Stagio.</p>
 		</section>
 
@@ -55,7 +55,9 @@
 
 	<aside class="sidebar">
 		<h2>Mon profil</h2>
-		<p><strong>Jean Dupont</strong></p>
+		<p>
+			<strong>{{ user.prenom }} {{ user.nom }}</strong>
+		</p>
 		<p>Formation : Informatique — Campus Paris</p>
 		<p>Promotion : 2024</p>
 		<hr>

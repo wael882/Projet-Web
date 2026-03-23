@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stagio - {{ etudiant.prenom }} {{ etudiant.nom }}{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/pilote.css" />
+{% endblock %}
+
+{% block content %}
+<div class="pilote-container">
+
+  <a href="/pilote" class="btn-retour">← Retour à la liste</a>
+
+  <div class="etudiant-fiche">
+    <div class="fiche-avatar">
+      {{ etudiant.prenom|slice(0,1)|upper }}{{ etudiant.nom|slice(0,1)|upper }}
+    </div>
+    <div class="fiche-info">
+      <h1>{{ etudiant.prenom }} {{ etudiant.nom }}</h1>
+      <p>{{ etudiant.email }}</p>
+      <p>{{ etudiant.promotion ?? 'Promotion non renseignée' }}</p>
+      {% if etudiant.statut_recherche_stage %}
+        <span class="statut-badge statut-{{ etudiant.statut_recherche_stage|replace({' ': '-'})|lower }}">
+          {{ etudiant.statut_recherche_stage }}
+        </span>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if success %}
+    <p class="alert alert-success">{{ success }}</p>
+  {% endif %}
+  {% if error %}
+    <p class="alert alert-error">{{ error }}</p>
+  {% endif %}
+
+  <h2>Candidatures ({{ candidatures|length }})</h2>
+
+  {% if candidatures is empty %}
+    <p class="empty-msg">Cet étudiant n'a pas encore postulé.</p>
+  {% else %}
+    <div class="candidatures-pilote">
+      {% for c in candidatures %}
+        <div class="candidature-pilote-card">
+          <div class="cand-info">
+            <a href="/offre?id={{ c.id_offre }}" class="cand-titre">{{ c.titre_offre }}</a>
+            <span class="cand-entreprise">{{ c.nom_entreprise }}</span>
+            <span class="cand-date">{{ c.date_candidature|date('d/m/Y') }}</span>
+          </div>
+
+          <form method="POST" action="/pilote/statut" class="statut-form">
+            <input type="hidden" name="id_candidature" value="{{ c.id_candidature }}">
+            <input type="hidden" name="id_etudiant" value="{{ etudiant.id_etudiant }}">
+            <select name="statut" onchange="this.form.submit()">
+              <option value="envoyee"  {% if c.statut == 'envoyee'  %}selected{% endif %}>Envoyée</option>
+              <option value="vue"      {% if c.statut == 'vue'      %}selected{% endif %}>Vue</option>
+              <option value="acceptee" {% if c.statut == 'acceptee' %}selected{% endif %}>Acceptée</option>
+              <option value="refusee"  {% if c.statut == 'refusee'  %}selected{% endif %}>Refusée</option>
+            </select>
+          </form>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

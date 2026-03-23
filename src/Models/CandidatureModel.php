@@ -39,6 +39,13 @@ class CandidatureModel
         return (int) $stmt->fetchColumn() > 0;
     }
 
+    public function updateStatut(int $idCandidature, string $statut): void {
+        $stmt = $this->pdo->prepare('
+            UPDATE CANDIDATURE SET statut = :statut WHERE id_candidature = :id
+        ');
+        $stmt->execute([':statut' => $statut, ':id' => $idCandidature]);
+    }
+
     public function create(int $idUtilisateur, int $idOffre, string $lettre, ?string $cvFichier = null): void {
         $stmt = $this->pdo->prepare('
             INSERT INTO CANDIDATURE (id_utilisateur, id_offre, lettre_motivation, cv_fichier)

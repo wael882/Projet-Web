@@ -44,6 +44,15 @@ class UtilisateurModel {
         return (int) $this->pdo->lastInsertId();
     }
 
+    public function update(int $id, string $nom, string $prenom, string $email): bool {
+        $stmt = $this->pdo->prepare('
+            UPDATE UTILISATEUR SET nom = :nom, prenom = :prenom, email = :email
+            WHERE id_utilisateur = :id
+        ');
+        $stmt->execute([':nom' => $nom, ':prenom' => $prenom, ':email' => $email, ':id' => $id]);
+        return $stmt->rowCount() > 0;
+    }
+
     public function saveResetToken(string $email, string $token, string $expiry): bool {
         $stmt = $this->pdo->prepare('
             UPDATE UTILISATEUR

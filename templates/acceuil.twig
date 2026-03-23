@@ -1,107 +1,67 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Stagio - Accueil
-{% endblock %}
+{% block title %}Stagio - Accueil{% endblock %}
 
 {% block styles %}
-{{ parent() }}
-<style>
-	{% set current_page = 'dashboard' %}
-	#acceuil-layout {
-		display: grid;
-		grid-template-columns: 1fr 300px;
-		gap: 2rem;
-		align-items: start;
-	}
-	@media(max-width: 992px) {
-		#acceuil-layout {
-			grid-template-columns: 1fr;
-		}
-	}
-	#resume {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-		gap: 1.5rem;
-	}
-	#dernières-candidatures article {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		padding: 1rem;
-		background: #f8faff;
-		border-radius: 8px;
-		margin-bottom: 1rem;
-	}
-</style>
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/acceuil.css" />
 {% endblock %}
 
 {% block content %}
 <div id="acceuil-layout">
 	<div class="main-content">
-		<!-- Section de bienvenue personnalisée -->
 		<section id="bienvenue">
 			<h1>Bonjour {{ user.prenom }} 👋</h1>
 			<p>Voici un résumé de votre activité sur Stagio.</p>
 		</section>
 
-		<!-- Résumé rapide de l'activité -->
 		<section id="resume">
 			<h2>Votre activité</h2>
-			<div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-				<div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center;">
-					<strong style="display: block; font-size: 2rem; color: var(--primary-color);">3</strong>
+			<div class="stats-grid">
+				<div class="stat-card">
+					<strong>3</strong>
 					<p>Candidatures envoyées</p>
 					<a href="{{ base_url }}candidature" class="btn btn-secondary">Voir mes candidatures</a>
 				</div>
-
-				<div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center;">
-					<strong style="display: block; font-size: 2rem; color: var(--primary-color);">5</strong>
+				<div class="stat-card">
+					<strong>5</strong>
 					<p>Offres en wishlist</p>
 					<a href="{{ base_url }}favoris" class="btn btn-secondary">Voir mes favoris</a>
 				</div>
-
-				<div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center;">
-					<strong style="display: block; font-size: 2rem; color: var(--primary-color);">1</strong>
+				<div class="stat-card">
+					<strong>1</strong>
 					<p>Réponse en attente</p>
 				</div>
 			</div>
 		</section>
 
-		<!-- Dernières candidatures -->
 		<section id="dernières-candidatures">
 			<h2>Mes dernières candidatures</h2>
-
 			<article>
 				<h3>Développeur Web — Thales</h3>
 				<p>Envoyée le 01/03/2024</p>
-				<p>Statut :
-					<strong>En attente</strong>
-				</p>
+				<p>Statut : <strong>En attente</strong></p>
 				<a href="{{ base_url }}offre?id=1" class="btn btn-secondary">Voir l'offre</a>
 			</article>
-
 			<article>
 				<h3>Data Analyst — Airbus</h3>
 				<p>Envoyée le 28/02/2024</p>
-				<p>Statut :
-					<strong>Refusée</strong>
-				</p>
+				<p>Statut : <strong>Refusée</strong></p>
 				<a href="{{ base_url }}offre?id=2" class="btn btn-secondary">Voir l'offre</a>
 			</article>
-
 			<a href="{{ base_url }}candidature" class="btn btn-secondary">Voir toutes mes candidatures</a>
 		</section>
 	</div>
 
-	<aside class="sidebar" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+	<aside class="sidebar">
 		<h2>Mon profil</h2>
 		<p>
 			<strong>{{ user.prenom }} {{ user.nom }}</strong>
 		</p>
 		<p>Formation : Informatique — Campus Paris</p>
 		<p>Promotion : 2024</p>
-		<hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid #eee;">
-		<a href="{{ base_url }}profil" class="btn btn-primary" style="display: block; text-align: center;">Modifier mon profil</a>
+		<hr>
+		<a href="{{ base_url }}profil" class="btn btn-primary">Modifier mon profil</a>
 	</aside>
 </div>
 {% endblock %}

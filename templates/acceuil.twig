@@ -9,15 +9,7 @@
 
 {% block content %}
 <div id="acceuil-layout">
-<<<<<<< HEAD
-	<div class="main-content">
-		<section id="bienvenue">
-			<h1>Bonjour {{ user.prenom }} 👋</h1>
-			<p>Voici un résumé de votre activité sur Stagio.</p>
-		</section>
-=======
   <div class="main-content">
->>>>>>> d2242bf (feat: espace pilote avec dashboard, création et suppression d'etudiant)
 
     <section id="bienvenue">
       <h1>Bonjour, {{ user.prenom }} {{ user.nom }}</h1>
@@ -40,18 +32,6 @@
       </div>
     </section>
 
-<<<<<<< HEAD
-	<aside class="sidebar">
-		<h2>Mon profil</h2>
-		<p>
-			<strong>{{ user.prenom }} {{ user.nom }}</strong>
-		</p>
-		<p>Formation : Informatique — Campus Paris</p>
-		<p>Promotion : 2024</p>
-		<hr>
-		<a href="{{ base_url }}profil" class="btn btn-primary">Modifier mon profil</a>
-	</aside>
-=======
     <section id="dernieres-candidatures">
       <h2>Mes dernières candidatures</h2>
       {% if dernieresCandidatures is empty %}
@@ -79,6 +59,5 @@
     <hr>
     <a href="{{ base_url }}profil" class="btn btn-primary">Modifier mon profil</a>
   </aside>
->>>>>>> d2242bf (feat: espace pilote avec dashboard, création et suppression d'etudiant)
 </div>
 {% endblock %}

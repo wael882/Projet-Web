@@ -1,32 +1,111 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Stagio - Accueil{% endblock %}
+{% block title %}Stagio - {{ offre.titre }}{% endblock %}
 
-{% block description %}content="Stagio - Acceuil"{% endblock %}
+{% block description %}content="Stagio - {{ offre.titre }}"{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/offre.css" />
+{% endblock %}
 
 {% block content %}
   <div class="offer-detail">
-    <div class="offer-header">
-      {{ offre.titre }}
-      {{ offre.description }}
-      {{ offre.date_offre }}
-      {{ offre.duree_stage }}
-      {{ offre.nom_entreprise }}
-      {{ offre.email_contact }}
-      {{ offre.telephone_contact }}
+
+    <div class="offer-main">
+
+      <div class="offer-header">
+        <h1 class="offer-titre">{{ offre.titre }}</h1>
+        <a href="/entreprise?id={{ offre.id_entreprise }}" class="offer-entreprise">{{ offre.nom_entreprise }}</a>
+      </div>
+
+      <div class="offer-meta">
+        {% if offre.remuneration_base %}
+        <div class="meta-item">
+          <span class="meta-label">Rémunération</span>
+          <span class="meta-value">{{ offre.remuneration_base }} € / mois</span>
+        </div>
+        {% endif %}
+        {% if offre.duree_stage %}
+        <div class="meta-item">
+          <span class="meta-label">Durée</span>
+          <span class="meta-value">{{ offre.duree_stage }} semaines</span>
+        </div>
+        {% endif %}
+        {% if offre.date_offre %}
+        <div class="meta-item">
+          <span class="meta-label">Date de début</span>
+          <span class="meta-value">{{ offre.date_offre }}</span>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="offer-section">
+        <h2>Description du poste</h2>
+        <p class="offer-description">{{ offre.description }}</p>
+      </div>
+
+      {% if competences is not empty %}
+      <div class="offer-section">
+        <h2>Compétences recherchées</h2>
+        <div class="competences-list">
+          {% for comp in competences %}
+            <span class="competence-tag">{{ comp }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="offer-section">
+        <h2>Contact</h2>
+        <ul class="contact-list">
+          {% if offre.email_contact %}
+          <li>
+            <span class="contact-label">Email</span>
+            <a href="mailto:{{ offre.email_contact }}">{{ offre.email_contact }}</a>
+          </li>
+          {% endif %}
+          {% if offre.telephone_contact %}
+          <li>
+            <span class="contact-label">Téléphone</span>
+            <span>{{ offre.telephone_contact }}</span>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+
     </div>
-    <div class="apply-section">
+
+    <div class="offer-sidebar">
+
+      {% if success %}
+        <p class="alert alert-success">{{ success }}</p>
+      {% endif %}
+      {% if error %}
+        <p class="alert alert-error">{{ error }}</p>
+      {% endif %}
+
+      {% if dejaPostule %}
+        <p class="deja-postule">Candidature envoyée</p>
+      {% elseif offre.active %}
+        <a href="/postuler?id={{ offre.id_offre }}" class="btn-postuler">Postuler</a>
+      {% endif %}
+
       {% if offre.id_offre in favorisIds %}
       <form method="POST" action="{{ base_url }}favoris/supprimer">
-          <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
-          <button type="submit">&#10084;</button>
+        <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
+        <button type="submit" class="btn-favoris actif">Retirer des favoris</button>
       </form>
       {% else %}
       <form method="POST" action="{{ base_url }}favoris">
-          <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
-          <button type="submit">&#9825;</button>
+        <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
+        <button type="submit" class="btn-favoris">Ajouter aux favoris</button>
       </form>
       {% endif %}
+
+      <a href="/rechercher" class="btn-retour">Retour aux offres</a>
+
     </div>
+
   </div>
 {% endblock %}

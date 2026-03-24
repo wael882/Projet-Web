@@ -1,63 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Stagio - Accueil{% endblock %}
+{% block title %}Stagio - Mes favoris{% endblock %}
 
-{% block description %}content="Stagio - Acceuil"{% endblock %}
+{% block description %}content="Stagio - Mes favoris"{% endblock %}
 
 {% block styles %}
   {{ parent() }}
-  <style>
-    section {
-      padding: 2rem 0;
-    }
-    section h2 {
-      margin-bottom: 2rem;
-      padding-left: 0.5rem;
-      border-left: 4px solid #FF5722;
-    }
-    .favoris-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 2rem;
-    }
-    .card {
-      background: #E0EFFF;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 12px rgba(28, 55, 91, 0.08);
-      transition: transform 0.3s ease;
-    }
-    .card:hover {
-      transform: translateY(-5px);
-    }
-    .card img {
-      width: 60px;
-      height: 60px;
-      background: white;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      object-fit: contain;
-      padding: 5px;
-    }
-  </style>
+  <link rel="stylesheet" href="{{ base_url }}css/pages/favoris.css" />
 {% endblock %}
 
 {% block content %}
-
-    <section>
-        {% for favori in favoris %}
-            <div class="card">
-                <h3>{{ favori.titre_offre }}</h3>
-                <p>{{ favori.nom_entreprise }}</p>
-                <a href="{{ base_url }}offre?id={{ favori.id_offre }}">Voir l'offre</a>
-                <form method="POST" action="{{ base_url }}favoris/supprimer">
-                    <input type="hidden" name="id_offre" value="{{ favori.id_offre }}">
-                    <button type="submit">&#10084;</button>
-                </form>
-            </div>
-        {% else %}
-            <p>Vous n'avez pas encore de favoris.</p>
-        {% endfor %}
-    </section>
-
+  <section>
+    <h2>Mes favoris</h2>
+    <div class="favoris-grid">
+      {% for favori in favoris %}
+        <div class="card">
+          <h3>{{ favori.titre_offre }}</h3>
+          <p>{{ favori.nom_entreprise }}</p>
+          <a href="{{ base_url }}offre?id={{ favori.id_offre }}">Voir l'offre</a>
+          <form method="POST" action="{{ base_url }}favoris/supprimer">
+            <input type="hidden" name="id_offre" value="{{ favori.id_offre }}">
+            <button type="submit">&#10084;</button>
+          </form>
+        </div>
+      {% else %}
+        <p>Vous n'avez pas encore de favoris.</p>
+      {% endfor %}
+    </div>
+  </section>
 {% endblock %}

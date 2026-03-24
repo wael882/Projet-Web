@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base-index.html.twig' %}
 
 {% block title %}Stagio - S'inscrire{% endblock %}
 
@@ -6,7 +6,8 @@
 
 {% block styles %}
   {{ parent() }}
-  <link rel="stylesheet" href="{{ base_url }}src/css/components/form.css" />
+  <link rel="stylesheet" href="{{ base_url }}css/components/form.css" />
+  <link rel="stylesheet" href="{{ base_url }}css/pages/inscription.css" />
 {% endblock %}
 
 {% block content %}

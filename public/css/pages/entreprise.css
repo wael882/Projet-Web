@@ -41,3 +41,36 @@
 #description p {
   text-align: justify;
 }
+/* Identité entreprise */
+#identite {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  background: var(--blanc);
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid var(--ligne);
+  margin-bottom: 2rem;
+}
+
+#identite img {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: var(--carte);
+  padding: 0.5rem;
+}
+
+#description {
+  background: var(--blanc);
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid var(--ligne);
+  margin-bottom: 2rem;
+}
+
+#description p {
+  text-align: justify;
+}

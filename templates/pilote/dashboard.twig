@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stagio - Espace pilote{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/pilote.css" />
+{% endblock %}
+
+{% block content %}
+<div class="pilote-container">
+
+  <div class="pilote-header">
+    <div>
+      <h1>Espace pilote</h1>
+      <p>{{ etudiants|length }} étudiant{{ etudiants|length > 1 ? 's' : '' }} dans votre promotion</p>
+    </div>
+    <button class="btn-principal" onclick="document.getElementById('modal-creer').style.display='flex'">+ Ajouter un étudiant</button>
+  </div>
+
+  {% if success is not null %}
+    <div class="alert alert-success">{{ success }}</div>
+  {% endif %}
+  {% if error is not null %}
+    <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  <div id="modal-creer" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:100; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:12px; padding:2rem; width:100%; max-width:420px;">
+      <h2 style="margin-bottom:1.25rem;">Créer un compte étudiant</h2>
+      <form method="POST" action="/pilote/creer-etudiant" style="display:flex; flex-direction:column; gap:0.75rem;">
+        <input type="text"     name="prenom"   placeholder="Prénom"        required style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+        <input type="text"     name="nom"      placeholder="Nom"           required style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+        <input type="email"    name="email"    placeholder="Email"         required style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+        <input type="text"     name="ecole"    placeholder="École / CESI"  required style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+        <input type="password" name="password" placeholder="Mot de passe"  required style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+        <div style="display:flex; gap:.75rem; margin-top:.5rem;">
+          <button type="button" onclick="document.getElementById('modal-creer').style.display='none'" style="flex:1; padding:.65rem; border:1px solid var(--ligne); border-radius:8px; background:#fff; color:#333; cursor:pointer;">Annuler</button>
+          <button type="submit" class="btn-principal" style="flex:1;">Créer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {% if etudiants is empty %}
+    <p class="empty-msg">Aucun étudiant ne vous est assigné pour le moment.</p>
+  {% else %}
+    <div class="etudiants-list">
+      {% for e in etudiants %}
+        <a href="/pilote/etudiant?id={{ e.id_etudiant }}" class="etudiant-card">
+            <div class="etudiant-avatar">
+              {{ e.prenom|slice(0,1)|upper }}{{ e.nom|slice(0,1)|upper }}
+            </div>
+            <div class="etudiant-info">
+              <span class="etudiant-nom">{{ e.prenom }} {{ e.nom }}</span>
+              <span class="etudiant-promo">{{ e.promotion ?? 'Promotion non renseignée' }}</span>
+              <span class="etudiant-email">{{ e.email }}</span>
+            </div>
+            <div class="etudiant-stats">
+              <span class="stat-badge">{{ e.nb_candidatures }} candidature{{ e.nb_candidatures > 1 ? 's' : '' }}</span>
+              {% if e.statut_recherche_stage %}
+                <span class="statut-badge statut-{{ e.statut_recherche_stage|replace({' ': '-'})|lower }}">
+                  {{ e.statut_recherche_stage }}
+                </span>
+              {% endif %}
+            </div>
+            <form method="POST" action="/pilote/supprimer-etudiant" onsubmit="return confirm('Supprimer le compte de {{ e.prenom }} {{ e.nom }} ?')">
+              <input type="hidden" name="id_etudiant" value="{{ e.id_etudiant }}">
+              <button type="submit" class="btn-supprimer" onclick="event.preventDefault(); event.stopPropagation(); if(confirm('Supprimer le compte de {{ e.prenom }} {{ e.nom }} ?')) this.closest('form').submit();">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              </button>
+            </form>
+          </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

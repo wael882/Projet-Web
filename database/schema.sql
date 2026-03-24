@@ -29,6 +29,8 @@ CREATE TABLE UTILISATEUR (
     actif               BOOLEAN         NOT NULL DEFAULT TRUE,
     date_creation       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     id_role             INT             NOT NULL,
+    reset_token         VARCHAR(64)     NULL,
+    reset_token_expiry  DATETIME        NULL,
     CONSTRAINT fk_utilisateur_role
         FOREIGN KEY (id_role) REFERENCES ROLE(id_role)
         ON DELETE RESTRICT
@@ -176,14 +178,14 @@ CREATE TABLE EVALUATION_ENTREPRISE (
 -- ------------------------------------------------------------
 CREATE TABLE CANDIDATURE (
     id_candidature      INT AUTO_INCREMENT PRIMARY KEY,
-    id_etudiant         INT          NOT NULL,
+    id_utilisateur      INT          NOT NULL,
     id_offre            INT          NOT NULL,
     cv_fichier          VARCHAR(255) NULL,
     lettre_motivation   TEXT         NULL,
     date_candidature    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     statut              VARCHAR(50)  NOT NULL DEFAULT 'envoyee',
-    CONSTRAINT fk_cand_etudiant
-        FOREIGN KEY (id_etudiant) REFERENCES ETUDIANT(id_etudiant)
+    CONSTRAINT fk_cand_utilisateur
+        FOREIGN KEY (id_utilisateur) REFERENCES UTILISATEUR(id_utilisateur)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
     CONSTRAINT fk_cand_offre

@@ -30,7 +30,23 @@ class CandidatureModel
         return $stmt->fetchAll();
     }
 
-    public function create(int $idUtilisateur, int $idOffre, string $lettre, $cvFichier = null): void {
+    public function dejaPostule(int $idUtilisateur, int $idOffre): bool {
+        $stmt = $this->pdo->prepare('
+            SELECT COUNT(*) FROM CANDIDATURE
+            WHERE id_utilisateur = :utilisateur AND id_offre = :offre
+        ');
+        $stmt->execute([':utilisateur' => $idUtilisateur, ':offre' => $idOffre]);
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
+    public function updateStatut(int $idCandidature, string $statut): void {
+        $stmt = $this->pdo->prepare('
+            UPDATE CANDIDATURE SET statut = :statut WHERE id_candidature = :id
+        ');
+        $stmt->execute([':statut' => $statut, ':id' => $idCandidature]);
+    }
+
+    public function create(int $idUtilisateur, int $idOffre, string $lettre, ?string $cvFichier = null): void {
         $stmt = $this->pdo->prepare('
             INSERT INTO CANDIDATURE (id_utilisateur, id_offre, lettre_motivation, cv_fichier)
             VALUES (:utilisateur, :offre, :lettre, :cv)

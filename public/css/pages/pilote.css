@@ -1,0 +1,261 @@
+/* ===========================================
+   PILOTE.CSS — Espace pilote
+   =========================================== */
+
+.pilote-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.pilote-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pilote-header h1 {
+  margin-bottom: 0.25rem;
+}
+.pilote-header p {
+  color: var(--gris);
+  margin: 0;
+}
+
+.empty-msg {
+  color: var(--gris);
+  text-align: center;
+  padding: 3rem 0;
+}
+
+/* === LISTE ÉTUDIANTS === */
+.etudiants-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.etudiant-card {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: var(--blanc);
+  border: 1px solid var(--ligne);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.btn-supprimer {
+  padding: 0.45rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #cbd5e1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s, background 0.2s;
+  margin-left: 0.5rem;
+}
+
+.btn-supprimer:hover {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+.etudiant-card:hover {
+  border-color: var(--bleu);
+  box-shadow: 0 2px 8px rgba(28, 55, 91, 0.08);
+  color: inherit;
+}
+
+.etudiant-avatar {
+  width: 48px;
+  height: 48px;
+  background: var(--bleu);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--blanc);
+  flex-shrink: 0;
+}
+
+.etudiant-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+}
+
+.etudiant-nom {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--texte);
+}
+
+.etudiant-promo,
+.etudiant-email {
+  font-size: 0.83rem;
+  color: var(--gris);
+}
+
+.etudiant-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+}
+
+.stat-badge {
+  font-size: 0.8rem;
+  color: var(--gris);
+  font-weight: 500;
+}
+
+/* === BADGES STATUT === */
+.statut-badge {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.25rem 0.7rem;
+  border-radius: 20px;
+}
+
+.statut-en-recherche-active,
+.statut-en_recherche {
+  background: #eff6ff;
+  color: #2563eb;
+}
+.statut-ouvert-aux-opportunités {
+  background: #fefce8;
+  color: #ca8a04;
+}
+.statut-stage-trouvé,
+.statut-non_disponible {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+/* === FICHE ÉTUDIANT === */
+.btn-retour {
+  color: var(--gris);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.btn-retour:hover {
+  color: var(--bleu);
+}
+
+.etudiant-fiche {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: var(--blanc);
+  border: 1px solid var(--ligne);
+  border-radius: 12px;
+  padding: 1.75rem;
+}
+
+.fiche-avatar {
+  width: 64px;
+  height: 64px;
+  background: var(--bleu);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--blanc);
+  flex-shrink: 0;
+}
+
+.fiche-info h1 {
+  font-size: 1.3rem;
+  margin-bottom: 0.2rem;
+}
+.fiche-info p {
+  font-size: 0.88rem;
+  color: var(--gris);
+  margin: 0.1rem 0;
+}
+
+/* === CANDIDATURES PILOTE === */
+.candidatures-pilote {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.candidature-pilote-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--blanc);
+  border: 1px solid var(--ligne);
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+}
+
+.cand-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.cand-titre {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--bleu);
+  text-decoration: none;
+}
+.cand-titre:hover {
+  text-decoration: underline;
+}
+
+.cand-entreprise,
+.cand-date {
+  font-size: 0.82rem;
+  color: var(--gris);
+}
+
+.statut-form select {
+  border: 1px solid var(--ligne);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+  background: #fff;
+}
+
+.statut-form select:focus {
+  outline: none;
+  border-color: var(--bleu);
+}
+
+/* === ALERTS === */
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+.alert-success {
+  background: #dcfce7;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+.alert-error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}

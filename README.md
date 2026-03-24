@@ -6,13 +6,13 @@ Application web MVC en PHP permettant aux étudiants de rechercher des offres de
 
 ## Stack technique
 
-| Technologie | Rôle |
-|-------------|------|
-| PHP 8+      | Backend |
-| Twig 3      | Moteur de templates |
-| MySQL       | Base de données |
-| PDO         | Connexion BDD |
-| Apache      | Serveur web (WSL2) |
+| Technologie | Rôle                    |
+| ----------- | ----------------------- |
+| PHP 8+      | Backend                 |
+| Twig 3      | Moteur de templates     |
+| MySQL       | Base de données         |
+| PDO         | Connexion BDD           |
+| Apache      | Serveur web (WSL2)      |
 | Composer    | Gestion des dépendances |
 
 ---
@@ -100,18 +100,49 @@ SOURCE database/seed.sql;
 
 ### 4. Configurer l'application
 
-Modifier `config/config.php` avec vos paramètres BDD :
+Modifier `config/config.php` avec vos paramètres BDD et l'URL de base :
 
 ```php
+define('BASE_URL', 'http://localhost:8000/'); // ← changer ici si changement de domaine
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'cesi_stages');
+define('DB_NAME', 'cesi_db');
 define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_PASSWORD', '');
 ```
 
 ### 5. Configurer Apache
 
 Pointer le `DocumentRoot` vers le dossier `public/` du projet.
+
+### 6. Changer le nom de domaine
+
+**a) Modifier `config/config.php` :**
+
+```php
+define('BASE_URL', 'http://ton-domaine.com/');
+```
+
+**b) Modifier le VirtualHost Apache :**
+
+```bash
+sudo nano /etc/apache2/sites-available/projet-web.conf
+# Changer : ServerName localhost
+# Par :     ServerName ton-domaine.com
+```
+
+**c) Si domaine local (développement), l'ajouter dans `/etc/hosts` :**
+
+```bash
+sudo nano /etc/hosts
+# Ajouter la ligne :
+127.0.0.1   ton-domaine.com
+```
+
+**d) Redémarrer Apache :**
+
+```bash
+sudo service apache2 restart
+```
 
 ---
 
@@ -134,15 +165,15 @@ Navigateur → .htaccess → public/index.php → Router → PageController → 
 
 ## Pages disponibles
 
-| Page | Description |
-|------|-------------|
-| `/` | Accueil |
-| `/rechercher` | Recherche d'offres de stage |
-| `/offre` | Détail d'une offre |
-| `/entreprise` | Détail d'une entreprise |
-| `/candidature` | Gestion des candidatures |
-| `/profil` | Profil étudiant |
-| `/favoris` | Wishlist / favoris |
-| `/identification` | Connexion |
-| `/inscription` | Inscription |
-| `/a-propos` | À propos |
+| Page              | Description                 |
+| ----------------- | --------------------------- |
+| `/`               | Accueil                     |
+| `/rechercher`     | Recherche d'offres de stage |
+| `/offre`          | Détail d'une offre          |
+| `/entreprise`     | Détail d'une entreprise     |
+| `/candidature`    | Gestion des candidatures    |
+| `/profil`         | Profil étudiant             |
+| `/favoris`        | Wishlist / favoris          |
+| `/identification` | Connexion                   |
+| `/inscription`    | Inscription                 |
+| `/a-propos`       | À propos                    |

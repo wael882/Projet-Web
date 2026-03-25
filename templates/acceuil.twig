@@ -2,65 +2,62 @@
 
 {% block title %}Stagio - Accueil{% endblock %}
 
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/acceuil.css" />
+{% endblock %}
+
 {% block content %}
-    <main>
-      <!-- Section de bienvenue personnalisée -->
-      <section id="bienvenue">
-        <h1>Bonjour Jean 👋</h1>
-        <p>Voici un résumé de votre activité sur Stagio.</p>
-      </section>
+<div id="acceuil-layout">
+  <div class="main-content">
 
-      <!-- Résumé rapide de l'activité -->
-      <section id="resume">
-        <h2>Votre activité</h2>
+    <section id="bienvenue">
+      <h1>Bonjour, {{ user.prenom }} {{ user.nom }}</h1>
+      <p>Voici un résumé de votre activité sur Stagio.</p>
+    </section>
 
+    <section id="resume">
+      <h2>Votre activité</h2>
+      <div class="stats-grid">
         <div class="stat-card">
-          <strong>3</strong>
+          <strong>{{ nbCandidatures }}</strong>
           <p>Candidatures envoyées</p>
-          <a href="{{ base_url }}candidature">Voir mes candidatures</a>
+          <a href="{{ base_url }}candidature" class="btn btn-secondary">Voir mes candidatures</a>
         </div>
-
         <div class="stat-card">
-          <strong>5</strong>
-          <p>Offres en wishlist</p>
-          <a href="{{ base_url }}favoris">Voir mes favoris</a>
+          <strong>{{ nbFavoris }}</strong>
+          <p>Offres en favoris</p>
+          <a href="{{ base_url }}favoris" class="btn btn-secondary">Voir mes favoris</a>
         </div>
+      </div>
+    </section>
 
-        <div class="stat-card">
-          <strong>1</strong>
-          <p>Réponse en attente</p>
-        </div>
-      </section>
-
-      <!-- Dernières candidatures -->
-      <section id="dernières-candidatures">
-        <h2>Mes dernières candidatures</h2>
-
+    <section id="dernieres-candidatures">
+      <h2>Mes dernières candidatures</h2>
+      {% if dernieresCandidatures is empty %}
+        <p>Vous n'avez pas encore postulé à une offre. <a href="{{ base_url }}rechercher">Rechercher une offre</a></p>
+      {% else %}
+        {% for c in dernieresCandidatures %}
         <article>
-          <h3>Développeur Web — Thales</h3>
-          <p>Envoyée le 01/03/2024</p>
-          <p>Statut : <strong>En attente</strong></p>
-          <a href="{{ base_url }}offre">>Voir l'offre</a>
+          <h3><a href="{{ base_url }}offre?id={{ c.id_offre }}">{{ c.titre_offre }}</a></h3>
+          <p>{{ c.nom_entreprise }}</p>
+          <p>Envoyée le {{ c.date_candidature|date('d/m/Y') }}</p>
+          <p>Statut : <strong>{{ c.statut|capitalize }}</strong></p>
         </article>
-
-        <article>
-          <h3>Data Analyst — Airbus</h3>
-          <p>Envoyée le 28/02/2024</p>
-          <p>Statut : <strong>Refusée</strong></p>
-          <a href="{{ base_url }}offre">Voir l'offre</a>
-        </article>
-
+        {% endfor %}
         <a href="{{ base_url }}candidature">Voir toutes mes candidatures</a>
-      </section>
-    </main>
+      {% endif %}
+    </section>
 
-    <aside>
-      <h2>Mon profil</h2>
-      <p>Jean Dupont</p>
-      <p>Formation : Informatique — Campus Paris</p>
-      <p>Promotion : 2024</p>
-      <a href="{{ base_url }}profil">Modifier mon profil</a>
-    </aside>
+  </div>
 
-    {% endblock %}
-
+  <aside class="sidebar">
+    <h2>Mon profil</h2>
+    <p><strong>{{ user.prenom }} {{ user.nom }}</strong></p>
+    <p>{{ user.email }}</p>
+    <p>{{ user.role|capitalize }}</p>
+    <hr>
+    <a href="{{ base_url }}profil" class="btn btn-primary">Modifier mon profil</a>
+  </aside>
+</div>
+{% endblock %}

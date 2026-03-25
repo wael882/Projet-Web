@@ -1,0 +1,325 @@
+/* Scroll snap */
+html {
+  scroll-snap-type: y proximity;
+}
+
+#hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 5rem 2rem;
+  position: relative;
+  background: #FFF0EA;
+  color: var(--texte);
+  /* Sortir du padding et max-width du <main> */
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-top: -3rem;
+  margin-bottom: 0;
+}
+
+/* Scroll arrow */
+.scroll-arrow {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.3rem;
+  color: var(--gris);
+  text-decoration: none;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(6px);
+  }
+}
+
+#hero h1 {
+  font-size: 3.4rem;
+  font-weight: 800;
+  max-width: 700px;
+  margin: 0 auto 1.4rem;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+#hero h1 .accent {
+  color: var(--orange);
+}
+
+#hero>p {
+  max-width: 500px;
+  margin: 0 auto 2.5rem;
+  font-size: 1rem;
+  color: var(--gris);
+  line-height: 1.7;
+}
+
+#hero .hero-btns {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+#hero .hero-btns a.btn-principal {
+  background: var(--orange);
+  color: var(--blanc);
+  padding: 0.7rem 1.6rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: background 0.2s, transform 0.15s;
+}
+
+#hero .hero-btns a.btn-principal:hover {
+  background: var(--orange-2);
+  transform: translateY(-1px);
+}
+
+#hero .hero-btns a.btn-secondaire {
+  color: var(--bleu);
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--ligne);
+  background: var(--blanc);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+#hero .hero-btns a.btn-secondaire:hover {
+  border-color: var(--bleu);
+  background: var(--carte);
+}
+
+/* Chiffres */
+#chiffres {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem 0;
+  margin-bottom: 0 !important;
+  min-height: 50vh;
+  border-top: none;
+  border-bottom: none;
+}
+
+#chiffres h2 {
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  color: var(--gris);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.chiffres-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+
+.chiffres-grid>div {
+  padding: 0 2rem;
+  border-right: 1.5px solid var(--ligne);
+}
+
+.chiffres-grid>div:first-child {
+  padding-left: 0;
+}
+
+.chiffres-grid>div:last-child {
+  border-right: none;
+}
+
+.chiffres-grid strong {
+  display: block;
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: var(--bleu);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.chiffres-grid p {
+  font-size: 0.88rem;
+  color: var(--gris);
+}
+
+/* Timeline */
+#comment-ca-marche {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-top: none;
+  padding: 3rem 0;
+  margin-bottom: 0 !important;
+  min-height: 50vh;
+}
+
+#comment-ca-marche h2 {
+  margin-bottom: 2.5rem;
+}
+
+.timeline {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.timeline-line {
+  position: absolute;
+  top: 20px;
+  left: calc(16.66% + 20px);
+  right: calc(16.66% + 20px);
+  height: 2px;
+  background: var(--ligne);
+  z-index: 0;
+}
+
+.timeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.timeline-dot {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--blanc);
+  border: 2px solid var(--orange);
+  color: var(--orange);
+  font-weight: 800;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.2rem;
+}
+
+.timeline-step h3 {
+  font-size: 0.97rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Offres récentes */
+#offres {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-top: none;
+  scroll-snap-align: start;
+  scroll-margin-top: 58px;
+}
+
+#offres h2 {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.offres-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.offres-grid .card {
+  background: var(--blanc);
+  border-radius: 10px;
+  padding: 3.5rem 2rem;
+  border: 1px solid var(--ligne);
+  border-left: 4px solid var(--bleu);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
+  transition: border-left-color 0.2s, transform 0.15s;
+}
+
+.offres-grid .card:hover {
+  border-left-color: var(--orange);
+  transform: translateX(4px);
+}
+
+.offres-grid .card h3 {
+  font-size: 1rem;
+  margin-bottom: 0;
+  min-width: 130px;
+}
+
+.offres-grid .card a {
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: var(--orange);
+  font-weight: 600;
+}
+
+.offre-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--bleu);
+  background: var(--carte);
+  border: 1px solid var(--ligne);
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #hero h1 {
+    font-size: 2.2rem;
+  }
+
+  .chiffres-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .chiffres-grid>div {
+    padding: 0;
+    border-right: none;
+  }
+
+  .timeline {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-line {
+    display: none;
+  }
+
+  .timeline-step {
+    align-items: flex-start;
+    text-align: left;
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .timeline-dot {
+    flex-shrink: 0;
+    margin-bottom: 0;
+  }
+}

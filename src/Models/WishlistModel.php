@@ -4,15 +4,31 @@ namespace App\Models;
 
 use App\Database;
 
-class WishlistModel {
-
+class WishlistModel
+{
     private $pdo;
 
-    public function __construct() {
-        $this->pdo = Database::getInstance()->getPdo();
+    public function __construct($pdo = null)
+    {
+        if ($pdo === null) {
+            $this->pdo = Database::getInstance()->getPdo();
+        } else {
+            $this->pdo = $pdo;
+        }
     }
 
-    public function findByEtudiant(int $idEtudiant): array {
+    private function getIdEtudiant(int $idUtilisateur): int|false
+    {
+        $stmt = $this->pdo->prepare('SELECT id_etudiant FROM ETUDIANT WHERE id_utilisateur = :id');
+        $stmt->execute([':id' => $idUtilisateur]);
+        return $stmt->fetchColumn();
+    }
+
+    public function findByUtilisateur(int $idUtilisateur): array
+    {
+        $idEtudiant = $this->getIdEtudiant($idUtilisateur);
+        if ($idEtudiant === false) return [];
+
         $stmt = $this->pdo->prepare('
             SELECT w.*, o.titre AS titre_offre, e.nom AS nom_entreprise
             FROM WISHLIST w
@@ -25,14 +41,32 @@ class WishlistModel {
         return $stmt->fetchAll();
     }
 
-    public function add(int $idEtudiant, int $idOffre): void {
+    public function getIdOffres(int $idUtilisateur): array
+    {
+        $idEtudiant = $this->getIdEtudiant($idUtilisateur);
+        if ($idEtudiant === false) return [];
+
+        $stmt = $this->pdo->prepare('SELECT id_offre FROM WISHLIST WHERE id_etudiant = :id');
+        $stmt->execute([':id' => $idEtudiant]);
+        return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+    }
+
+    public function add(int $idUtilisateur, int $idOffre): void
+    {
+        $idEtudiant = $this->getIdEtudiant($idUtilisateur);
+        if ($idEtudiant === false) return;
+
         $stmt = $this->pdo->prepare('
             INSERT IGNORE INTO WISHLIST (id_etudiant, id_offre) VALUES (:etudiant, :offre)
         ');
         $stmt->execute([':etudiant' => $idEtudiant, ':offre' => $idOffre]);
     }
 
-    public function remove(int $idEtudiant, int $idOffre): void {
+    public function remove(int $idUtilisateur, int $idOffre): void
+    {
+        $idEtudiant = $this->getIdEtudiant($idUtilisateur);
+        if ($idEtudiant === false) return;
+
         $stmt = $this->pdo->prepare('
             DELETE FROM WISHLIST WHERE id_etudiant = :etudiant AND id_offre = :offre
         ');

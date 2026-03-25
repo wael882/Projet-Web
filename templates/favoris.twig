@@ -1,21 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Stagio - Accueil{% endblock %}
+{% block title %}Stagio - Mes favoris{% endblock %}
 
-{% block description %}content="Stagio - Acceuil"{% endblock %}
+{% block description %}content="Stagio - Mes favoris"{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/favoris.css" />
+{% endblock %}
 
 {% block content %}
-    <section>
-      <h2>Offres Enregistrées</h2>
-
-      <div class="card">
-        <img src="" alt="Logo Thales" />
-        <h3>Thales</h3>
-        <p>Cannes - 06</p>
-        <p>Durée du stage : 4 mois</p>
-        <a href="{{ base_url }}identification">Voir l'offre</a>
-        <!-- dois etre connecté pour acceder a l'ofre -->
-      </div>
-    </section>
-
+  <section>
+    <h2>Mes favoris</h2>
+    <div class="favoris-grid">
+      {% for favori in favoris %}
+        <div class="card">
+          <h3>{{ favori.titre_offre }}</h3>
+          <p>{{ favori.nom_entreprise }}</p>
+          <a href="{{ base_url }}offre?id={{ favori.id_offre }}">Voir l'offre</a>
+          <form method="POST" action="{{ base_url }}favoris/supprimer">
+            <input type="hidden" name="id_offre" value="{{ favori.id_offre }}">
+            <button type="submit">&#10084;</button>
+          </form>
+        </div>
+      {% else %}
+        <p>Vous n'avez pas encore de favoris.</p>
+      {% endfor %}
+    </div>
+  </section>
 {% endblock %}

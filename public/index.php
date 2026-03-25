@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 session_start();
 require_once dirname(__DIR__) . '/vendor/autoload.php';
@@ -10,7 +12,9 @@ use App\Controllers\PageController;
 
 // Twig
 $loader = new \Twig\Loader\FilesystemLoader(dirname(__DIR__) . '/templates');
-$twig = new \Twig\Environment($loader, ['cache' => dirname(__DIR__) . '/cache/twig']);
+$twig = new \Twig\Environment($loader, ['cache' => dirname(__DIR__) . '/cache/twig', 'auto_reload' => true]);
+$twig->addGlobal('base_url', '/');
+$twig->addGlobal('user', $_SESSION['user'] ?? null);
 
 // Génération du token CSRF (une fois par session)
 if (empty($_SESSION['csrf_token'])) {

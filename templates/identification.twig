@@ -1,47 +1,45 @@
-{% extends 'base.html.twig' %}
+{% extends 'base-index.html.twig' %}
 
-{% block title %}Stagio - Connexion{% endblock %}
+{% block title %}Stagio - Accueil{% endblock %}
 
-{% block description %}content="Stagio - Connectez-vous à votre espace"{% endblock %}
+{% block description %}content="Stagio - Acceuil"{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/identification.css" />
+{% endblock %}
 
 {% block content %}
 
-  <section>
-    <form method="POST" action="/identification" novalidate>
-      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+    <main>
+      <section>
 
-      <h1>Se connecter</h1>
+        <form method="POST" action="/identification">
+          
 
-      {% if success %}
-        <p class="msg-success">{{ success }}</p>
-      {% endif %}
-      {% if erreur %}
-        <p class="msg-erreur">{{ erreur }}</p>
-      {% endif %}
+          <h1>S'identifier</h1>
+          <span>Email</span><br />
+          <input
+            name="email"
+            type="email"
+            id="email"
+            placeholder="monstage@monstage.fr"
+          /><br />
+          <span>Mot de passe</span><br />
+          <input name="password" type="password" id="password" /><br />
 
-      <label for="email">Email</label>
-      <input
-        name="email"
-        type="email"
-        id="email"
-        placeholder="monstage@monstage.fr"
-        required
-        autocomplete="email"
-      />
+          {% if success %}
+           <p>{{ success }}</p>
+          {% endif %}
+          {% if error %}
+          <p>{{ error }}</p>
+          {% endif %}
 
-      <label for="password">Mot de passe</label>
-      <input
-        name="password"
-        type="password"
-        id="password"
-        required
-        autocomplete="current-password"
-      />
+          <button type="submit">S'inscrire</button>
+          <a href="/oubliMdp">Mot de passe oublié ?</a>
+        </form>
 
-      <button type="submit">Se connecter</button>
-
-      <p>Pas encore de compte ? <a href="/inscription">S'inscrire</a></p>
-    </form>
-  </section>
+      </section>
+    </main>
 
 {% endblock %}

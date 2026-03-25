@@ -1,0 +1,89 @@
+#acceuil-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 992px) {
+  #acceuil-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  background: var(--blanc);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.stat-card strong {
+  display: block;
+  font-size: 2rem;
+  color: var(--bleu);
+  margin-bottom: 0.3rem;
+}
+
+.sidebar {
+  background: var(--blanc);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar hr {
+  margin: 1.5rem 0;
+  border: 0;
+  border-top: 1px solid var(--ligne);
+}
+
+.sidebar a.btn-primary {
+  display: block;
+  text-align: center;
+  background: var(--orange);
+  color: var(--blanc);
+  padding: 0.6rem 1.4rem;
+  border-radius: 7px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.sidebar a.btn-primary:hover {
+  background: var(--orange-2);
+}
+
+#dernières-candidatures article {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: var(--fond);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.btn-secondary {
+  display: inline-block;
+  color: var(--bleu);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  border: 1.5px solid var(--ligne);
+  background: transparent;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--bleu);
+  background: var(--carte);
+}

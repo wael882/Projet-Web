@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stagio - Postuler{% endblock %}
+
+{% block description %}content="Stagio - Postuler à une offre"{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/postuler.css" />
+{% endblock %}
+
+{% block content %}
+
+  <main class="postuler-container">
+    <div class="postuler-card">
+
+      <div class="postuler-header">
+        <h1>Postuler à cette offre</h1>
+        <p class="offre-titre">{{ offre.titre }}</p>
+        <p class="offre-entreprise">
+          <a href="/entreprise?id={{ offre.id_entreprise }}">{{ offre.nom_entreprise }}</a>
+        </p>
+      </div>
+
+      {% if error %}
+        <p class="alert alert-error">{{ error }}</p>
+      {% endif %}
+
+      <form method="POST" action="/candidature" enctype="multipart/form-data" class="postuler-form">
+        <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
+
+        <div class="form-group">
+          <label for="lettre_motivation">Lettre de motivation</label>
+          <textarea
+            id="lettre_motivation"
+            name="lettre_motivation"
+            placeholder="Présentez-vous et expliquez pourquoi vous êtes intéressé par ce stage..."
+            rows="10"
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="cv">CV <span class="hint">(PDF uniquement, 2 Mo max)</span></label>
+          <input
+            type="file"
+            id="cv"
+            name="cv"
+            accept=".pdf"
+            required
+          />
+        </div>
+
+        <div class="form-actions">
+          <a href="/offre?id={{ offre.id_offre }}" class="btn-annuler">Annuler</a>
+          <button type="submit" class="btn-postuler">Envoyer ma candidature</button>
+        </div>
+      </form>
+
+    </div>
+  </main>
+
+{% endblock %}

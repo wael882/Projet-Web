@@ -1,56 +1,45 @@
-{% extends 'base.html.twig' %}
+{% extends 'base-index.html.twig' %}
 
-{% block title %}Stagio - Inscription{% endblock %}
+{% block title %}Stagio - S'inscrire{% endblock %}
 
-{% block description %}content="Stagio - Créez votre compte étudiant"{% endblock %}
+{% block description %}content="Stagio - Crée un compte"{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/components/form.css" />
+  <link rel="stylesheet" href="{{ base_url }}css/pages/inscription.css" />
+{% endblock %}
 
 {% block content %}
 
-  <section>
-    <form action="/inscription" method="POST" novalidate>
-      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+    <main>
+      <section>
+        <form action="/inscription" method="POST">
+          <h1>S'inscrire</h1>
+          <span>Nom</span><br />
+          <input name="nom" type="text" id="nom" placeholder="Nom" /><br />
+          <span>Prenom</span><br />
+          <input name="prenom" type="text" id="prenom" placeholder="Prénom" /><br />
+          <span>Ecole</span><br />
+          <input name="ecole" type="text" id="ecole" placeholder="Ecole" /><br />
+          <span>Email</span><br />
+          <input
+            name="email" 
+            type="email"
+            id="email"
+            placeholder="monstage@monstage.fr"
+          /><br />
+          <span>Mot de passe</span><br />
+          <input name="password" type="password" id="password" /><br />
 
-      <h1>Créer un compte</h1>
+          {% if erreur %}
+           <p>{{ erreur }}</p>
+          {% endif %}
 
-      {% if erreur %}
-        <p class="msg-erreur">{{ erreur }}</p>
-      {% endif %}
+          <button type="submit">S'inscrire</button>
+        </form>
+      </section>
+    </main>
 
-      <label for="nom">Nom <span aria-hidden="true">*</span></label>
-      <input name="nom" type="text" id="nom" placeholder="Dupont" required maxlength="100" />
-
-      <label for="prenom">Prénom <span aria-hidden="true">*</span></label>
-      <input name="prenom" type="text" id="prenom" placeholder="Jean" required maxlength="100" />
-
-      <label for="ecole">École</label>
-      <input name="ecole" type="text" id="ecole" placeholder="CESI" maxlength="150" />
-
-      <label for="email">Email <span aria-hidden="true">*</span></label>
-      <input
-        name="email"
-        type="email"
-        id="email"
-        placeholder="monstage@monstage.fr"
-        required
-        maxlength="150"
-        autocomplete="email"
-      />
-
-      <label for="password">Mot de passe <span aria-hidden="true">*</span></label>
-      <input
-        name="password"
-        type="password"
-        id="password"
-        required
-        minlength="8"
-        autocomplete="new-password"
-      />
-      <small>Minimum 8 caractères</small>
-
-      <button type="submit">S'inscrire</button>
-
-      <p>Déjà un compte ? <a href="/identification">Se connecter</a></p>
-    </form>
-  </section>
 
 {% endblock %}

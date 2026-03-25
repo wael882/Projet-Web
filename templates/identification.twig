@@ -1,40 +1,47 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Stagio - Accueil{% endblock %}
+{% block title %}Stagio - Connexion{% endblock %}
 
-{% block description %}content="Stagio - Acceuil"{% endblock %}
+{% block description %}content="Stagio - Connectez-vous à votre espace"{% endblock %}
 
 {% block content %}
 
-    <main>
-      <section>
+  <section>
+    <form method="POST" action="/identification" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
 
-        <form method="POST" action="/identification">
-        
-          
+      <h1>Se connecter</h1>
 
-          <h1>S'identifier</h1>
-          <span>Email</span><br />
-          <input
-            name="email"
-            type="email"
-            id="email"
-            placeholder="monstage@monstage.fr"
-          /><br />
-          <span>Mot de passe</span><br />
-          <input name="password" type="password" id="password" /><br />
+      {% if success %}
+        <p class="msg-success">{{ success }}</p>
+      {% endif %}
+      {% if erreur %}
+        <p class="msg-erreur">{{ erreur }}</p>
+      {% endif %}
 
-          {% if success %}
-           <p>{{ success }}</p>
-          {% endif %}
-          {% if error %}
-          <p>{{ error }}</p>
-          {% endif %}
+      <label for="email">Email</label>
+      <input
+        name="email"
+        type="email"
+        id="email"
+        placeholder="monstage@monstage.fr"
+        required
+        autocomplete="email"
+      />
 
-          <button type="submit">S'inscrire</button>
-        </form>
+      <label for="password">Mot de passe</label>
+      <input
+        name="password"
+        type="password"
+        id="password"
+        required
+        autocomplete="current-password"
+      />
 
-      </section>
-    </main>
+      <button type="submit">Se connecter</button>
+
+      <p>Pas encore de compte ? <a href="/inscription">S'inscrire</a></p>
+    </form>
+  </section>
 
 {% endblock %}

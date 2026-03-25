@@ -26,6 +26,7 @@ CREATE TABLE UTILISATEUR (
     prenom              VARCHAR(100)    NOT NULL,
     email               VARCHAR(150)    NOT NULL UNIQUE,
     mot_de_passe_hash   VARCHAR(255)    NOT NULL,
+    ecole               VARCHAR(150)    NULL,
     actif               BOOLEAN         NOT NULL DEFAULT TRUE,
     date_creation       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     id_role             INT             NOT NULL,

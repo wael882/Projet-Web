@@ -11,9 +11,9 @@
     {{recherche.description}}
     {{recherche.date_offre}}
     {{recherche.duree_stage}}
-
+    <a href="/offre?id={{ recherche.id_offre }}">Voir l'offre →</a>
     {% endfor %}
-    
+
     {% if page > 1 %}
     <a href="/rechercher?page={{ page - 1 }}">← Précédent</a>
     {% endif %}

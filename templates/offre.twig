@@ -5,8 +5,13 @@
 {% block description %}content="Stagio - Acceuil"{% endblock %}
 
 {% block content %}
-
-
-
-
+<main>
+    <h1>{{ offre.titre }}</h1>
+    <p><strong>Entreprise :</strong> {{ offre.nom_entreprise }}</p>
+    <p><strong>Description :</strong> {{ offre.description }}</p>
+    <p><strong>Durée :</strong> {{ offre.duree_stage }} semaines</p>
+    <p><strong>Rémunération :</strong> {{ offre.remuneration_base }} €</p>
+    <p><strong>Date :</strong> {{ offre.date_offre }}</p>
+    <a href="/rechercher">← Retour aux offres</a>
+</main>
 {% endblock %}

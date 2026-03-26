@@ -335,6 +335,7 @@ class PageController
 
     public function offre()
     {
+        $this->requireAuth();
         $model = new OffreModel();
         $offre = $model->findById((int) $_GET['id']);
         if ($offre) {
@@ -541,7 +542,6 @@ class PageController
     }
 
     public function entreprises(): void {
-        $this->requireAuth();
         $model       = new EntrepriseModel();
         $search      = trim($_GET['search'] ?? '');
         $page        = max(1, (int) ($_GET['page'] ?? 1));

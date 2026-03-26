@@ -30,6 +30,7 @@
   font-size: 2.5rem;
   color: var(--bleu);
 }
+
 =======
 /* ===========================================
    PROFIL.CSS — Page profil étudiant
@@ -216,4 +217,5 @@
     grid-template-columns: 1fr;
   }
 }
->>>>>>> d2242bf (feat: espace pilote avec dashboard, création et suppression d'etudiant)
+
+>>>>>>>d2242bf (feat: espace pilote avec dashboard, création et suppression d'etudiant)

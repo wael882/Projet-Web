@@ -1,0 +1,67 @@
+{% extends 'base-index.html.twig' %}
+
+{% block title %}Stagio - Entreprises{% endblock %}
+
+{% block description %}content="Stagio - Liste des entreprises partenaires"{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/entreprises.css" />
+{% endblock %}
+
+{% block content %}
+<div class="entreprises-container">
+
+  <div class="entreprises-header">
+    <div>
+      <h1>Entreprises partenaires</h1>
+      <p>{{ entreprises|length }} entreprise{{ entreprises|length > 1 ? 's' : '' }} trouvée{{ entreprises|length > 1 ? 's' : '' }}</p>
+    </div>
+    <form method="GET" action="/entreprises" class="search-form">
+      <input type="text" name="search" value="{{ search }}" placeholder="Rechercher une entreprise...">
+      <button type="submit" class="btn-principal">Rechercher</button>
+    </form>
+  </div>
+
+  {% if entreprises is empty %}
+    <p class="empty-msg">Aucune entreprise trouvée.</p>
+  {% else %}
+    <div class="entreprises-grid">
+      {% for entreprise in entreprises %}
+        <a href="/entreprise?id={{ entreprise.id_entreprise }}" class="entreprise-card">
+          <div class="entreprise-logo">
+            {% if entreprise.logo %}
+              <img src="{{ base_url }}{{ entreprise.logo }}" alt="{{ entreprise.nom }}">
+            {% else %}
+              <span>{{ entreprise.nom|slice(0,2)|upper }}</span>
+            {% endif %}
+          </div>
+          <div class="entreprise-info">
+            <span class="entreprise-nom">{{ entreprise.nom }}</span>
+            {% if entreprise.ville %}
+              <span class="entreprise-ville">{{ entreprise.ville }}</span>
+            {% endif %}
+            {% if entreprise.description %}
+              <span class="entreprise-desc">{{ entreprise.description|slice(0,100) }}{% if entreprise.description|length > 100 %}…{% endif %}</span>
+            {% endif %}
+          </div>
+          <svg class="entreprise-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if totalPages > 1 %}
+    <nav class="pagination">
+      {% if page > 1 %}
+        <a href="?page={{ page - 1 }}&search={{ search }}" class="page-btn">&laquo; Précédent</a>
+      {% endif %}
+      <span class="page-info">Page {{ page }} / {{ totalPages }}</span>
+      {% if page < totalPages %}
+        <a href="?page={{ page + 1 }}&search={{ search }}" class="page-btn">Suivant &raquo;</a>
+      {% endif %}
+    </nav>
+  {% endif %}
+
+</div>
+{% endblock %}

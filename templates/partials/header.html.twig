@@ -1,35 +1,24 @@
-  <!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Stagio - Votre tableau de bord étudiant."
-    />
-    <title>Stagio - Accueil</title>
-  </head>
-  <body>
-    <header>
-      <nav>
-        <img src="image/logo.webp" alt="Logo Stagio" />
-        <a href="{{ base_url }}acceuil">Accueil</a>
-        <a href="{{ base_url }}rechercher">Rechercher</a>
-        {% if user and user.role == 'etudiant' %}
-        <a href="{{ base_url }}favoris">Favoris</a>
-        <a href="{{ base_url }}candidature">Mes candidatures</a>
-        {% endif %}
-        {% if user and user.role == 'pilote' %}
-        <a href="{{ base_url }}pilote">Espace pilote</a>
-        {% endif %}
-        {% if user and user.role == 'admin' %}
-        <a href="{{ base_url }}admin">Administration</a>
-        {% endif %}
-        {% if user %}
-        <span class="nav-username">Bonjour, {{ user.prenom }} {{ user.nom }}</span>
-        <a href="{{ base_url }}logout">Se déconnecter</a>
-        {% else %}
-        <a href="{{ base_url }}identification" class="nav-cta">Se connecter</a>
-        {% endif %}
-      </nav>
-    </header>
+<header>
+  <nav>
+    <img src="{{ base_url }}image/logo.webp" alt="Logo Stagio" />
+    <a href="{{ base_url }}acceuil">Accueil</a>
+    <a href="{{ base_url }}rechercher">Rechercher</a>
+    <a href="{{ base_url }}entreprises">Entreprises</a>
+    {% if user and user.role == 'etudiant' %}
+    <a href="{{ base_url }}favoris">Favoris</a>
+    <a href="{{ base_url }}candidature">Mes candidatures</a>
+    {% endif %}
+    {% if user and user.role == 'pilote' %}
+    <a href="{{ base_url }}pilote">Espace pilote</a>
+    {% endif %}
+    {% if user and user.role == 'admin' %}
+    <a href="{{ base_url }}admin">Administration</a>
+    {% endif %}
+    {% if user %}
+    <span class="nav-username">Bonjour, {{ user.prenom }} {{ user.nom }}</span>
+    <a href="/deconnexion">Se déconnecter</a>
+    {% else %}
+    <a href="{{ base_url }}identification" class="nav-cta">Se connecter</a>
+    {% endif %}
+  </nav>
+</header>

@@ -2,6 +2,29 @@
 
 {% block title %}Stagio - Offres de stage{% endblock %}
 
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/index.css" />
+{% endblock %}
+
 {% block content %}
+
+  <section id="offres">
+    <h2>Offres récentes</h2>
+    {% if offres is empty %}
+      <p style="color:var(--gris); text-align:center; padding:2rem 0;">Aucune offre disponible pour le moment.</p>
+    {% else %}
+      <div class="offres-grid">
+        {% for offre in offres %}
+          <div class="card">
+            <h3>{{ offre.nom_entreprise ?? offre.titre }}</h3>
+            {% if offre.ville %}<p>{{ offre.ville }}</p>{% endif %}
+            {% if offre.duree %}<p>Durée : {{ offre.duree }}</p>{% endif %}
+            <a href="{{ base_url }}identification">Voir l'offre →</a>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
 
 {% endblock %}

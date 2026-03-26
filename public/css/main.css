@@ -2,15 +2,15 @@
    MAIN.CSS — Stagio (styles globaux uniquement)
    =========================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap");
 
 :root {
-  --bleu: #1C375B;
-  --bleu-clair: #2A5082;
-  --orange: #FF5722;
-  --orange-2: #E64A19;
-  --fond: #F0F7FF;
-  --carte: #E0EFFF;
+  --bleu: #1c375b;
+  --bleu-clair: #2a5082;
+  --orange: #ff5722;
+  --orange-2: #e64a19;
+  --fond: #f0f7ff;
+  --carte: #e0efff;
   --blanc: #ffffff;
   --texte: #1a2332;
   --gris: #64748b;
@@ -27,16 +27,18 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   background: var(--fond);
   color: var(--texte);
   line-height: 1.6;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 /* ---- Typo de base ---- */
@@ -88,7 +90,9 @@ a:hover {
 header {
   background: var(--carte);
   border-bottom: 1px solid var(--ligne);
-  box-shadow: 0 2px 12px rgba(28, 55, 91, 0.10), 0 1px 3px rgba(28, 55, 91, 0.06);
+  box-shadow:
+    0 2px 12px rgba(28, 55, 91, 0.1),
+    0 1px 3px rgba(28, 55, 91, 0.06);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -116,7 +120,9 @@ nav a {
   font-weight: 500;
   padding: 0.4rem 0.8rem;
   border-radius: 6px;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 nav a:hover {
@@ -186,7 +192,7 @@ section {
   color: var(--orange);
 }
 
-#hero>p {
+#hero > p {
   max-width: 500px;
   margin: 0 auto 2.5rem;
   font-size: 1rem;
@@ -209,7 +215,9 @@ section {
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.92rem;
-  transition: background 0.2s, transform 0.15s;
+  transition:
+    background 0.2s,
+    transform 0.15s;
 }
 
 #hero .hero-btns a.btn-principal:hover {
@@ -225,7 +233,9 @@ section {
   border-radius: 8px;
   border: 1.5px solid var(--ligne);
   background: var(--blanc);
-  transition: border-color 0.2s, background 0.2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
 }
 
 #hero .hero-btns a.btn-secondaire:hover {
@@ -259,16 +269,16 @@ section {
   gap: 0;
 }
 
-.chiffres-grid>div {
+.chiffres-grid > div {
   padding: 0 2rem;
   border-right: 1.5px solid var(--ligne);
 }
 
-.chiffres-grid>div:first-child {
+.chiffres-grid > div:first-child {
   padding-left: 0;
 }
 
-.chiffres-grid>div:last-child {
+.chiffres-grid > div:last-child {
   border-right: none;
 }
 
@@ -389,7 +399,9 @@ section {
   flex-direction: row;
   align-items: center;
   gap: 2rem;
-  transition: border-left-color 0.2s, transform 0.15s;
+  transition:
+    border-left-color 0.2s,
+    transform 0.15s;
 }
 
 .offres-grid .card:hover {
@@ -474,16 +486,18 @@ aside {
 
 /* ---- Boutons ---- */
 button {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 0.9rem;
   font-weight: 600;
   padding: 0.6rem 1.4rem;
   border: none;
   border-radius: 7px;
   cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
+  transition:
+    background 0.2s,
+    transform 0.15s;
 }
-button:not([class]) ,
+button:not([class]),
 button.btn-default {
   background: var(--orange);
   color: var(--blanc);
@@ -494,8 +508,9 @@ button:hover {
   background: var(--orange-2);
   transform: translateY(-1px);
 }
-button.btn-default:hover { 
-  background: var(--orange-2); transform: translateY(-1px); 
+button.btn-default:hover {
+  background: var(--orange-2);
+  transform: translateY(-1px);
 }
 
 button a {
@@ -520,7 +535,7 @@ footer {
   grid-template-columns: 2fr 1fr 2fr;
   gap: 3rem;
   padding-bottom: 2rem;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .footer-brand {
@@ -532,7 +547,7 @@ footer {
 
 .footer-desc {
   font-size: 0.85rem;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255, 255, 255, 0.55);
   line-height: 1.6;
 }
 
@@ -541,7 +556,7 @@ footer {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255, 255, 255, 0.4);
   margin-bottom: 1rem;
 }
 
@@ -554,18 +569,18 @@ footer {
 
 .footer-col p {
   font-size: 0.82rem;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255, 255, 255, 0.5);
   line-height: 1.6;
   margin-bottom: 0.5rem;
 }
 
 .footer-col strong {
-  color: rgba(255,255,255,0.75);
+  color: rgba(255, 255, 255, 0.75);
   font-weight: 600;
 }
 
 footer a {
-  color: rgba(255,255,255,0.6);
+  color: rgba(255, 255, 255, 0.6);
   font-weight: 400;
   font-size: 0.88rem;
   transition: color 0.2s;
@@ -581,7 +596,7 @@ footer a:hover {
   align-items: center;
   padding-top: 1.2rem;
   font-size: 0.78rem;
-  color: rgba(255,255,255,0.3);
+  color: rgba(255, 255, 255, 0.3);
   flex-wrap: wrap;
   gap: 0.5rem;
 }
@@ -616,7 +631,7 @@ footer a:hover {
     gap: 1.5rem;
   }
 
-  .chiffres-grid>div {
+  .chiffres-grid > div {
     padding: 0;
     border-right: none;
   }

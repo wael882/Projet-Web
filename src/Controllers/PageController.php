@@ -534,6 +534,30 @@ class PageController
         exit;
     }
 
+    public function deconnexion(): void {
+        session_destroy();
+        header('Location: /');
+        exit;
+    }
+
+    public function entreprises(): void {
+        $this->requireAuth();
+        $model       = new EntrepriseModel();
+        $search      = trim($_GET['search'] ?? '');
+        $page        = max(1, (int) ($_GET['page'] ?? 1));
+        $limite      = 10;
+        $offset      = ($page - 1) * $limite;
+        $entreprises = $model->findAll($search, $limite, $offset);
+        $total       = $model->count($search);
+        $totalPages  = (int) ceil($total / $limite);
+        echo $this->twig->render('entreprises.twig', [
+            'entreprises' => $entreprises,
+            'search'      => $search,
+            'page'        => $page,
+            'totalPages'  => $totalPages,
+        ]);
+    }
+
     public function oubliMdp() {
         echo $this->twig->render('oubli-mdp.twig', [
             'success'    => $_SESSION['success'] ?? null,

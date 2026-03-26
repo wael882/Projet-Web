@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stagio - Entreprises{% endblock %}
+
+{% block description %}content="Stagio - Liste des entreprises"{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/entreprise.css" />
+{% endblock %}
+
+{% block content %}
+  <section>
+    <h1>Entreprises</h1>
+
+    <form method="GET" action="/entreprises">
+      <input type="text" name="search" value="{{ search }}" placeholder="Rechercher une entreprise...">
+      <button type="submit">Rechercher</button>
+    </form>
+
+    <div class="favoris-grid">
+      {% for entreprise in entreprises %}
+        <div class="card">
+          <h3>{{ entreprise.nom }}</h3>
+          <p>{{ entreprise.description }}</p>
+          <a href="/entreprise?id={{ entreprise.id_entreprise }}">Voir l'entreprise</a>
+        </div>
+      {% else %}
+        <p>Aucune entreprise trouvée.</p>
+      {% endfor %}
+    </div>
+
+    {% if totalPages > 1 %}
+      <nav class="pagination">
+        {% if page > 1 %}
+          <a href="?page={{ page - 1 }}&search={{ search }}">&laquo; Précédent</a>
+        {% endif %}
+        <span>Page {{ page }} / {{ totalPages }}</span>
+        {% if page < totalPages %}
+          <a href="?page={{ page + 1 }}&search={{ search }}">Suivant &raquo;</a>
+        {% endif %}
+      </nav>
+    {% endif %}
+  </section>
+{% endblock %}

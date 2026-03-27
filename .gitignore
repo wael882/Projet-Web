@@ -3,5 +3,6 @@ uploads/
 .env
 logs/
 cache/
-cache/
-config/config.php
+stagio.local-key.pem
+stagio.local.pem 
+config/config.php 

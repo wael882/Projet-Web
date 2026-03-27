@@ -4,7 +4,7 @@
 
 .offer-detail {
   display: grid;
-  grid-template-columns: 1fr 260px;
+  grid-template-columns: 1fr;
   gap: 2rem;
   max-width: 1100px;
   margin: 2rem auto;
@@ -70,7 +70,7 @@
 /* === MÉTA INFOS === */
 .offer-meta {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
 }
 
@@ -175,8 +175,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  position: sticky;
-  top: 1.5rem;
+  position: static;
+  order: -1;
   background: var(--blanc, #fff);
   border: 1px solid var(--ligne, #e5e7eb);
   border-radius: 12px;
@@ -273,17 +273,18 @@
   border: 1px solid #fecaca;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .offer-detail {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 260px;
   }
 
   .offer-sidebar {
-    position: static;
-    order: -1;
+    position: sticky;
+    top: 1.5rem;
+    order: 0;
   }
 
   .offer-meta {
-    gap: 1.5rem;
+    gap: 2rem;
   }
 }

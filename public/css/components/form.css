@@ -6,16 +6,17 @@
 form {
   background: var(--color-white, #ffffff);
   border-radius: var(--radius-md, 12px);
-  padding: 2.5rem 2rem;
+  padding: 1.8rem 1.2rem;
   box-shadow: var(--shadow-md, 0 4px 16px rgba(28, 55, 91, 0.12));
   max-width: 460px;
   width: 100%;
+  margin: 0 1rem;
 }
 
 form h1 {
   text-align: center;
   color: var(--color-primary, #1C375B);
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   margin-bottom: 1.8rem;
   position: relative;
 }
@@ -50,9 +51,9 @@ form input[type="text"],
 form input[type="email"],
 form input[type="password"] {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.65rem 0.8rem;
   font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--color-text, #333333);
   background: var(--color-bg, #F0F7FF);
   border: 2px solid var(--color-border, #C8D8E8);
@@ -123,21 +124,21 @@ form button[type="submit"]:active {
   box-shadow: 0 2px 8px rgba(255, 87, 34, 0.25);
 }
 
-/* ---- Responsive ---- */
-@media (max-width: 480px) {
+/* ---- Desktop ---- */
+@media (min-width: 481px) {
   form {
-    padding: 1.8rem 1.2rem;
-    margin: 0 1rem;
+    padding: 2.5rem 2rem;
+    margin: 0;
   }
 
   form h1 {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
   }
 
   form input[type="text"],
   form input[type="email"],
   form input[type="password"] {
-    padding: 0.65rem 0.8rem;
-    font-size: 0.85rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
   }
 }

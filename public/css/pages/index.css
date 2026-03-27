@@ -33,7 +33,6 @@ html {
 }
 
 @keyframes bounce {
-
   0%,
   100% {
     transform: translateX(-50%) translateY(0);
@@ -45,7 +44,7 @@ html {
 }
 
 #hero h1 {
-  font-size: 3.4rem;
+  font-size: 2.2rem;
   font-weight: 800;
   max-width: 700px;
   margin: 0 auto 1.4rem;
@@ -57,7 +56,7 @@ html {
   color: var(--orange);
 }
 
-#hero>p {
+#hero > p {
   max-width: 500px;
   margin: 0 auto 2.5rem;
   font-size: 1rem;
@@ -127,20 +126,20 @@ html {
 
 .chiffres-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
 }
 
-.chiffres-grid>div {
-  padding: 0 2rem;
-  border-right: 1.5px solid var(--ligne);
+.chiffres-grid > div {
+  padding: 0;
+  border-right: none;
 }
 
-.chiffres-grid>div:first-child {
+.chiffres-grid > div:first-child {
   padding-left: 0;
 }
 
-.chiffres-grid>div:last-child {
+.chiffres-grid > div:last-child {
   border-right: none;
 }
 
@@ -177,25 +176,20 @@ html {
 .timeline {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr;
   gap: 2rem;
 }
 
 .timeline-line {
-  position: absolute;
-  top: 20px;
-  left: calc(16.66% + 20px);
-  right: calc(16.66% + 20px);
-  height: 2px;
-  background: var(--ligne);
-  z-index: 0;
+  display: none;
 }
 
 .timeline-step {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
+  flex-direction: row;
+  gap: 1rem;
   position: relative;
   z-index: 1;
 }
@@ -212,7 +206,8 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.2rem;
+  margin-bottom: 0;
+  flex-shrink: 0;
 }
 
 .timeline-step h3 {
@@ -287,39 +282,54 @@ html {
   white-space: nowrap;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Desktop */
+@media (min-width: 769px) {
   #hero h1 {
-    font-size: 2.2rem;
+    font-size: 3.4rem;
   }
 
   .chiffres-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
   }
 
-  .chiffres-grid>div {
-    padding: 0;
+  .chiffres-grid > div {
+    padding: 0 2rem;
+    border-right: 1.5px solid var(--ligne);
+  }
+
+  .chiffres-grid > div:first-child {
+    padding-left: 0;
+  }
+
+  .chiffres-grid > div:last-child {
     border-right: none;
   }
 
   .timeline {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .timeline-line {
-    display: none;
+    display: block;
+    position: absolute;
+    top: 20px;
+    left: calc(16.66% + 20px);
+    right: calc(16.66% + 20px);
+    height: 2px;
+    background: var(--ligne);
+    z-index: 0;
   }
 
   .timeline-step {
-    align-items: flex-start;
-    text-align: left;
-    flex-direction: row;
-    gap: 1rem;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+    gap: 0;
   }
 
   .timeline-dot {
-    flex-shrink: 0;
-    margin-bottom: 0;
+    margin-bottom: 1.2rem;
+    flex-shrink: 1;
   }
 }

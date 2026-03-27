@@ -2,7 +2,7 @@
 
 //variable "d'environnement" a utiliser plus tard dans le code 
 
-define('BASE_URL', 'https://stagio.local/');
+define('BASE_URL', 'https://cesi-site.local/');
 define('DB_HOST', '127.0.0.1');
 define('DB_USER', 'root');
 define('DB_PASSWORD', 'Root1234!');

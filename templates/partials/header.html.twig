@@ -1,24 +1,36 @@
 <header>
-  <nav>
-    <img src="{{ base_url }}image/logo.webp" alt="Logo Stagio" />
-    <a href="{{ base_url }}acceuil">Accueil</a>
-    <a href="{{ base_url }}rechercher">Rechercher</a>
-    <a href="{{ base_url }}entreprises">Entreprises</a>
-    {% if user and user.role == 'etudiant' %}
-    <a href="{{ base_url }}favoris">Favoris</a>
-    <a href="{{ base_url }}candidature">Mes candidatures</a>
-    {% endif %}
-    {% if user and user.role == 'pilote' %}
-    <a href="{{ base_url }}pilote">Espace pilote</a>
-    {% endif %}
-    {% if user and user.role == 'admin' %}
-    <a href="{{ base_url }}admin">Administration</a>
-    {% endif %}
+  <nav class="navbar">
+    <a href="{{ base_url }}" class="logo">
+      <img src="{{ base_url }}image/logo.webp" alt="Logo Stagio" />
+    </a>
+
+    <div class="nav-links">
+      <a href="{{ base_url }}acceuil">Accueil</a>
+      <a href="{{ base_url }}rechercher">Rechercher</a>
+      <a href="{{ base_url }}entreprises">Entreprises</a>
+
+      {% if user and user.role == 'etudiant' %}
+        <a href="{{ base_url }}favoris">Favoris</a>
+        <a href="{{ base_url }}candidature">Mes candidatures</a>
+      {% endif %}
+
+      {% if user and user.role == 'pilote' %}
+        <a href="{{ base_url }}pilote">Espace pilote</a>
+      {% endif %}
+
+      {% if user and user.role == 'admin' %}
+        <a href="{{ base_url }}admin">Administration</a>
+      {% endif %}
+    </div>
+
     {% if user %}
-    <span class="nav-username">Bonjour, {{ user.prenom }} {{ user.nom }}</span>
-    <a href="/deconnexion">Se déconnecter</a>
+      <a href="/deconnexion" class="nav-cta">Se déconnecter</a>
     {% else %}
-    <a href="{{ base_url }}identification" class="nav-cta">Se connecter</a>
+      <a href="{{ base_url }}identification" class="nav-cta">Se connecter</a>
     {% endif %}
+
+    <button class="menu-toggle" type="button" aria-label="Ouvrir le menu">
+      ☰
+    </button>
   </nav>
 </header>

@@ -61,7 +61,7 @@
   background: var(--orange-2);
 }
 
-#dernières-candidatures article {
+#dernieres-candidatures article {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;

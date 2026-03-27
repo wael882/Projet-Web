@@ -4,11 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Stagio{% endblock %}</title>
+
     {% block styles %}
       <link rel="stylesheet" href="{{ base_url }}css/main.css" />
     {% endblock %}
+
     <meta name="description" {% block description %} content="Stagio"{% endblock %} />
   </head>
+
   <body>
 
     {% block header %}
@@ -24,6 +27,27 @@
     </main>
 
     {% include 'partials/footer.html.twig' %}
+
+
+    <!-- ========================================= -->
+    <!-- ============ MENU BURGER JS ============= -->
+    <!-- ========================================= -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const menuToggle = document.querySelector(".menu-toggle");
+        const navLinks = document.querySelector(".nav-links");
+
+        if (menuToggle && navLinks) {
+          menuToggle.addEventListener("click", function () {
+            navLinks.classList.toggle("active");
+          });
+        }
+      });
+    </script>
+    <!-- ========================================= -->
+    <!-- ========== FIN MENU BURGER JS ============ -->
+    <!-- ========================================= -->
+
 
   </body>
 </html>

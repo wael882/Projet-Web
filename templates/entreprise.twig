@@ -10,23 +10,203 @@
 {% endblock %}
 
 {% block content %}
+<div style="max-width:900px; margin:2rem auto; display:flex; flex-direction:column; gap:1.5rem;">
+
+  <a href="/entreprises" style="color:var(--gris); text-decoration:none; font-size:0.9rem;">← Retour aux entreprises</a>
+
   <section id="identite">
-    <h1>{{ entreprise.nom }}</h1>
-    <p>{{ entreprise.description }}</p>
-    <p>Email : {{ entreprise.email_contact }}</p>
-    <p>Téléphone : {{ entreprise.telephone_contact }}</p>
+    <div class="entreprise-logo-placeholder">
+      {{ entreprise.nom|slice(0,2)|upper }}
+    </div>
+    <div>
+      <h1>{{ entreprise.nom }}</h1>
+      {% if entreprise.email_contact %}
+        <p style="color:var(--gris); font-size:0.9rem;">✉ {{ entreprise.email_contact }}</p>
+      {% endif %}
+      {% if entreprise.telephone_contact %}
+        <p style="color:var(--gris); font-size:0.9rem;">📞 {{ entreprise.telephone_contact }}</p>
+      {% endif %}
+    </div>
   </section>
+
+  <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+    <div class="stat-card">
+      <strong>{{ entreprise.nb_stagiaires }}</strong>
+      <span>candidature{{ entreprise.nb_stagiaires > 1 ? 's' : '' }}</span>
+    </div>
+    <div class="stat-card">
+      <strong>
+        {% if entreprise.moyenne_evaluation %}
+          <span class="stars-display" title="{{ entreprise.moyenne_evaluation }}/5">
+            {% for i in 1..5 %}
+              {% if i <= entreprise.moyenne_evaluation|round(0, 'floor') %}
+                <span class="star full">★</span>
+              {% elseif i == entreprise.moyenne_evaluation|round(0, 'floor') + 1 and (entreprise.moyenne_evaluation % 1) >= 0.5 %}
+                <span class="star half">★</span>
+              {% else %}
+                <span class="star empty">★</span>
+              {% endif %}
+            {% endfor %}
+          </span>
+        {% else %}
+          —
+        {% endif %}
+      </strong>
+      <span>évaluation moyenne{% if entreprise.nb_evaluations %} ({{ entreprise.nb_evaluations }}){% endif %}</span>
+    </div>
+  </div>
+
+  {% if entreprise.description %}
+  <section id="description">
+    <h2>À propos</h2>
+    <p>{{ entreprise.description }}</p>
+  </section>
+  {% endif %}
 
   <section id="offres">
     <h2>Offres disponibles</h2>
-    {% for offre in offresEntreprise %}
-      <article>
-        <h3>{{ offre.titre }}</h3>
-        <p>Durée : {{ offre.duree_stage }} semaines — Rémunération : {{ offre.remuneration_base }} €</p>
-        <a href="/offre?id={{ offre.id_offre }}">Voir l'offre</a>
-      </article>
+    {% if offresEntreprise is empty %}
+      <p style="color:var(--gris);">Aucune offre disponible pour cette entreprise.</p>
     {% else %}
-      <p>Aucune offre disponible pour cette entreprise.</p>
-    {% endfor %}
+      <div style="display:flex; flex-direction:column; gap:0.75rem;">
+        {% for offre in offresEntreprise %}
+          <div style="background:var(--blanc); border:1px solid var(--ligne); border-radius:10px; padding:1.25rem 1.5rem; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:600; color:var(--bleu);">{{ offre.titre }}</div>
+              <div style="font-size:0.85rem; color:var(--gris); margin-top:0.2rem;">
+                {{ offre.duree_stage }} semaines
+                {% if offre.remuneration_base %} — {{ offre.remuneration_base }} €{% endif %}
+              </div>
+            </div>
+            <a href="/offre?id={{ offre.id_offre }}" class="btn-principal" style="font-size:0.85rem; padding:0.5rem 1rem;">Voir l'offre</a>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
   </section>
+
+  <section id="evaluations">
+    <h2>Évaluations ({{ evaluations|length }})</h2>
+
+    {% if user and user.role == 'etudiant' %}
+      {% if dejaEvalue %}
+        <p style="color:var(--gris); font-size:0.9rem;">Vous avez déjà évalué cette entreprise.</p>
+      {% else %}
+        {% if success %}<div class="alert alert-success" style="margin-bottom:1rem;">{{ success }}</div>{% endif %}
+        {% if error %}<div class="alert alert-error" style="margin-bottom:1rem;">{{ error }}</div>{% endif %}
+        <form method="POST" action="/entreprise/evaluer" style="background:var(--blanc); border:1px solid var(--ligne); border-radius:10px; padding:1.5rem; display:flex; flex-direction:column; gap:0.75rem; margin-bottom:1.5rem;">
+          <input type="hidden" name="id_entreprise" value="{{ entreprise.id_entreprise }}">
+          <label style="font-weight:600; font-size:0.9rem;">Note</label>
+          <div class="star-rating">
+            {% for i in 5..1 %}
+              <input type="radio" name="note" id="star{{ i }}" value="{{ i }}" required>
+              <label for="star{{ i }}" title="{{ i }} étoile{{ i > 1 ? 's' : '' }}">★</label>
+            {% endfor %}
+          </div>
+          <label style="font-weight:600; font-size:0.9rem;">Commentaire (optionnel)</label>
+          <textarea name="commentaire" rows="3" placeholder="Votre avis..." style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit; resize:vertical;"></textarea>
+          <button type="submit" class="btn-principal" style="align-self:flex-start;">Envoyer mon évaluation</button>
+        </form>
+      {% endif %}
+    {% endif %}
+
+    {% if evaluations is empty %}
+      <p style="color:var(--gris);">Aucune évaluation pour le moment.</p>
+    {% else %}
+      <div style="display:flex; flex-direction:column; gap:0.75rem;">
+        {% for ev in evaluations %}
+          <div style="background:var(--blanc); border:1px solid var(--ligne); border-radius:10px; padding:1.25rem 1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+              <span style="font-weight:600;">{{ ev.prenom }} {{ ev.nom }}</span>
+              <div style="display:flex; align-items:center; gap:0.75rem;">
+                <span class="stars-display" title="{{ ev.note }}/5">
+                  {% for i in 1..5 %}
+                    <span class="star {{ i <= ev.note ? 'full' : 'empty' }}">★</span>
+                  {% endfor %}
+                </span>
+                {% if user and user.role == 'etudiant' and user.id_etudiant == ev.id_etudiant %}
+                  <button type="button" class="btn-avis-action btn-avis-edit" title="Modifier"
+                    data-id="{{ ev.id_evaluation }}"
+                    data-note="{{ ev.note }}"
+                    data-commentaire="{{ ev.commentaire|default('') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  </button>
+                  <form method="POST" action="/entreprise/evaluer/supprimer" style="display:inline;" onsubmit="return confirm('Supprimer votre avis ?');">
+                    <input type="hidden" name="id_evaluation" value="{{ ev.id_evaluation }}">
+                    <input type="hidden" name="id_entreprise" value="{{ entreprise.id_entreprise }}">
+                    <button type="submit" class="btn-avis-action btn-avis-delete" title="Supprimer">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                    </button>
+                  </form>
+                {% endif %}
+              </div>
+            </div>
+            {% if ev.commentaire %}
+              <p style="color:var(--gris); font-size:0.88rem; margin:0;">{{ ev.commentaire }}</p>
+            {% endif %}
+            <p style="color:var(--gris); font-size:0.78rem; margin-top:0.4rem;">{{ ev.date_evaluation|date('d/m/Y') }}</p>
+          </div>
+        {% endfor %}
+      </div>
+
+      {# Modal d'édition #}
+      {% if user and user.role == 'etudiant' %}
+      <div id="modal-edit-avis" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:#fff; border-radius:12px; padding:2rem; width:100%; max-width:440px; box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+          <h3 style="margin:0 0 1rem;">Modifier mon avis</h3>
+          <form method="POST" action="/entreprise/evaluer/modifier" style="display:flex; flex-direction:column; gap:0.75rem;">
+            <input type="hidden" name="id_evaluation" id="edit-id-evaluation">
+            <input type="hidden" name="id_entreprise" value="{{ entreprise.id_entreprise }}">
+            <label style="font-weight:600; font-size:0.9rem;">Note</label>
+            <div class="star-rating" id="edit-star-rating">
+              {% for i in 5..1 %}
+                <input type="radio" name="note" id="edit-star{{ i }}" value="{{ i }}" required>
+                <label for="edit-star{{ i }}" title="{{ i }} étoile{{ i > 1 ? 's' : '' }}">★</label>
+              {% endfor %}
+            </div>
+            <label style="font-weight:600; font-size:0.9rem;">Commentaire (optionnel)</label>
+            <textarea name="commentaire" id="edit-commentaire" rows="3" placeholder="Votre avis..." style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit; resize:vertical;"></textarea>
+            <div style="display:flex; gap:0.75rem; justify-content:flex-end; margin-top:0.5rem;">
+              <button type="button" class="btn-secondaire" id="fermer-modal-edit">Annuler</button>
+              <button type="submit" class="btn-principal">Enregistrer</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      {% endif %}
+    {% endif %}
+  </section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('modal-edit-avis');
+
+  document.querySelectorAll('.btn-avis-edit').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const id   = this.dataset.id;
+      const note = this.dataset.note;
+      const commentaire = this.dataset.commentaire;
+
+      document.getElementById('edit-id-evaluation').value = id;
+      document.getElementById('edit-commentaire').value   = commentaire;
+      const radio = document.getElementById('edit-star' + note);
+      if (radio) radio.checked = true;
+      modal.style.display = 'flex';
+    });
+  });
+
+  document.getElementById('fermer-modal-edit')?.addEventListener('click', function() {
+    modal.style.display = 'none';
+  });
+
+  modal?.addEventListener('click', function(e) {
+    if (e.target === this) this.style.display = 'none';
+  });
+});
+</script>
 {% endblock %}

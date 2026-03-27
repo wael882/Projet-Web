@@ -5,4 +5,5 @@ logs/
 cache/
 stagio.local-key.pem
 stagio.local.pem 
-config/config.php 
+config/config.php
+Makefile

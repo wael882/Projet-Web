@@ -12,7 +12,11 @@
   <body>
 
     {% block header %}
-      {% include 'partials/header-index.html.twig' %}
+      {% if user %}
+        {% include 'partials/header.html.twig' %}
+      {% else %}
+        {% include 'partials/header-index.html.twig' %}
+      {% endif %}
     {% endblock %}
 
     <main>

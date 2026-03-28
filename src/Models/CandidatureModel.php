@@ -46,6 +46,12 @@ class CandidatureModel
         $stmt->execute([':statut' => $statut, ':id' => $idCandidature]);
     }
 
+    public function compterParOffre(int $idOffre): int {
+        $requete = $this->pdo->prepare('SELECT COUNT(*) FROM CANDIDATURE WHERE id_offre = :idOffre');
+        $requete->execute([':idOffre' => $idOffre]);
+        return (int) $requete->fetchColumn();
+    }
+
     public function create(int $idUtilisateur, int $idOffre, string $lettre, ?string $cvFichier = null): void {
         $stmt = $this->pdo->prepare('
             INSERT INTO CANDIDATURE (id_utilisateur, id_offre, lettre_motivation, cv_fichier)

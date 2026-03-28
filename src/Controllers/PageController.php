@@ -423,13 +423,15 @@ class PageController
                 ? $candidature->dejaPostule((int) $_SESSION['user']['id_utilisateur'], (int) $offre['id_offre'])
                 : false;
             $competences = $model->findCompetencesByOffre((int) $offre['id_offre']);
+            $nbCandidatures = $candidature->compterParOffre((int) $offre['id_offre']);
             echo $this->twig->render('offre.twig', [
-                'offre'       => $offre,
-                'favorisIds'  => $favorisIds,
-                'dejaPostule' => $dejaPostule,
-                'competences' => $competences,
-                'success'     => $_SESSION['success'] ?? null,
-                'error'       => $_SESSION['error'] ?? null,
+                'offre'          => $offre,
+                'favorisIds'     => $favorisIds,
+                'dejaPostule'    => $dejaPostule,
+                'competences'    => $competences,
+                'nbCandidatures' => $nbCandidatures,
+                'success'        => $_SESSION['success'] ?? null,
+                'error'          => $_SESSION['error'] ?? null,
             ]);
             unset($_SESSION['success'], $_SESSION['error']);
         } else {
@@ -535,29 +537,44 @@ class PageController
 
     public function rechercher()
     {
-        $model = new OffreModel();
-        $wishlist = new WishlistModel();
-        $pageCourante = $_GET['page'] ?? 1;
-        $motCle = trim($_GET['motCle'] ?? '');
+        $modeleOffre = new OffreModel();
+        $modeleWishlist = new WishlistModel();
+        $modeleEntreprise = new EntrepriseModel();
+        $pageCourante = (int) ($_GET['page'] ?? 1);
         $nombreParPage = 10;
-        $debutListe = ($pageCourante - 1) * $nombreParPage;
+        $debut = ($pageCourante - 1) * $nombreParPage;
 
-        if ($motCle !== '') {
-            $offres = $model->search($motCle, $nombreParPage, $debutListe);
-            $totalOffres = $model->countSearch($motCle);
+        $filtres = [
+            'motCle'           => trim($_GET['motCle'] ?? ''),
+            'titre'            => trim($_GET['titre'] ?? ''),
+            'entreprise'       => trim($_GET['entreprise'] ?? ''),
+            'competence'       => trim($_GET['competence'] ?? ''),
+            'remuneration_min' => trim($_GET['remuneration_min'] ?? ''),
+            'remuneration_max' => trim($_GET['remuneration_max'] ?? ''),
+        ];
+
+        $aucunFiltre = array_filter($filtres) === [];
+
+        if ($aucunFiltre) {
+            $offres = $modeleOffre->findAll($nombreParPage, $debut);
+            $totalOffres = $modeleOffre->count();
         } else {
-            $offres = $model->findAll($nombreParPage, $debutListe);
-            $totalOffres = $model->count();
+            $offres = $modeleOffre->rechercheAvancee($filtres, $nombreParPage, $debut);
+            $totalOffres = $modeleOffre->compterRechercheAvancee($filtres);
         }
 
         $totalPages = ceil($totalOffres / $nombreParPage);
-        $favorisIds = isset($_SESSION['user']) ? $wishlist->getIdOffres((int) $_SESSION['user']['id_utilisateur']) : [];
+        $favorisIds = isset($_SESSION['user']) ? $modeleWishlist->getIdOffres((int) $_SESSION['user']['id_utilisateur']) : [];
+
         echo $this->twig->render('rechercher.twig', [
-            'offres' => $offres,
+            'offres'       => $offres,
             'pageCourante' => $pageCourante,
-            'totalPages' => $totalPages,
-            'favorisIds' => $favorisIds,
-            'motCle' => $motCle
+            'totalPages'   => $totalPages,
+            'favorisIds'   => $favorisIds,
+            'filtres'      => $filtres,
+            'entreprises'  => $modeleEntreprise->listerToutesActives(),
+            'competences'  => $modeleOffre->listerCompetences(),
+            'titres'       => $modeleOffre->listerTitres(),
         ]);
     }
 

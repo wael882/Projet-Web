@@ -260,6 +260,15 @@ class EntrepriseModel {
         ]);
     }
 
+    public function listerToutesActives(): array {
+        $requete = $this->pdo->query('
+            SELECT id_entreprise, nom FROM ENTREPRISE
+            WHERE statut = "approuvee" AND active = TRUE
+            ORDER BY nom ASC
+        ');
+        return $requete->fetchAll();
+    }
+
     public function findByUtilisateur(int $idUtilisateur): array {
         $stmt = $this->pdo->prepare('
             SELECT * FROM ENTREPRISE

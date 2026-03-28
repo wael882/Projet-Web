@@ -238,6 +238,46 @@ class OffreModel
         return (int) $requete->fetchColumn();
     }
 
+    public function modifier(int $idOffre, int $idEntreprise, string $titre, string $description, ?float $remunerationBase, ?string $dateOffre, ?string $photo = null): void {
+        if ($photo !== null) {
+            $requete = $this->pdo->prepare('
+                UPDATE OFFRE
+                SET titre = :titre, description = :description, remuneration_base = :remunerationBase,
+                    date_offre = :dateOffre, photo = :photo, id_entreprise = :idEntreprise
+                WHERE id_offre = :idOffre
+            ');
+            $requete->execute([
+                ':titre'            => $titre,
+                ':description'      => $description,
+                ':remunerationBase' => $remunerationBase,
+                ':dateOffre'        => $dateOffre,
+                ':photo'            => $photo,
+                ':idEntreprise'     => $idEntreprise,
+                ':idOffre'          => $idOffre,
+            ]);
+        } else {
+            $requete = $this->pdo->prepare('
+                UPDATE OFFRE
+                SET titre = :titre, description = :description, remuneration_base = :remunerationBase,
+                    date_offre = :dateOffre, id_entreprise = :idEntreprise
+                WHERE id_offre = :idOffre
+            ');
+            $requete->execute([
+                ':titre'            => $titre,
+                ':description'      => $description,
+                ':remunerationBase' => $remunerationBase,
+                ':dateOffre'        => $dateOffre,
+                ':idEntreprise'     => $idEntreprise,
+                ':idOffre'          => $idOffre,
+            ]);
+        }
+    }
+
+    public function supprimerToutesCompetences(int $idOffre): void {
+        $requete = $this->pdo->prepare('DELETE FROM offre_competence WHERE id_offre = :idOffre');
+        $requete->execute([':idOffre' => $idOffre]);
+    }
+
     public function findCompetencesByOffre(int $id): array {
         $requete = $this->pdo->prepare('
             SELECT COMPETENCE.libelle

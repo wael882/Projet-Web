@@ -14,7 +14,7 @@
     <div class="alert alert-error" style="margin-bottom:1rem;">{{ error }}</div>
   {% endif %}
 
-  <form method="POST" action="/admin/entreprise/modifier" style="background:var(--blanc); border:1px solid var(--ligne); border-radius:12px; padding:2rem; display:flex; flex-direction:column; gap:1.1rem;">
+  <form method="POST" action="/admin/entreprise/modifier" enctype="multipart/form-data" style="background:var(--blanc); border:1px solid var(--ligne); border-radius:12px; padding:2rem; display:flex; flex-direction:column; gap:1.1rem;">
     <input type="hidden" name="id_entreprise" value="{{ entreprise.id_entreprise }}">
 
     <div style="display:flex; flex-direction:column; gap:0.3rem;">
@@ -52,6 +52,20 @@
         <input type="url" name="site_web" value="{{ entreprise.site_web }}"
                style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
       </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:0.5rem;">
+      <label style="font-weight:600; font-size:0.9rem;">Logo <span style="color:var(--gris); font-weight:400;">optionnel — laisser vide pour conserver l'actuel</span></label>
+      {% if entreprise.logo %}
+        <div style="display:flex; align-items:center; gap:1rem;">
+          <img src="{{ base_url }}{{ entreprise.logo }}" alt="Logo actuel" style="width:64px; height:64px; object-fit:contain; border:1px solid var(--ligne); border-radius:8px; padding:4px;">
+          <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.9rem; color:#dc2626; cursor:pointer; font-weight:500;">
+            <input type="checkbox" name="supprimer_logo" value="1"> Supprimer le logo actuel
+          </label>
+        </div>
+      {% endif %}
+      <input type="file" name="logo" accept="image/jpeg,image/png,image/webp"
+             style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit; background:var(--blanc); cursor:pointer;">
     </div>
 
     <div style="display:flex; justify-content:flex-end; margin-top:0.5rem;">

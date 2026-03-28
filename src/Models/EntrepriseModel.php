@@ -273,7 +273,24 @@ class EntrepriseModel {
         ')->execute([':id' => $id]);
     }
 
-    public function adminModifierDirect(int $id, string $nom, string $description, string $email, string $telephone, string $ville, string $siteWeb): void {
+    public function adminModifierDirect(int $id, string $nom, string $description, string $email, string $telephone, string $ville, string $siteWeb, ?string $logo = null): void {
+        if ($logo !== null) {
+            $this->pdo->prepare('
+                UPDATE ENTREPRISE SET nom = :nom, description = :description, email_contact = :email,
+                telephone_contact = :telephone, ville = :ville, site_web = :site_web, logo = :logo
+                WHERE id_entreprise = :id
+            ')->execute([
+                ':nom'         => $nom,
+                ':description' => $description,
+                ':email'       => $email,
+                ':telephone'   => $telephone,
+                ':ville'       => $ville,
+                ':site_web'    => $siteWeb,
+                ':logo'        => $logo,
+                ':id'          => $id,
+            ]);
+            return;
+        }
         $this->pdo->prepare('
             UPDATE ENTREPRISE SET nom = :nom, description = :description, email_contact = :email,
             telephone_contact = :telephone, ville = :ville, site_web = :site_web

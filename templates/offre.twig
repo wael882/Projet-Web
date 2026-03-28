@@ -118,6 +118,10 @@
         {% endif %}
       {% endif %}
 
+      {% if user and user.role in ['admin', 'pilote'] %}
+        <a href="/offre/modifier?id={{ offre.id_offre }}" class="btn-retour">Modifier l'offre</a>
+      {% endif %}
+
       <a href="/rechercher" class="btn-retour">Retour aux offres</a>
 
     </div>

@@ -55,6 +55,8 @@ $router->add('POST', '/pilote/creer-etudiant',    [$controller, 'piloteCreerEtud
 $router->add('POST', '/pilote/supprimer-etudiant', [$controller, 'piloteSupprimerEtudiant']);
 $router->add('GET',  '/offre/creer',       [$controller, 'offreCreer']);
 $router->add('POST', '/offre/creer',       [$controller, 'offreCreerPost']);
+$router->add('GET',  '/offre/modifier',    [$controller, 'offreModifier']);
+$router->add('POST', '/offre/modifier',    [$controller, 'offreModifierPost']);
 $router->add('GET',  '/postuler',          [$controller, 'postuler']);
 $router->add('POST', '/candidature',       [$controller, 'candidaturePost']);
 $router->add('GET',  '/oubliMdp',          [$controller, 'oubliMdp']);

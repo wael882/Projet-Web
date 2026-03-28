@@ -829,6 +829,105 @@ class PageController
         exit;
     }
 
+    public function offreModifier(): void {
+        $this->requireRoles(['admin', 'pilote']);
+
+        $idOffre     = (int) ($_GET['id'] ?? 0);
+        $modeleOffre = new OffreModel();
+        $offre       = $modeleOffre->findById($idOffre);
+
+        if (!$offre) {
+            $_SESSION['error'] = 'Offre introuvable.';
+            header('Location: /rechercher');
+            exit;
+        }
+
+        $modeleEntreprise = new EntrepriseModel();
+        $entreprises      = $modeleEntreprise->listerToutesActives();
+        $competences      = $modeleOffre->findCompetencesByOffre($idOffre);
+
+        echo $this->twig->render('offre-modifier.twig', [
+            'offre'       => $offre,
+            'entreprises' => $entreprises,
+            'competences' => $competences,
+            'error'       => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['error']);
+    }
+
+    public function offreModifierPost(): void {
+        $this->requireRoles(['admin', 'pilote']);
+
+        $idOffre     = (int) ($_POST['id_offre'] ?? 0);
+        $modeleOffre = new OffreModel();
+        $offre       = $modeleOffre->findById($idOffre);
+
+        if (!$offre) {
+            $_SESSION['error'] = 'Offre introuvable.';
+            header('Location: /rechercher');
+            exit;
+        }
+
+        $modeleEntreprise   = new EntrepriseModel();
+        $entreprisesActives = $modeleEntreprise->listerToutesActives();
+
+        $idEntreprise     = (int) ($_POST['id_entreprise'] ?? 0);
+        $titre            = trim($_POST['titre'] ?? '');
+        $description      = trim($_POST['description'] ?? '');
+        $remunerationBase = ($_POST['remuneration_base'] ?? '') !== '' ? (float) $_POST['remuneration_base'] : null;
+        $dateOffre        = ($_POST['date_offre'] ?? '') !== '' ? $_POST['date_offre'] : null;
+
+        $idEntreprisesAutorisees = array_column($entreprisesActives, 'id_entreprise');
+        if (!$titre || !$description || !in_array($idEntreprise, $idEntreprisesAutorisees)) {
+            $_SESSION['error'] = 'Veuillez remplir tous les champs obligatoires.';
+            header('Location: /offre/modifier?id=' . $idOffre);
+            exit;
+        }
+
+        $cheminPhoto = null;
+        if (!empty($_FILES['photo']['name'])) {
+            $fichier        = $_FILES['photo'];
+            $typesAutorises = ['image/jpeg', 'image/png', 'image/webp'];
+            $finfo          = new \finfo(FILEINFO_MIME_TYPE);
+            $mimeReel       = $finfo->file($fichier['tmp_name']);
+
+            if ($fichier['error'] === UPLOAD_ERR_OK && $fichier['size'] <= 5 * 1024 * 1024 && in_array($mimeReel, $typesAutorises)) {
+                $ext         = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$mimeReel];
+                $nomFichier  = 'offre_' . uniqid() . '.' . $ext;
+                $destination = UPLOAD_PATH . '/offres/' . $nomFichier;
+                if (move_uploaded_file($fichier['tmp_name'], $destination)) {
+                    $cheminPhoto = 'uploads/offres/' . $nomFichier;
+                }
+            } else {
+                $_SESSION['error'] = 'Photo invalide (JPG/PNG/WEBP, 5 Mo max).';
+                header('Location: /offre/modifier?id=' . $idOffre);
+                exit;
+            }
+        }
+
+        $modeleOffre->modifier($idOffre, $idEntreprise, $titre, $description, $remunerationBase, $dateOffre, $cheminPhoto);
+
+        // Réinitialise et recrée les compétences
+        $modeleOffre->supprimerToutesCompetences($idOffre);
+
+        $competencesExistantes = array_map('intval', $_POST['competences_existantes'] ?? []);
+        foreach ($competencesExistantes as $idCompetence) {
+            $modeleOffre->ajouterCompetence($idOffre, $idCompetence);
+        }
+
+        $nouvellesCompetences = $_POST['nouvelles_competences'] ?? [];
+        foreach ($nouvellesCompetences as $libelle) {
+            $libelle = trim($libelle);
+            if ($libelle === '') continue;
+            $idCompetence = $modeleOffre->creerOuTrouverCompetence($libelle);
+            $modeleOffre->ajouterCompetence($idOffre, $idCompetence);
+        }
+
+        $_SESSION['success'] = 'L\'offre a bien été modifiée.';
+        header('Location: /offre?id=' . $idOffre);
+        exit;
+    }
+
     public function mesEntreprises(): void {
         header('Location: /entreprises');
         exit;
@@ -905,7 +1004,38 @@ class PageController
             exit;
         }
 
-        (new EntrepriseModel())->adminModifierDirect($id, $nom, $description, $email, $telephone, $ville, $siteWeb);
+        $modeleEntreprise  = new EntrepriseModel();
+        $entrepriseActuelle = $modeleEntreprise->findById($id);
+        $supprimerLogo     = !empty($_POST['supprimer_logo']);
+
+        $cheminLogo = null;
+        if (!empty($_FILES['logo']['name'])) {
+            $fichier        = $_FILES['logo'];
+            $typesAutorises = ['image/jpeg', 'image/png', 'image/webp'];
+            $finfo          = new \finfo(FILEINFO_MIME_TYPE);
+            $mimeReel       = $finfo->file($fichier['tmp_name']);
+
+            if ($fichier['error'] === UPLOAD_ERR_OK && $fichier['size'] <= 2 * 1024 * 1024 && in_array($mimeReel, $typesAutorises)) {
+                $ext        = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$mimeReel];
+                $nomFichier = 'logo_' . uniqid() . '.' . $ext;
+                if (move_uploaded_file($fichier['tmp_name'], UPLOAD_PATH . '/logos/' . $nomFichier)) {
+                    // Supprime l'ancien fichier si présent
+                    if (!empty($entrepriseActuelle['logo'])) {
+                        @unlink(dirname(UPLOAD_PATH) . '/public/' . $entrepriseActuelle['logo']);
+                    }
+                    $cheminLogo = 'uploads/logos/' . $nomFichier;
+                }
+            } else {
+                $_SESSION['error'] = 'Logo invalide (JPG/PNG/WEBP, 2 Mo max).';
+                header('Location: /admin/entreprise/modifier?id=' . $id);
+                exit;
+            }
+        } elseif ($supprimerLogo && !empty($entrepriseActuelle['logo'])) {
+            @unlink(UPLOAD_PATH . '/logos/' . basename($entrepriseActuelle['logo']));
+            $cheminLogo = '';  // chaîne vide pour mettre NULL en base
+        }
+
+        $modeleEntreprise->adminModifierDirect($id, $nom, $description, $email, $telephone, $ville, $siteWeb, $cheminLogo);
         $_SESSION['success'] = 'Entreprise modifiée.';
         header('Location: /entreprise?id=' . $id);
         exit;

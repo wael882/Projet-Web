@@ -50,6 +50,47 @@ class PiloteModel
         return $stmt->fetch();
     }
 
+    public function modifierEtudiant(int $idEtudiant, int $idPilote, string $nom, string $prenom, string $email, string $ecole, string $promotion, ?string $motDePasseHash = null): bool
+    {
+        $etudiant = $this->getEtudiant($idEtudiant, $idPilote);
+        if (!$etudiant) return false;
+
+        if ($motDePasseHash !== null) {
+            $stmt = $this->pdo->prepare('
+                UPDATE UTILISATEUR SET nom = :nom, prenom = :prenom, email = :email,
+                       ecole = :ecole, mot_de_passe_hash = :hash
+                WHERE id_utilisateur = :id
+            ');
+            $stmt->execute([
+                ':nom'    => $nom,
+                ':prenom' => $prenom,
+                ':email'  => $email,
+                ':ecole'  => $ecole,
+                ':hash'   => $motDePasseHash,
+                ':id'     => $etudiant['id_utilisateur'],
+            ]);
+        } else {
+            $stmt = $this->pdo->prepare('
+                UPDATE UTILISATEUR SET nom = :nom, prenom = :prenom, email = :email, ecole = :ecole
+                WHERE id_utilisateur = :id
+            ');
+            $stmt->execute([
+                ':nom'    => $nom,
+                ':prenom' => $prenom,
+                ':email'  => $email,
+                ':ecole'  => $ecole,
+                ':id'     => $etudiant['id_utilisateur'],
+            ]);
+        }
+
+        $stmt = $this->pdo->prepare('
+            UPDATE ETUDIANT SET promotion = :promotion WHERE id_etudiant = :id
+        ');
+        $stmt->execute([':promotion' => $promotion ?: null, ':id' => $idEtudiant]);
+
+        return true;
+    }
+
     public function supprimerEtudiant(int $idEtudiant, int $idPilote): bool
     {
         // Vérifie que l'étudiant appartient bien à ce pilote
@@ -85,6 +126,120 @@ class PiloteModel
         ');
         $stmt->execute([':id_utilisateur' => $idUtilisateur, ':id_pilote' => $idPilote]);
         return true;
+    }
+
+    public function supprimer(int $idPilote): bool
+    {
+        $pilote = $this->findById($idPilote);
+        if (!$pilote) return false;
+
+        // La suppression de l'utilisateur cascade sur PILOTE
+        // et met id_pilote à NULL dans ETUDIANT (ON DELETE SET NULL)
+        $stmt = $this->pdo->prepare('DELETE FROM UTILISATEUR WHERE id_utilisateur = :id');
+        $stmt->execute([':id' => $pilote['id_utilisateur']]);
+        return true;
+    }
+
+    public function modifier(int $idPilote, string $nom, string $prenom, string $email, string $ecole, ?string $motDePasseHash = null): bool
+    {
+        $pilote = $this->findById($idPilote);
+        if (!$pilote) return false;
+
+        if ($motDePasseHash !== null) {
+            $stmt = $this->pdo->prepare('
+                UPDATE UTILISATEUR SET nom = :nom, prenom = :prenom, email = :email,
+                       ecole = :ecole, mot_de_passe_hash = :hash
+                WHERE id_utilisateur = :id
+            ');
+            $stmt->execute([
+                ':nom'    => $nom,
+                ':prenom' => $prenom,
+                ':email'  => $email,
+                ':ecole'  => $ecole,
+                ':hash'   => $motDePasseHash,
+                ':id'     => $pilote['id_utilisateur'],
+            ]);
+        } else {
+            $stmt = $this->pdo->prepare('
+                UPDATE UTILISATEUR SET nom = :nom, prenom = :prenom, email = :email, ecole = :ecole
+                WHERE id_utilisateur = :id
+            ');
+            $stmt->execute([
+                ':nom'    => $nom,
+                ':prenom' => $prenom,
+                ':email'  => $email,
+                ':ecole'  => $ecole,
+                ':id'     => $pilote['id_utilisateur'],
+            ]);
+        }
+        return true;
+    }
+
+    public function creer(string $nom, string $prenom, string $email, string $motDePasseHash, string $ecole): int
+    {
+        $stmt = $this->pdo->prepare('
+            INSERT INTO UTILISATEUR (nom, prenom, email, mot_de_passe_hash, id_role, ecole)
+            VALUES (:nom, :prenom, :email, :hash, 2, :ecole)
+        ');
+        $stmt->execute([
+            ':nom'    => $nom,
+            ':prenom' => $prenom,
+            ':email'  => $email,
+            ':hash'   => $motDePasseHash,
+            ':ecole'  => $ecole,
+        ]);
+        $idUtilisateur = (int) $this->pdo->lastInsertId();
+
+        $stmt = $this->pdo->prepare('INSERT INTO PILOTE (id_utilisateur) VALUES (:id)');
+        $stmt->execute([':id' => $idUtilisateur]);
+
+        return (int) $this->pdo->lastInsertId();
+    }
+
+    public function getTous(string $recherche = ''): array
+    {
+        if ($recherche !== '') {
+            $stmt = $this->pdo->prepare('
+                SELECT p.id_pilote, p.id_utilisateur,
+                       u.nom, u.prenom, u.email, u.ecole, u.date_creation,
+                       COUNT(e.id_etudiant) AS nb_etudiants
+                FROM PILOTE p
+                JOIN UTILISATEUR u ON p.id_utilisateur = u.id_utilisateur
+                LEFT JOIN ETUDIANT e ON e.id_pilote = p.id_pilote
+                WHERE u.nom LIKE :recherche OR u.prenom LIKE :recherche OR u.email LIKE :recherche
+                GROUP BY p.id_pilote
+                ORDER BY u.nom, u.prenom
+            ');
+            $stmt->execute([':recherche' => '%' . $recherche . '%']);
+        } else {
+            $stmt = $this->pdo->query('
+                SELECT p.id_pilote, p.id_utilisateur,
+                       u.nom, u.prenom, u.email, u.ecole, u.date_creation,
+                       COUNT(e.id_etudiant) AS nb_etudiants
+                FROM PILOTE p
+                JOIN UTILISATEUR u ON p.id_utilisateur = u.id_utilisateur
+                LEFT JOIN ETUDIANT e ON e.id_pilote = p.id_pilote
+                GROUP BY p.id_pilote
+                ORDER BY u.nom, u.prenom
+            ');
+        }
+        return $stmt->fetchAll();
+    }
+
+    public function findById(int $idPilote): array|false
+    {
+        $stmt = $this->pdo->prepare('
+            SELECT p.id_pilote, p.id_utilisateur,
+                   u.nom, u.prenom, u.email, u.ecole, u.date_creation,
+                   COUNT(e.id_etudiant) AS nb_etudiants
+            FROM PILOTE p
+            JOIN UTILISATEUR u ON p.id_utilisateur = u.id_utilisateur
+            LEFT JOIN ETUDIANT e ON e.id_pilote = p.id_pilote
+            WHERE p.id_pilote = :id
+            GROUP BY p.id_pilote
+        ');
+        $stmt->execute([':id' => $idPilote]);
+        return $stmt->fetch();
     }
 
     public function getCandidaturesEtudiant(int $idUtilisateur): array

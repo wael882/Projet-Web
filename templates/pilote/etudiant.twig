@@ -10,7 +10,16 @@
 {% block content %}
 <div class="pilote-container">
 
-  <a href="/pilote" class="btn-retour">← Retour à la liste</a>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+    <a href="/pilote" class="btn-retour" style="margin-bottom:0;">← Retour à la liste</a>
+    <div style="display:flex; gap:0.75rem;">
+      <a href="/pilote/modifier-etudiant?id={{ etudiant.id_etudiant }}" class="btn-principal" style="font-size:0.88rem; padding:0.55rem 1.1rem;">Modifier</a>
+      <form method="POST" action="/pilote/supprimer-etudiant" onsubmit="return confirm('Supprimer le compte de {{ etudiant.prenom }} {{ etudiant.nom }} ?');">
+        <input type="hidden" name="id_etudiant" value="{{ etudiant.id_etudiant }}">
+        <button type="submit" style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; padding:0.55rem 1.1rem; border-radius:8px; font-weight:600; font-size:0.88rem; cursor:pointer;">Supprimer</button>
+      </form>
+    </div>
+  </div>
 
   <div class="etudiant-fiche">
     <div class="fiche-avatar">

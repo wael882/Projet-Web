@@ -27,6 +27,7 @@ $router->add('GET',  '/mes-entreprises',                [$controller, 'mesEntrep
 $router->add('GET',  '/entreprise/modifier',            [$controller, 'entrepriseModifier']);
 $router->add('POST', '/entreprise/modifier',           [$controller, 'entrepriseModifierPost']);
 $router->add('POST', '/entreprise/supprimer/demande',          [$controller, 'entrepriseDemanderSuppression']);
+$router->add('GET',  '/admin',                                  [$controller, 'adminDashboard']);
 $router->add('GET',  '/admin/entreprises',                     [$controller, 'adminEntreprises']);
 $router->add('POST', '/admin/entreprise/approuver',            [$controller, 'adminEntrepriseApprouver']);
 $router->add('POST', '/admin/entreprise/rejeter',              [$controller, 'adminEntrepriseRejeter']);
@@ -50,6 +51,8 @@ $router->add('GET',  '/pilote/etudiant',   [$controller, 'piloteEtudiant']);
 $router->add('POST', '/pilote/statut',          [$controller, 'piloteUpdateStatut']);
 $router->add('POST', '/pilote/creer-etudiant',    [$controller, 'piloteCreerEtudiant']);
 $router->add('POST', '/pilote/supprimer-etudiant', [$controller, 'piloteSupprimerEtudiant']);
+$router->add('GET',  '/offre/creer',       [$controller, 'offreCreer']);
+$router->add('POST', '/offre/creer',       [$controller, 'offreCreerPost']);
 $router->add('GET',  '/postuler',          [$controller, 'postuler']);
 $router->add('POST', '/candidature',       [$controller, 'candidaturePost']);
 $router->add('GET',  '/oubliMdp',          [$controller, 'oubliMdp']);

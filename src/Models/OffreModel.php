@@ -89,9 +89,43 @@ class OffreModel
         return $requete->fetch();
     }
 
+    public function creer(int $idEntreprise, string $titre, string $description, ?float $remunerationBase, ?string $dateOffre): int {
+        $requete = $this->pdo->prepare('
+            INSERT INTO OFFRE (titre, description, remuneration_base, date_offre, id_entreprise)
+            VALUES (:titre, :description, :remunerationBase, :dateOffre, :idEntreprise)
+        ');
+        $requete->execute([
+            ':titre'            => $titre,
+            ':description'      => $description,
+            ':remunerationBase' => $remunerationBase,
+            ':dateOffre'        => $dateOffre,
+            ':idEntreprise'     => $idEntreprise,
+        ]);
+        return (int) $this->pdo->lastInsertId();
+    }
+
+    public function ajouterCompetence(int $idOffre, int $idCompetence): void {
+        $requete = $this->pdo->prepare('
+            INSERT IGNORE INTO offre_competence (id_offre, id_competence) VALUES (:idOffre, :idCompetence)
+        ');
+        $requete->execute([':idOffre' => $idOffre, ':idCompetence' => $idCompetence]);
+    }
+
     public function listerCompetences(): array {
         $requete = $this->pdo->query('SELECT id_competence, libelle FROM COMPETENCE ORDER BY libelle ASC');
         return $requete->fetchAll();
+    }
+
+    public function creerOuTrouverCompetence(string $libelle): int {
+        $stmt = $this->pdo->prepare('SELECT id_competence FROM COMPETENCE WHERE libelle = :libelle');
+        $stmt->execute([':libelle' => $libelle]);
+        $idExistant = $stmt->fetchColumn();
+        if ($idExistant !== false) {
+            return (int) $idExistant;
+        }
+        $stmt = $this->pdo->prepare('INSERT INTO COMPETENCE (libelle) VALUES (:libelle)');
+        $stmt->execute([':libelle' => $libelle]);
+        return (int) $this->pdo->lastInsertId();
     }
 
     public function listerTitres(): array {

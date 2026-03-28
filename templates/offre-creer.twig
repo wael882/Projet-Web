@@ -1,0 +1,158 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stagio - Créer une offre{% endblock %}
+
+{% block description %}content="Stagio - Créer une offre de stage"{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/postuler.css" />
+{% endblock %}
+
+{% block content %}
+
+  <main class="postuler-container">
+    <div class="postuler-card">
+
+      <div class="postuler-header">
+        <h1>Créer une offre de stage</h1>
+      </div>
+
+      {% if error %}
+        <p class="alert alert-error">{{ error }}</p>
+      {% endif %}
+
+      <form method="POST" action="/offre/creer" class="postuler-form">
+
+        <div class="form-group">
+          <label for="saisie-entreprise">Entreprise</label>
+          <input type="text" id="saisie-entreprise" list="liste-entreprises" placeholder="Rechercher une entreprise..." autocomplete="off" required>
+          <datalist id="liste-entreprises">
+            {% for entreprise in entreprises %}
+              <option value="{{ entreprise.nom }}" data-id="{{ entreprise.id_entreprise }}"></option>
+            {% endfor %}
+          </datalist>
+          <input type="hidden" id="id_entreprise" name="id_entreprise" value="">
+        </div>
+
+        <div class="form-group">
+          <label for="titre">Titre du poste</label>
+          <input type="text" id="titre" name="titre" placeholder="Ex : Développeur web junior" required>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" rows="8" placeholder="Décrivez le poste, les missions, le profil recherché..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="remuneration_base">Rémunération de base (€/an) <span class="hint">optionnel</span></label>
+          <input type="number" id="remuneration_base" name="remuneration_base" placeholder="Ex : 7200" min="0" step="0.01">
+        </div>
+
+        <div class="form-group">
+          <label for="date_offre">Date de début du stage <span class="hint">optionnel</span></label>
+          <input type="date" id="date_offre" name="date_offre">
+        </div>
+
+        <div class="form-group">
+          <label>Compétences requises <span class="hint">optionnel</span></label>
+          <div class="nouvelle-competence-zone">
+            <input type="text" id="saisie-competence" placeholder="Ex : React, Node.js, Docker..." autocomplete="off">
+            <button type="button" class="btn-ajouter-competence" onclick="ajouterCompetence()">Ajouter</button>
+          </div>
+          <div class="tags-nouvelles-competences" id="tags-competences"></div>
+
+          <div class="recapitulatif-competences" id="recapitulatif-competences">
+            <div class="recapitulatif-entete">
+              <span class="recapitulatif-titre">Compétences ajoutées</span>
+              <span class="recapitulatif-compteur" id="compteur-competences">0</span>
+            </div>
+            <p class="recapitulatif-vide" id="recapitulatif-vide">Aucune compétence ajoutée pour le moment.</p>
+            <div class="recapitulatif-liste" id="recapitulatif-liste"></div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a href="/entreprises" class="btn-annuler">Annuler</a>
+          <button type="submit" class="btn-postuler">Publier l'offre</button>
+        </div>
+
+      </form>
+
+      <script>
+        // Résolution entreprise → id
+        const cartEntreprises = {};
+        document.querySelectorAll('#liste-entreprises option').forEach(opt => {
+          cartEntreprises[opt.value.toLowerCase()] = opt.dataset.id;
+        });
+
+        document.getElementById('saisie-entreprise').addEventListener('input', function() {
+          const id = cartEntreprises[this.value.trim().toLowerCase()] ?? '';
+          document.getElementById('id_entreprise').value = id;
+        });
+
+        document.querySelector('form').addEventListener('submit', function(e) {
+          const id = document.getElementById('id_entreprise').value;
+          if (!id) {
+            e.preventDefault();
+            document.getElementById('saisie-entreprise').setCustomValidity('Veuillez choisir une entreprise de la liste.');
+            document.getElementById('saisie-entreprise').reportValidity();
+          } else {
+            document.getElementById('saisie-entreprise').setCustomValidity('');
+          }
+        });
+
+        function ajouterCompetence() {
+          const saisie = document.getElementById('saisie-competence');
+          const libelle = saisie.value.trim();
+          if (!libelle) return;
+
+          // Évite les doublons dans les tags déjà ajoutés
+          const dejaSaisie = [...document.querySelectorAll('.tag-competence span')].map(s => s.textContent.toLowerCase());
+          if (dejaSaisie.includes(libelle.toLowerCase())) {
+            saisie.value = '';
+            return;
+          }
+
+          const conteneur = document.getElementById('tags-competences');
+          const tag = document.createElement('span');
+          tag.className = 'tag-competence';
+          tag.innerHTML = `<span>${libelle}</span><input type="hidden" name="nouvelles_competences[]" value="${libelle}"><button type="button" onclick="this.parentElement.remove(); mettreAJourRecapitulatif();" title="Retirer">×</button>`;
+          conteneur.appendChild(tag);
+          saisie.value = '';
+          saisie.focus();
+          mettreAJourRecapitulatif();
+        }
+
+        function mettreAJourRecapitulatif() {
+          const tags = [...document.querySelectorAll('.tag-competence span')];
+          const liste  = document.getElementById('recapitulatif-liste');
+          const vide   = document.getElementById('recapitulatif-vide');
+          const compteur = document.getElementById('compteur-competences');
+
+          liste.innerHTML = '';
+          compteur.textContent = tags.length;
+
+          if (tags.length === 0) {
+            vide.style.display = 'block';
+          } else {
+            vide.style.display = 'none';
+            tags.forEach((tag, index) => {
+              const ligne = document.createElement('div');
+              ligne.className = 'recapitulatif-ligne';
+              ligne.innerHTML = `<span class="recapitulatif-numero">${index + 1}</span><span class="recapitulatif-nom">${tag.textContent}</span>`;
+              liste.appendChild(ligne);
+            });
+          }
+        }
+
+        document.getElementById('saisie-competence').addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') { e.preventDefault(); ajouterCompetence(); }
+        });
+      </script>
+
+    </div>
+  </main>
+
+{% endblock %}

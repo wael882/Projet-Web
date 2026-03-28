@@ -39,6 +39,16 @@ class PageController
         }
     }
 
+    private function requireRoles(array $roles): void
+    {
+        $this->requireAuth();
+        if (!in_array($_SESSION['user']['role'] ?? '', $roles, true)) {
+            $_SESSION['error'] = 'Accès refusé.';
+            header('Location: /acceuil');
+            exit;
+        }
+    }
+
     public function pilote()
     {
         $this->requireRole('pilote');
@@ -636,7 +646,7 @@ class PageController
     }
 
     public function entrepriseInscription(): void {
-        $this->requireAuth();
+        $this->requireRoles(['admin', 'pilote']);
         echo $this->twig->render('entreprise-inscription.twig', [
             'error'   => $_SESSION['error'] ?? null,
             'success' => $_SESSION['success'] ?? null,
@@ -645,14 +655,13 @@ class PageController
     }
 
     public function entrepriseInscriptionPost(): void {
-        $this->requireAuth();
+        $this->requireRoles(['admin', 'pilote']);
         $nom         = trim($_POST['nom'] ?? '');
         $description = trim($_POST['description'] ?? '');
         $email       = trim($_POST['email_contact'] ?? '');
         $telephone   = trim($_POST['telephone_contact'] ?? '');
         $ville       = trim($_POST['ville'] ?? '');
         $siteWeb     = trim($_POST['site_web'] ?? '');
-        $idUser      = (int) $_SESSION['user']['id_utilisateur'];
 
         if (!$nom) {
             $_SESSION['error'] = 'Le nom de l\'entreprise est obligatoire.';
@@ -660,36 +669,33 @@ class PageController
             exit;
         }
 
-        (new EntrepriseModel())->demanderCreation($nom, $description, $email, $telephone, $ville, $siteWeb, $idUser);
+        (new EntrepriseModel())->demanderCreation($nom, $description, $email, $telephone, $ville, $siteWeb);
         $_SESSION['success'] = 'Votre demande a bien été envoyée. Un administrateur va l\'examiner.';
         header('Location: /entreprise/inscription');
         exit;
     }
 
     public function entrepriseModifier(): void {
-        $this->requireAuth();
-        $id     = (int) ($_GET['id'] ?? 0);
-        $model  = new EntrepriseModel();
+        $this->requireRole('admin');
+        $id         = (int) ($_GET['id'] ?? 0);
+        $model      = new EntrepriseModel();
         $entreprise = $model->findById($id);
 
-        if (!$entreprise || (int) $entreprise['id_utilisateur'] !== (int) $_SESSION['user']['id_utilisateur']) {
+        if (!$entreprise) {
             header('Location: /entreprises');
             exit;
         }
 
-        $dejaEnAttente = $model->aDemandeEnAttente($id, (int) $_SESSION['user']['id_utilisateur']);
-
         echo $this->twig->render('entreprise-modifier.twig', [
-            'entreprise'     => $entreprise,
-            'dejaEnAttente'  => $dejaEnAttente,
-            'error'          => $_SESSION['error'] ?? null,
-            'success'        => $_SESSION['success'] ?? null,
+            'entreprise' => $entreprise,
+            'error'      => $_SESSION['error'] ?? null,
+            'success'    => $_SESSION['success'] ?? null,
         ]);
         unset($_SESSION['error'], $_SESSION['success']);
     }
 
     public function entrepriseModifierPost(): void {
-        $this->requireAuth();
+        $this->requireRole('admin');
         $id          = (int) ($_POST['id_entreprise'] ?? 0);
         $nom         = trim($_POST['nom'] ?? '');
         $description = trim($_POST['description'] ?? '');
@@ -702,7 +708,7 @@ class PageController
         $model      = new EntrepriseModel();
         $entreprise = $model->findById($id);
 
-        if (!$entreprise || (int) $entreprise['id_utilisateur'] !== $idUser) {
+        if (!$entreprise) {
             header('Location: /entreprises');
             exit;
         }
@@ -719,22 +725,77 @@ class PageController
         exit;
     }
 
-    public function mesEntreprises(): void {
-        $this->requireAuth();
-        $model      = new EntrepriseModel();
-        $entreprises = $model->findByUtilisateur((int) $_SESSION['user']['id_utilisateur']);
+    public function offreCreer(): void {
+        $this->requireRoles(['admin', 'pilote']);
+        $modeleEntreprise = new EntrepriseModel();
+        $entreprises      = $modeleEntreprise->listerToutesActives();
+
         if (empty($entreprises)) {
+            $_SESSION['error'] = 'Aucune entreprise approuvée disponible pour créer une offre.';
             header('Location: /entreprises');
             exit;
         }
-        echo $this->twig->render('mes-entreprises.twig', ['entreprises' => $entreprises]);
+
+        $modeleOffre = new OffreModel();
+        echo $this->twig->render('offre-creer.twig', [
+            'entreprises' => $entreprises,
+            'competences' => $modeleOffre->listerCompetences(),
+            'error'       => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['error']);
+    }
+
+    public function offreCreerPost(): void {
+        $this->requireRoles(['admin', 'pilote']);
+        $modeleEntreprise    = new EntrepriseModel();
+        $entreprisesActives  = $modeleEntreprise->listerToutesActives();
+
+        $idEntreprise        = (int) ($_POST['id_entreprise'] ?? 0);
+        $titre               = trim($_POST['titre'] ?? '');
+        $description         = trim($_POST['description'] ?? '');
+        $remunerationBase    = ($_POST['remuneration_base'] ?? '') !== '' ? (float) $_POST['remuneration_base'] : null;
+        $dateOffre           = ($_POST['date_offre'] ?? '') !== '' ? $_POST['date_offre'] : null;
+        $competencesChoisies = array_map('intval', $_POST['competences'] ?? []);
+
+        // Vérifie que l'entreprise choisie est bien une entreprise active approuvée
+        $idEntreprisesAutorisees = array_column($entreprisesActives, 'id_entreprise');
+        if (!$titre || !$description || !in_array($idEntreprise, $idEntreprisesAutorisees)) {
+            $_SESSION['error'] = 'Veuillez remplir tous les champs obligatoires.';
+            header('Location: /offre/creer');
+            exit;
+        }
+
+        $modeleOffre = new OffreModel();
+        $idOffre     = $modeleOffre->creer($idEntreprise, $titre, $description, $remunerationBase, $dateOffre);
+
+        // Compétences existantes cochées
+        foreach ($competencesChoisies as $idCompetence) {
+            $modeleOffre->ajouterCompetence($idOffre, $idCompetence);
+        }
+
+        // Nouvelles compétences saisies manuellement
+        $nouvellesCompetences = $_POST['nouvelles_competences'] ?? [];
+        foreach ($nouvellesCompetences as $libelle) {
+            $libelle = trim($libelle);
+            if ($libelle === '') continue;
+            $idCompetence = $modeleOffre->creerOuTrouverCompetence($libelle);
+            $modeleOffre->ajouterCompetence($idOffre, $idCompetence);
+        }
+
+        $_SESSION['success'] = 'L\'offre a bien été créée.';
+        header('Location: /offre?id=' . $idOffre);
+        exit;
+    }
+
+    public function mesEntreprises(): void {
+        header('Location: /entreprises');
+        exit;
     }
 
     public function entrepriseDemanderSuppression(): void {
-        $this->requireAuth();
-        $id     = (int) ($_POST['id_entreprise'] ?? 0);
-        $idUser = (int) $_SESSION['user']['id_utilisateur'];
-        $ok     = (new EntrepriseModel())->demanderSuppression($id, $idUser);
+        $this->requireRoles(['admin', 'pilote']);
+        $id = (int) ($_POST['id_entreprise'] ?? 0);
+        $ok = (new EntrepriseModel())->demanderSuppression($id);
         $_SESSION['success'] = $ok ? 'Demande de suppression envoyée.' : 'Impossible d\'effectuer cette action.';
         header('Location: /entreprise?id=' . $id);
         exit;
@@ -850,6 +911,29 @@ class PageController
         }
         header('Location: /admin/modifications');
         exit;
+    }
+
+    public function adminDashboard(): void {
+        $this->requireRole('admin');
+        $db = \App\Database::getInstance()->getPdo();
+
+        $stats = [
+            'nb_entreprises_en_attente'  => count((new EntrepriseModel())->getDemandesEnAttente()),
+            'nb_modifications_en_attente'=> count((new EntrepriseModel())->getModificationsEnAttente()),
+            'nb_suppressions_en_attente' => count((new EntrepriseModel())->getSuppressionsDemandees()),
+            'nb_offres'                  => (int) $db->query('SELECT COUNT(*) FROM OFFRE WHERE active = TRUE')->fetchColumn(),
+            'nb_entreprises'             => (int) $db->query('SELECT COUNT(*) FROM ENTREPRISE WHERE statut = "approuvee" AND active = TRUE')->fetchColumn(),
+            'nb_etudiants'               => (int) $db->query('SELECT COUNT(*) FROM ETUDIANT')->fetchColumn(),
+            'nb_pilotes'                 => (int) $db->query('SELECT COUNT(*) FROM PILOTE')->fetchColumn(),
+            'nb_candidatures'            => (int) $db->query('SELECT COUNT(*) FROM CANDIDATURE')->fetchColumn(),
+        ];
+
+        echo $this->twig->render('admin/dashboard.twig', [
+            'stats'   => $stats,
+            'success' => $_SESSION['success'] ?? null,
+            'error'   => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
     }
 
     public function adminEntreprises(): void {

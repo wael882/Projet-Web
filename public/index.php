@@ -29,14 +29,7 @@ $twig->addGlobal('base_url', BASE_URL);
 // Test connexion BDD
 $db = Database::getInstance()->getPdo();
 
-// Entreprise de l'utilisateur connecté (global Twig)
-$aEntreprise = false;
-if (!empty($_SESSION['user'])) {
-    $stmt = $db->prepare('SELECT COUNT(*) FROM ENTREPRISE WHERE id_utilisateur = :id AND statut = "approuvee" AND active = TRUE');
-    $stmt->execute([':id' => $_SESSION['user']['id_utilisateur']]);
-    $aEntreprise = (int) $stmt->fetchColumn() > 0;
-}
-$twig->addGlobal('aEntreprise', $aEntreprise);
+$twig->addGlobal('aEntreprise', false);
 
 // Router
 $router = new Router();

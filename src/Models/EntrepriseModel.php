@@ -107,19 +107,18 @@ class EntrepriseModel {
         ]);
     }
 
-    public function demanderCreation(string $nom, string $description, string $email, string $telephone, string $ville, string $siteWeb, int $idUtilisateur): void {
+    public function demanderCreation(string $nom, string $description, string $email, string $telephone, string $ville, string $siteWeb): void {
         $stmt = $this->pdo->prepare('
-            INSERT INTO ENTREPRISE (nom, description, email_contact, telephone_contact, ville, site_web, active, statut, id_utilisateur)
-            VALUES (:nom, :description, :email, :telephone, :ville, :site_web, FALSE, "en_attente", :id_utilisateur)
+            INSERT INTO ENTREPRISE (nom, description, email_contact, telephone_contact, ville, site_web, active, statut)
+            VALUES (:nom, :description, :email, :telephone, :ville, :site_web, FALSE, "en_attente")
         ');
         $stmt->execute([
-            ':nom'           => $nom,
-            ':description'   => $description,
-            ':email'         => $email,
-            ':telephone'     => $telephone,
-            ':ville'         => $ville,
-            ':site_web'      => $siteWeb,
-            ':id_utilisateur'=> $idUtilisateur,
+            ':nom'         => $nom,
+            ':description' => $description,
+            ':email'       => $email,
+            ':telephone'   => $telephone,
+            ':ville'       => $ville,
+            ':site_web'    => $siteWeb,
         ]);
     }
 
@@ -214,22 +213,20 @@ class EntrepriseModel {
         ')->execute([':id' => $id]);
     }
 
-    public function demanderSuppression(int $id, int $idUtilisateur): bool {
+    public function demanderSuppression(int $id): bool {
         $stmt = $this->pdo->prepare('
             UPDATE ENTREPRISE SET statut = "suppression_demandee"
-            WHERE id_entreprise = :id AND id_utilisateur = :user AND statut = "approuvee"
+            WHERE id_entreprise = :id AND statut = "approuvee"
         ');
-        $stmt->execute([':id' => $id, ':user' => $idUtilisateur]);
+        $stmt->execute([':id' => $id]);
         return $stmt->rowCount() > 0;
     }
 
     public function getSuppressionsDemandees(): array {
         $stmt = $this->pdo->query('
-            SELECT e.*, u.prenom, u.nom AS nom_user
-            FROM ENTREPRISE e
-            JOIN UTILISATEUR u ON e.id_utilisateur = u.id_utilisateur
-            WHERE e.statut = "suppression_demandee"
-            ORDER BY e.date_creation DESC
+            SELECT * FROM ENTREPRISE
+            WHERE statut = "suppression_demandee"
+            ORDER BY date_creation DESC
         ');
         return $stmt->fetchAll();
     }
@@ -267,16 +264,6 @@ class EntrepriseModel {
             ORDER BY nom ASC
         ');
         return $requete->fetchAll();
-    }
-
-    public function findByUtilisateur(int $idUtilisateur): array {
-        $stmt = $this->pdo->prepare('
-            SELECT * FROM ENTREPRISE
-            WHERE id_utilisateur = :id AND statut = "approuvee" AND active = TRUE
-            ORDER BY nom ASC
-        ');
-        $stmt->execute([':id' => $idUtilisateur]);
-        return $stmt->fetchAll();
     }
 
     public function findById(int $id): array|false {

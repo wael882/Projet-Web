@@ -1,21 +1,25 @@
 <header>
   <nav>
     <img src="{{ base_url }}image/logo.webp" alt="Logo Stagio" />
+    {% if user and user.role == 'admin' %}
+    <a href="/admin">Administration</a>
+    {% else %}
     <a href="{{ base_url }}acceuil">Accueil</a>
+    {% endif %}
     <a href="{{ base_url }}rechercher">Rechercher</a>
+    {% if user and user.role == 'admin' %}
+    <a href="{{ base_url }}favoris">Favoris</a>
+    {% endif %}
     <a href="{{ base_url }}entreprises">Entreprises</a>
     {% if user and user.role == 'etudiant' %}
-    <a href="{{ base_url }}favoris">Favoris</a>
     <a href="{{ base_url }}candidature">Mes candidatures</a>
+    <a href="{{ base_url }}favoris">Favoris</a>
     {% endif %}
     {% if user and user.role == 'pilote' %}
     <a href="{{ base_url }}pilote">Espace pilote</a>
     {% endif %}
-    {% if user and user.role == 'admin' %}
-    <a href="{{ base_url }}admin/entreprises">Administration</a>
-    {% endif %}
-    {% if aEntreprise %}
-    <a href="/mes-entreprises">Mes entreprises</a>
+    {% if user and user.role in ['admin', 'pilote'] %}
+    <a href="/offre/creer">Créer une offre</a>
     {% endif %}
     {% if user %}
     <span class="nav-username">Bonjour, {{ user.prenom }} {{ user.nom }}</span>

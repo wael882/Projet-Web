@@ -7,3 +7,4 @@ stagio.local-key.pem
 stagio.local.pem 
 config/config.php
 Makefile
+CLAUDE.md

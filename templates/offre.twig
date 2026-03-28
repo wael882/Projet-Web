@@ -23,7 +23,7 @@
         {% if offre.remuneration_base %}
         <div class="meta-item">
           <span class="meta-label">Rémunération</span>
-          <span class="meta-value">{{ offre.remuneration_base }} € / mois</span>
+          <span class="meta-value">{{ offre.remuneration_base }} € / an</span>
         </div>
         {% endif %}
         {% if offre.duree_stage %}
@@ -89,22 +89,26 @@
         <p class="alert alert-error">{{ error }}</p>
       {% endif %}
 
-      {% if dejaPostule %}
-        <p class="deja-postule">Candidature envoyée</p>
-      {% elseif offre.active %}
-        <a href="/postuler?id={{ offre.id_offre }}" class="btn-postuler">Postuler</a>
+      {% if user and user.role == 'etudiant' %}
+        {% if dejaPostule %}
+          <p class="deja-postule">Candidature envoyée</p>
+        {% elseif offre.active %}
+          <a href="/postuler?id={{ offre.id_offre }}" class="btn-postuler">Postuler</a>
+        {% endif %}
       {% endif %}
 
-      {% if offre.id_offre in favorisIds %}
-      <form method="POST" action="{{ base_url }}favoris/supprimer">
-        <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
-        <button type="submit" class="btn-favoris actif">Retirer des favoris</button>
-      </form>
-      {% else %}
-      <form method="POST" action="{{ base_url }}favoris">
-        <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
-        <button type="submit" class="btn-favoris">Ajouter aux favoris</button>
-      </form>
+      {% if user %}
+        {% if offre.id_offre in favorisIds %}
+        <form method="POST" action="{{ base_url }}favoris/supprimer">
+          <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
+          <button type="submit" class="btn-favoris actif">Retirer des favoris</button>
+        </form>
+        {% else %}
+        <form method="POST" action="{{ base_url }}favoris">
+          <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
+          <button type="submit" class="btn-favoris">Ajouter aux favoris</button>
+        </form>
+        {% endif %}
       {% endif %}
 
       <a href="/rechercher" class="btn-retour">Retour aux offres</a>

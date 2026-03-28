@@ -618,6 +618,70 @@ class PageController
         exit;
     }
 
+    public function entrepriseInscription(): void {
+        $this->requireAuth();
+        echo $this->twig->render('entreprise-inscription.twig', [
+            'error'   => $_SESSION['error'] ?? null,
+            'success' => $_SESSION['success'] ?? null,
+        ]);
+        unset($_SESSION['error'], $_SESSION['success']);
+    }
+
+    public function entrepriseInscriptionPost(): void {
+        $this->requireAuth();
+        $nom         = trim($_POST['nom'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $email       = trim($_POST['email_contact'] ?? '');
+        $telephone   = trim($_POST['telephone_contact'] ?? '');
+        $ville       = trim($_POST['ville'] ?? '');
+        $siteWeb     = trim($_POST['site_web'] ?? '');
+
+        if (!$nom) {
+            $_SESSION['error'] = 'Le nom de l\'entreprise est obligatoire.';
+            header('Location: /entreprise/inscription');
+            exit;
+        }
+
+        (new EntrepriseModel())->demanderCreation($nom, $description, $email, $telephone, $ville, $siteWeb);
+        $_SESSION['success'] = 'Votre demande a bien été envoyée. Un administrateur va l\'examiner.';
+        header('Location: /entreprise/inscription');
+        exit;
+    }
+
+    public function adminEntreprises(): void {
+        $this->requireRole('admin');
+        $model    = new EntrepriseModel();
+        $demandes = $model->getDemandesEnAttente();
+        echo $this->twig->render('admin/entreprises.twig', [
+            'demandes' => $demandes,
+            'success'  => $_SESSION['success'] ?? null,
+            'error'    => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function adminEntrepriseApprouver(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_POST['id_entreprise'] ?? 0);
+        if ($id) {
+            (new EntrepriseModel())->approuver($id);
+            $_SESSION['success'] = 'Entreprise approuvée.';
+        }
+        header('Location: /admin/entreprises');
+        exit;
+    }
+
+    public function adminEntrepriseRejeter(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_POST['id_entreprise'] ?? 0);
+        if ($id) {
+            (new EntrepriseModel())->rejeter($id);
+            $_SESSION['success'] = 'Entreprise rejetée.';
+        }
+        header('Location: /admin/entreprises');
+        exit;
+    }
+
     public function entreprises(): void {
         $model       = new EntrepriseModel();
         $search      = trim($_GET['search'] ?? '');

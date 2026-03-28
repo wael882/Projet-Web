@@ -107,6 +107,40 @@ class EntrepriseModel {
         ]);
     }
 
+    public function demanderCreation(string $nom, string $description, string $email, string $telephone, string $ville, string $siteWeb): void {
+        $stmt = $this->pdo->prepare('
+            INSERT INTO ENTREPRISE (nom, description, email_contact, telephone_contact, ville, site_web, active, statut)
+            VALUES (:nom, :description, :email, :telephone, :ville, :site_web, FALSE, "en_attente")
+        ');
+        $stmt->execute([
+            ':nom'         => $nom,
+            ':description' => $description,
+            ':email'       => $email,
+            ':telephone'   => $telephone,
+            ':ville'       => $ville,
+            ':site_web'    => $siteWeb,
+        ]);
+    }
+
+    public function getDemandesEnAttente(): array {
+        $stmt = $this->pdo->query('
+            SELECT * FROM ENTREPRISE WHERE statut = "en_attente" ORDER BY date_creation DESC
+        ');
+        return $stmt->fetchAll();
+    }
+
+    public function approuver(int $id): void {
+        $this->pdo->prepare('
+            UPDATE ENTREPRISE SET statut = "approuvee", active = TRUE WHERE id_entreprise = :id
+        ')->execute([':id' => $id]);
+    }
+
+    public function rejeter(int $id): void {
+        $this->pdo->prepare('
+            UPDATE ENTREPRISE SET statut = "rejetee", active = FALSE WHERE id_entreprise = :id
+        ')->execute([':id' => $id]);
+    }
+
     public function findById(int $id): array|false {
         $stmt = $this->pdo->prepare('
             SELECT e.*,

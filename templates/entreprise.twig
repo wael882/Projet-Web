@@ -20,11 +20,17 @@
     </div>
     <div>
       <h1>{{ entreprise.nom }}</h1>
+      {% if entreprise.ville %}
+        <p style="color:var(--gris); font-size:0.9rem;">📍 {{ entreprise.ville }}</p>
+      {% endif %}
       {% if entreprise.email_contact %}
         <p style="color:var(--gris); font-size:0.9rem;">✉ {{ entreprise.email_contact }}</p>
       {% endif %}
       {% if entreprise.telephone_contact %}
         <p style="color:var(--gris); font-size:0.9rem;">📞 {{ entreprise.telephone_contact }}</p>
+      {% endif %}
+      {% if entreprise.site_web %}
+        <p style="font-size:0.9rem;"><a href="{{ entreprise.site_web }}" target="_blank" style="color:var(--bleu);">{{ entreprise.site_web }}</a></p>
       {% endif %}
     </div>
   </section>

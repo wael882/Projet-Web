@@ -89,17 +89,16 @@ class OffreModel
         return $requete->fetch();
     }
 
-    public function creer(int $idEntreprise, string $titre, string $description, ?float $remunerationBase, ?string $dateOffre, ?string $photo = null): int {
+    public function creer(int $idEntreprise, string $titre, string $description, ?float $remunerationBase, ?string $dateOffre): int {
         $requete = $this->pdo->prepare('
-            INSERT INTO OFFRE (titre, description, remuneration_base, date_offre, photo, id_entreprise)
-            VALUES (:titre, :description, :remunerationBase, :dateOffre, :photo, :idEntreprise)
+            INSERT INTO OFFRE (titre, description, remuneration_base, date_offre, id_entreprise)
+            VALUES (:titre, :description, :remunerationBase, :dateOffre, :idEntreprise)
         ');
         $requete->execute([
             ':titre'            => $titre,
             ':description'      => $description,
             ':remunerationBase' => $remunerationBase,
             ':dateOffre'        => $dateOffre,
-            ':photo'            => $photo,
             ':idEntreprise'     => $idEntreprise,
         ]);
         return (int) $this->pdo->lastInsertId();
@@ -238,39 +237,76 @@ class OffreModel
         return (int) $requete->fetchColumn();
     }
 
-    public function modifier(int $idOffre, int $idEntreprise, string $titre, string $description, ?float $remunerationBase, ?string $dateOffre, ?string $photo = null): void {
-        if ($photo !== null) {
-            $requete = $this->pdo->prepare('
-                UPDATE OFFRE
-                SET titre = :titre, description = :description, remuneration_base = :remunerationBase,
-                    date_offre = :dateOffre, photo = :photo, id_entreprise = :idEntreprise
-                WHERE id_offre = :idOffre
-            ');
-            $requete->execute([
-                ':titre'            => $titre,
-                ':description'      => $description,
-                ':remunerationBase' => $remunerationBase,
-                ':dateOffre'        => $dateOffre,
-                ':photo'            => $photo,
-                ':idEntreprise'     => $idEntreprise,
-                ':idOffre'          => $idOffre,
-            ]);
-        } else {
-            $requete = $this->pdo->prepare('
-                UPDATE OFFRE
-                SET titre = :titre, description = :description, remuneration_base = :remunerationBase,
-                    date_offre = :dateOffre, id_entreprise = :idEntreprise
-                WHERE id_offre = :idOffre
-            ');
-            $requete->execute([
-                ':titre'            => $titre,
-                ':description'      => $description,
-                ':remunerationBase' => $remunerationBase,
-                ':dateOffre'        => $dateOffre,
-                ':idEntreprise'     => $idEntreprise,
-                ':idOffre'          => $idOffre,
-            ]);
-        }
+    public function modifier(int $idOffre, int $idEntreprise, string $titre, string $description, ?float $remunerationBase, ?string $dateOffre): void {
+        $requete = $this->pdo->prepare('
+            UPDATE OFFRE
+            SET titre = :titre, description = :description, remuneration_base = :remunerationBase,
+                date_offre = :dateOffre, id_entreprise = :idEntreprise
+            WHERE id_offre = :idOffre
+        ');
+        $requete->execute([
+            ':titre'            => $titre,
+            ':description'      => $description,
+            ':remunerationBase' => $remunerationBase,
+            ':dateOffre'        => $dateOffre,
+            ':idEntreprise'     => $idEntreprise,
+            ':idOffre'          => $idOffre,
+        ]);
+    }
+
+    public function repartitionParDureeStage(): array {
+        $requete = $this->pdo->query('
+            SELECT
+                CASE
+                    WHEN duree_stage IS NULL         THEN "Non précisée"
+                    WHEN duree_stage <= 4            THEN "1 à 4 semaines"
+                    WHEN duree_stage <= 8            THEN "5 à 8 semaines"
+                    WHEN duree_stage <= 12           THEN "9 à 12 semaines"
+                    WHEN duree_stage <= 24           THEN "13 à 24 semaines"
+                    ELSE                                  "Plus de 24 semaines"
+                END AS tranche_duree,
+                COUNT(*) AS nombre_offres
+            FROM OFFRE
+            WHERE active = TRUE
+            GROUP BY tranche_duree
+            ORDER BY MIN(COALESCE(duree_stage, 9999))
+        ');
+        return $requete->fetchAll();
+    }
+
+    public function topOffresWishlist(int $limite = 5): array {
+        $requete = $this->pdo->prepare('
+            SELECT OFFRE.id_offre, OFFRE.titre, ENTREPRISE.nom AS nom_entreprise,
+                   COUNT(WISHLIST.id_offre) AS nombre_favoris
+            FROM OFFRE
+            JOIN ENTREPRISE ON OFFRE.id_entreprise = ENTREPRISE.id_entreprise
+            LEFT JOIN WISHLIST ON OFFRE.id_offre = WISHLIST.id_offre
+            WHERE OFFRE.active = TRUE
+            GROUP BY OFFRE.id_offre, OFFRE.titre, ENTREPRISE.nom
+            ORDER BY nombre_favoris DESC
+            LIMIT :limite
+        ');
+        $requete->bindValue(':limite', $limite, \PDO::PARAM_INT);
+        $requete->execute();
+        return $requete->fetchAll();
+    }
+
+    public function moyenneCandidaturesParOffre(): float {
+        $requete = $this->pdo->query('
+            SELECT AVG(nb_candidatures) AS moyenne
+            FROM (
+                SELECT COUNT(CANDIDATURE.id_candidature) AS nb_candidatures
+                FROM OFFRE
+                LEFT JOIN CANDIDATURE ON OFFRE.id_offre = CANDIDATURE.id_offre
+                WHERE OFFRE.active = TRUE
+                GROUP BY OFFRE.id_offre
+            ) AS sous_requete
+        ');
+        return round((float) $requete->fetchColumn(), 1);
+    }
+
+    public function supprimer(int $idOffre): void {
+        $this->pdo->prepare('DELETE FROM OFFRE WHERE id_offre = :id')->execute([':id' => $idOffre]);
     }
 
     public function supprimerToutesCompetences(int $idOffre): void {

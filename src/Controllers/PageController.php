@@ -179,15 +179,42 @@ class PageController
 
         $candidatureModel = new CandidatureModel();
         $wishlistModel    = new WishlistModel();
+        $modeleOffre      = new OffreModel();
 
         $candidatures = $candidatureModel->findByUtilisateur((int) $_SESSION['user']['id_utilisateur']);
         $nbFavoris    = count($wishlistModel->getIdOffres((int) $_SESSION['user']['id_utilisateur']));
 
+        $cartesStatistiques = [
+            [
+                'titre'  => 'Offres disponibles',
+                'type'   => 'chiffre',
+                'valeur' => $modeleOffre->count(),
+                'unite'  => 'offres actives en base',
+            ],
+            [
+                'titre'  => 'Candidatures moyennes',
+                'type'   => 'chiffre',
+                'valeur' => $modeleOffre->moyenneCandidaturesParOffre(),
+                'unite'  => 'candidatures par offre en moyenne',
+            ],
+            [
+                'titre'  => 'Top des offres en favoris',
+                'type'   => 'liste',
+                'items'  => $modeleOffre->topOffresWishlist(5),
+            ],
+            [
+                'titre'  => 'Répartition par durée de stage',
+                'type'   => 'repartition',
+                'items'  => $modeleOffre->repartitionParDureeStage(),
+            ],
+        ];
+
         echo $this->twig->render('acceuil.twig', [
-            'candidatures'       => $candidatures,
-            'nbCandidatures'     => count($candidatures),
-            'nbFavoris'          => $nbFavoris,
+            'candidatures'          => $candidatures,
+            'nbCandidatures'        => count($candidatures),
+            'nbFavoris'             => $nbFavoris,
             'dernieresCandidatures' => array_slice($candidatures, 0, 3),
+            'cartesStatistiques'    => $cartesStatistiques,
         ]);
     }
 
@@ -786,29 +813,8 @@ class PageController
             exit;
         }
 
-        $cheminPhoto = null;
-        if (!empty($_FILES['photo']['name'])) {
-            $fichier        = $_FILES['photo'];
-            $typesAutorises = ['image/jpeg', 'image/png', 'image/webp'];
-            $finfo          = new \finfo(FILEINFO_MIME_TYPE);
-            $mimeReel       = $finfo->file($fichier['tmp_name']);
-
-            if ($fichier['error'] === UPLOAD_ERR_OK && $fichier['size'] <= 5 * 1024 * 1024 && in_array($mimeReel, $typesAutorises)) {
-                $ext         = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$mimeReel];
-                $nomFichier  = 'offre_' . uniqid() . '.' . $ext;
-                $destination = UPLOAD_PATH . '/offres/' . $nomFichier;
-                if (move_uploaded_file($fichier['tmp_name'], $destination)) {
-                    $cheminPhoto = 'uploads/offres/' . $nomFichier;
-                }
-            } else {
-                $_SESSION['error'] = 'Photo invalide (JPG/PNG/WEBP, 5 Mo max).';
-                header('Location: /offre/creer');
-                exit;
-            }
-        }
-
         $modeleOffre = new OffreModel();
-        $idOffre     = $modeleOffre->creer($idEntreprise, $titre, $description, $remunerationBase, $dateOffre, $cheminPhoto);
+        $idOffre     = $modeleOffre->creer($idEntreprise, $titre, $description, $remunerationBase, $dateOffre);
 
         // Compétences existantes cochées
         foreach ($competencesChoisies as $idCompetence) {
@@ -884,28 +890,7 @@ class PageController
             exit;
         }
 
-        $cheminPhoto = null;
-        if (!empty($_FILES['photo']['name'])) {
-            $fichier        = $_FILES['photo'];
-            $typesAutorises = ['image/jpeg', 'image/png', 'image/webp'];
-            $finfo          = new \finfo(FILEINFO_MIME_TYPE);
-            $mimeReel       = $finfo->file($fichier['tmp_name']);
-
-            if ($fichier['error'] === UPLOAD_ERR_OK && $fichier['size'] <= 5 * 1024 * 1024 && in_array($mimeReel, $typesAutorises)) {
-                $ext         = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$mimeReel];
-                $nomFichier  = 'offre_' . uniqid() . '.' . $ext;
-                $destination = UPLOAD_PATH . '/offres/' . $nomFichier;
-                if (move_uploaded_file($fichier['tmp_name'], $destination)) {
-                    $cheminPhoto = 'uploads/offres/' . $nomFichier;
-                }
-            } else {
-                $_SESSION['error'] = 'Photo invalide (JPG/PNG/WEBP, 5 Mo max).';
-                header('Location: /offre/modifier?id=' . $idOffre);
-                exit;
-            }
-        }
-
-        $modeleOffre->modifier($idOffre, $idEntreprise, $titre, $description, $remunerationBase, $dateOffre, $cheminPhoto);
+        $modeleOffre->modifier($idOffre, $idEntreprise, $titre, $description, $remunerationBase, $dateOffre);
 
         // Réinitialise et recrée les compétences
         $modeleOffre->supprimerToutesCompetences($idOffre);
@@ -925,6 +910,61 @@ class PageController
 
         $_SESSION['success'] = 'L\'offre a bien été modifiée.';
         header('Location: /offre?id=' . $idOffre);
+        exit;
+    }
+
+    public function offreStatistiques(): void {
+        $this->requireRoles(['admin', 'pilote']);
+
+        $modeleOffre = new OffreModel();
+
+        $cartes = [
+            [
+                'titre'  => 'Offres disponibles',
+                'type'   => 'chiffre',
+                'valeur' => $modeleOffre->count(),
+                'unite'  => 'offres actives en base',
+            ],
+            [
+                'titre'  => 'Candidatures moyennes',
+                'type'   => 'chiffre',
+                'valeur' => $modeleOffre->moyenneCandidaturesParOffre(),
+                'unite'  => 'candidatures par offre en moyenne',
+            ],
+            [
+                'titre'  => 'Top des offres en favoris',
+                'type'   => 'liste',
+                'items'  => $modeleOffre->topOffresWishlist(5),
+            ],
+            [
+                'titre'  => 'Répartition par durée de stage',
+                'type'   => 'repartition',
+                'items'  => $modeleOffre->repartitionParDureeStage(),
+            ],
+        ];
+
+        echo $this->twig->render('offre-statistiques.twig', [
+            'cartes' => $cartes,
+        ]);
+    }
+
+    public function offreSupprimerPost(): void {
+        $this->requireRoles(['admin', 'pilote']);
+
+        $idOffre     = (int) ($_POST['id_offre'] ?? 0);
+        $modeleOffre = new OffreModel();
+        $offre       = $modeleOffre->findById($idOffre);
+
+        if (!$offre) {
+            $_SESSION['error'] = 'Offre introuvable.';
+            header('Location: /rechercher');
+            exit;
+        }
+
+        $modeleOffre->supprimer($idOffre);
+
+        $_SESSION['success'] = 'L\'offre a bien été supprimée.';
+        header('Location: /rechercher');
         exit;
     }
 

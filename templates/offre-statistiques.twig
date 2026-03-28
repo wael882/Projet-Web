@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stagio - Statistiques des offres{% endblock %}
+
+{% block description %}content="Stagio - Statistiques des offres"{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/statistiques.css" />
+{% endblock %}
+
+{% block content %}
+<div class="statistiques-page">
+
+  <div class="statistiques-entete">
+    <h1 class="statistiques-titre">Statistiques des offres</h1>
+    <p class="statistiques-sous-titre">Aperçu des indicateurs clés des offres de stage</p>
+  </div>
+
+  <div class="carrousel-conteneur">
+
+    <button class="carrousel-bouton carrousel-bouton-precedent" aria-label="Carte précédente">&#8249;</button>
+
+    <div class="carrousel-piste-enveloppe">
+      <div class="carrousel-piste" id="carrouselPiste">
+
+        {% for carte in cartes %}
+        <div class="carrousel-carte">
+
+          {% if carte.type == 'chiffre' %}
+            <div class="carte-chiffre">
+              <span class="carte-grande-valeur">{{ carte.valeur }}</span>
+              <p class="carte-chiffre-titre">{{ carte.titre }}</p>
+              <p class="carte-unite">{{ carte.unite }}</p>
+            </div>
+
+          {% elseif carte.type == 'liste' %}
+            <div class="carte-liste">
+              <h2 class="carte-liste-titre">{{ carte.titre }}</h2>
+              {% if carte.items is empty %}
+                <p class="carte-vide">Aucune donnée disponible.</p>
+              {% else %}
+                <ol class="carte-classement">
+                  {% for item in carte.items %}
+                  <li class="classement-ligne">
+                    <span class="classement-rang">{{ loop.index }}</span>
+                    <span class="classement-info">
+                      <a href="/offre?id={{ item.id_offre }}" class="classement-titre-offre">{{ item.titre }}</a>
+                      <span class="classement-entreprise">{{ item.nom_entreprise }}</span>
+                    </span>
+                    <span class="classement-compteur">{{ item.nombre_favoris }} <span class="classement-label">favori{{ item.nombre_favoris != 1 ? 's' : '' }}</span></span>
+                  </li>
+                  {% endfor %}
+                </ol>
+              {% endif %}
+            </div>
+
+          {% elseif carte.type == 'repartition' %}
+            <div class="carte-repartition">
+              <h2 class="carte-repartition-titre">{{ carte.titre }}</h2>
+              {% if carte.items is empty %}
+                <p class="carte-vide">Aucune donnée disponible.</p>
+              {% else %}
+                {% set total = 0 %}
+                {% for item in carte.items %}{% set total = total + item.nombre_offres %}{% endfor %}
+                <div class="barres-repartition">
+                  {% for item in carte.items %}
+                  {% set pourcentage = total > 0 ? ((item.nombre_offres / total) * 100)|round : 0 %}
+                  <div class="barre-ligne">
+                    <span class="barre-etiquette">{{ item.tranche_duree }}</span>
+                    <div class="barre-progression-enveloppe">
+                      <div class="barre-progression" style="width: {{ pourcentage }}%"></div>
+                    </div>
+                    <span class="barre-valeur">{{ item.nombre_offres }} ({{ pourcentage }}%)</span>
+                  </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+
+        </div>
+        {% endfor %}
+
+      </div>
+    </div>
+
+    <button class="carrousel-bouton carrousel-bouton-suivant" aria-label="Carte suivante">&#8250;</button>
+
+  </div>
+
+  <div class="carrousel-indicateurs" id="carrouselIndicateurs">
+    {% for carte in cartes %}
+      <button class="indicateur{% if loop.first %} indicateur-actif{% endif %}" data-index="{{ loop.index0 }}" aria-label="Carte {{ loop.index }}"></button>
+    {% endfor %}
+  </div>
+
+</div>
+
+<script>
+(function () {
+  const piste        = document.getElementById('carrouselPiste');
+  const indicateurs  = document.querySelectorAll('#carrouselIndicateurs .indicateur');
+  const nombreCartes = indicateurs.length;
+  let indexCourant   = 0;
+
+  function allerALaCarte(index) {
+    indexCourant = (index + nombreCartes) % nombreCartes;
+    piste.style.transform = 'translateX(-' + (indexCourant * 100) + '%)';
+    indicateurs.forEach((ind, i) => {
+      ind.classList.toggle('indicateur-actif', i === indexCourant);
+    });
+  }
+
+  document.querySelector('.carrousel-bouton-precedent').addEventListener('click', function () {
+    allerALaCarte(indexCourant - 1);
+  });
+
+  document.querySelector('.carrousel-bouton-suivant').addEventListener('click', function () {
+    allerALaCarte(indexCourant + 1);
+  });
+
+  indicateurs.forEach(function (ind) {
+    ind.addEventListener('click', function () {
+      allerALaCarte(parseInt(ind.dataset.index));
+    });
+  });
+})();
+</script>
+{% endblock %}

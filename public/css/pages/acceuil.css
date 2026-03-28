@@ -1,14 +1,6 @@
 #acceuil-layout {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 2rem;
-  align-items: start;
-}
-
-@media (max-width: 992px) {
-  #acceuil-layout {
-    grid-template-columns: 1fr;
-  }
+  display: flex;
+  flex-direction: column;
 }
 
 .stats-grid {
@@ -34,20 +26,29 @@
 
 .sidebar {
   background: var(--blanc);
-  padding: 2rem;
+  padding: 1.5rem 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.sidebar h2 {
+  margin-bottom: 0;
+}
+
+.sidebar p {
+  margin-bottom: 0;
 }
 
 .sidebar hr {
-  margin: 1.5rem 0;
-  border: 0;
-  border-top: 1px solid var(--ligne);
+  display: none;
 }
 
 .sidebar a.btn-primary {
-  display: block;
-  text-align: center;
+  margin-left: auto;
   background: var(--orange);
   color: var(--blanc);
   padding: 0.6rem 1.4rem;
@@ -55,6 +56,7 @@
   font-weight: 600;
   font-size: 0.9rem;
   transition: background 0.2s;
+  white-space: nowrap;
 }
 
 .sidebar a.btn-primary:hover {

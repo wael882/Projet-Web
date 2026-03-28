@@ -120,6 +120,10 @@
 
       {% if user and user.role in ['admin', 'pilote'] %}
         <a href="/offre/modifier?id={{ offre.id_offre }}" class="btn-retour">Modifier l'offre</a>
+        <form method="POST" action="{{ base_url }}offre/supprimer" onsubmit="return confirm('Confirmer la suppression de cette offre ?')">
+          <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
+          <button type="submit" class="btn-supprimer">Supprimer l'offre</button>
+        </form>
       {% endif %}
 
       <a href="/rechercher" class="btn-retour">Retour aux offres</a>

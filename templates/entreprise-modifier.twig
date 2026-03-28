@@ -1,0 +1,73 @@
+{% extends 'base-index.html.twig' %}
+
+{% block title %}Stagio - Modifier {{ entreprise.nom }}{% endblock %}
+
+{% block content %}
+<div style="max-width:640px; margin:2rem auto;">
+
+  <a href="/entreprise?id={{ entreprise.id_entreprise }}" style="color:var(--gris); text-decoration:none; font-size:0.9rem;">← Retour à la fiche</a>
+
+  <h1 style="margin:1.5rem 0 0.25rem;">Modifier l'entreprise</h1>
+  <p style="color:var(--gris); font-size:0.9rem; margin-bottom:1.5rem;">Votre demande de modification sera examinée par un administrateur avant d'être appliquée.</p>
+
+  {% if error %}
+    <div class="alert alert-error" style="margin-bottom:1rem;">{{ error }}</div>
+  {% endif %}
+  {% if success %}
+    <div class="alert alert-success" style="margin-bottom:1rem;">{{ success }}</div>
+  {% endif %}
+
+  {% if dejaEnAttente %}
+    <div class="alert alert-error" style="margin-bottom:1rem;">Vous avez déjà une demande de modification en attente pour cette entreprise.</div>
+  {% else %}
+
+  <form method="POST" action="/entreprise/modifier" style="background:var(--blanc); border:1px solid var(--ligne); border-radius:12px; padding:2rem; display:flex; flex-direction:column; gap:1.1rem;">
+    <input type="hidden" name="id_entreprise" value="{{ entreprise.id_entreprise }}">
+
+    <div style="display:flex; flex-direction:column; gap:0.3rem;">
+      <label style="font-weight:600; font-size:0.9rem;">Nom <span style="color:red;">*</span></label>
+      <input type="text" name="nom" required value="{{ entreprise.nom }}"
+             style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:0.3rem;">
+      <label style="font-weight:600; font-size:0.9rem;">Description</label>
+      <textarea name="description" rows="5"
+                style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit; resize:vertical;">{{ entreprise.description }}</textarea>
+    </div>
+
+    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+      <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1; min-width:200px;">
+        <label style="font-weight:600; font-size:0.9rem;">Email de contact</label>
+        <input type="email" name="email_contact" value="{{ entreprise.email_contact }}"
+               style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1; min-width:200px;">
+        <label style="font-weight:600; font-size:0.9rem;">Téléphone de contact</label>
+        <input type="tel" name="telephone_contact" value="{{ entreprise.telephone_contact }}"
+               style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+      </div>
+    </div>
+
+    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+      <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1; min-width:200px;">
+        <label style="font-weight:600; font-size:0.9rem;">Ville</label>
+        <input type="text" name="ville" value="{{ entreprise.ville }}"
+               style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1; min-width:200px;">
+        <label style="font-weight:600; font-size:0.9rem;">Site web</label>
+        <input type="url" name="site_web" value="{{ entreprise.site_web }}"
+               style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; margin-top:0.5rem;">
+      <button type="submit" class="btn-principal">Envoyer la demande</button>
+    </div>
+
+  </form>
+  {% endif %}
+
+</div>
+{% endblock %}

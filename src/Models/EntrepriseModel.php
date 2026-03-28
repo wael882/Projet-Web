@@ -107,19 +107,92 @@ class EntrepriseModel {
         ]);
     }
 
-    public function demanderCreation(string $nom, string $description, string $email, string $telephone, string $ville, string $siteWeb): void {
+    public function demanderCreation(string $nom, string $description, string $email, string $telephone, string $ville, string $siteWeb, int $idUtilisateur): void {
         $stmt = $this->pdo->prepare('
-            INSERT INTO ENTREPRISE (nom, description, email_contact, telephone_contact, ville, site_web, active, statut)
-            VALUES (:nom, :description, :email, :telephone, :ville, :site_web, FALSE, "en_attente")
+            INSERT INTO ENTREPRISE (nom, description, email_contact, telephone_contact, ville, site_web, active, statut, id_utilisateur)
+            VALUES (:nom, :description, :email, :telephone, :ville, :site_web, FALSE, "en_attente", :id_utilisateur)
         ');
         $stmt->execute([
-            ':nom'         => $nom,
-            ':description' => $description,
-            ':email'       => $email,
-            ':telephone'   => $telephone,
-            ':ville'       => $ville,
-            ':site_web'    => $siteWeb,
+            ':nom'           => $nom,
+            ':description'   => $description,
+            ':email'         => $email,
+            ':telephone'     => $telephone,
+            ':ville'         => $ville,
+            ':site_web'      => $siteWeb,
+            ':id_utilisateur'=> $idUtilisateur,
         ]);
+    }
+
+    public function demanderModification(int $idEntreprise, int $idUtilisateur, string $nom, string $description, string $email, string $telephone, string $ville, string $siteWeb): void {
+        $stmt = $this->pdo->prepare('
+            INSERT INTO DEMANDE_MODIFICATION_ENTREPRISE (id_entreprise, id_utilisateur, nom, description, email_contact, telephone_contact, ville, site_web)
+            VALUES (:id_entreprise, :id_utilisateur, :nom, :description, :email, :telephone, :ville, :site_web)
+        ');
+        $stmt->execute([
+            ':id_entreprise'  => $idEntreprise,
+            ':id_utilisateur' => $idUtilisateur,
+            ':nom'            => $nom,
+            ':description'    => $description,
+            ':email'          => $email,
+            ':telephone'      => $telephone,
+            ':ville'          => $ville,
+            ':site_web'       => $siteWeb,
+        ]);
+    }
+
+    public function getModificationsEnAttente(): array {
+        $stmt = $this->pdo->query('
+            SELECT dm.*, e.nom AS nom_actuel, u.prenom, u.nom AS nom_user
+            FROM DEMANDE_MODIFICATION_ENTREPRISE dm
+            JOIN ENTREPRISE e ON dm.id_entreprise = e.id_entreprise
+            JOIN UTILISATEUR u ON dm.id_utilisateur = u.id_utilisateur
+            WHERE dm.statut = "en_attente"
+            ORDER BY dm.date_demande DESC
+        ');
+        return $stmt->fetchAll();
+    }
+
+    public function approuverModification(int $idDemande): void {
+        $stmt = $this->pdo->prepare('
+            SELECT * FROM DEMANDE_MODIFICATION_ENTREPRISE WHERE id_demande = :id
+        ');
+        $stmt->execute([':id' => $idDemande]);
+        $dm = $stmt->fetch();
+        if (!$dm) return;
+
+        $this->pdo->prepare('
+            UPDATE ENTREPRISE
+            SET nom = :nom, description = :description, email_contact = :email,
+                telephone_contact = :telephone, ville = :ville, site_web = :site_web
+            WHERE id_entreprise = :id_entreprise
+        ')->execute([
+            ':nom'          => $dm['nom'],
+            ':description'  => $dm['description'],
+            ':email'        => $dm['email_contact'],
+            ':telephone'    => $dm['telephone_contact'],
+            ':ville'        => $dm['ville'],
+            ':site_web'     => $dm['site_web'],
+            ':id_entreprise'=> $dm['id_entreprise'],
+        ]);
+
+        $this->pdo->prepare('
+            UPDATE DEMANDE_MODIFICATION_ENTREPRISE SET statut = "approuvee" WHERE id_demande = :id
+        ')->execute([':id' => $idDemande]);
+    }
+
+    public function rejeterModification(int $idDemande): void {
+        $this->pdo->prepare('
+            UPDATE DEMANDE_MODIFICATION_ENTREPRISE SET statut = "rejetee" WHERE id_demande = :id
+        ')->execute([':id' => $idDemande]);
+    }
+
+    public function aDemandeEnAttente(int $idEntreprise, int $idUtilisateur): bool {
+        $stmt = $this->pdo->prepare('
+            SELECT COUNT(*) FROM DEMANDE_MODIFICATION_ENTREPRISE
+            WHERE id_entreprise = :id_entreprise AND id_utilisateur = :id_utilisateur AND statut = "en_attente"
+        ');
+        $stmt->execute([':id_entreprise' => $idEntreprise, ':id_utilisateur' => $idUtilisateur]);
+        return (int) $stmt->fetchColumn() > 0;
     }
 
     public function getDemandesEnAttente(): array {
@@ -139,6 +212,62 @@ class EntrepriseModel {
         $this->pdo->prepare('
             UPDATE ENTREPRISE SET statut = "rejetee", active = FALSE WHERE id_entreprise = :id
         ')->execute([':id' => $id]);
+    }
+
+    public function demanderSuppression(int $id, int $idUtilisateur): bool {
+        $stmt = $this->pdo->prepare('
+            UPDATE ENTREPRISE SET statut = "suppression_demandee"
+            WHERE id_entreprise = :id AND id_utilisateur = :user AND statut = "approuvee"
+        ');
+        $stmt->execute([':id' => $id, ':user' => $idUtilisateur]);
+        return $stmt->rowCount() > 0;
+    }
+
+    public function getSuppressionsDemandees(): array {
+        $stmt = $this->pdo->query('
+            SELECT e.*, u.prenom, u.nom AS nom_user
+            FROM ENTREPRISE e
+            JOIN UTILISATEUR u ON e.id_utilisateur = u.id_utilisateur
+            WHERE e.statut = "suppression_demandee"
+            ORDER BY e.date_creation DESC
+        ');
+        return $stmt->fetchAll();
+    }
+
+    public function supprimer(int $id): void {
+        $this->pdo->prepare('DELETE FROM ENTREPRISE WHERE id_entreprise = :id')->execute([':id' => $id]);
+    }
+
+    public function rejeterSuppression(int $id): void {
+        $this->pdo->prepare('
+            UPDATE ENTREPRISE SET statut = "approuvee", active = TRUE WHERE id_entreprise = :id
+        ')->execute([':id' => $id]);
+    }
+
+    public function adminModifierDirect(int $id, string $nom, string $description, string $email, string $telephone, string $ville, string $siteWeb): void {
+        $this->pdo->prepare('
+            UPDATE ENTREPRISE SET nom = :nom, description = :description, email_contact = :email,
+            telephone_contact = :telephone, ville = :ville, site_web = :site_web
+            WHERE id_entreprise = :id
+        ')->execute([
+            ':nom'         => $nom,
+            ':description' => $description,
+            ':email'       => $email,
+            ':telephone'   => $telephone,
+            ':ville'       => $ville,
+            ':site_web'    => $siteWeb,
+            ':id'          => $id,
+        ]);
+    }
+
+    public function findByUtilisateur(int $idUtilisateur): array {
+        $stmt = $this->pdo->prepare('
+            SELECT * FROM ENTREPRISE
+            WHERE id_utilisateur = :id AND statut = "approuvee" AND active = TRUE
+            ORDER BY nom ASC
+        ');
+        $stmt->execute([':id' => $idUtilisateur]);
+        return $stmt->fetchAll();
     }
 
     public function findById(int $id): array|false {

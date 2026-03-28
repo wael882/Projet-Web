@@ -12,7 +12,10 @@
     <a href="{{ base_url }}pilote">Espace pilote</a>
     {% endif %}
     {% if user and user.role == 'admin' %}
-    <a href="{{ base_url }}admin">Administration</a>
+    <a href="{{ base_url }}admin/entreprises">Administration</a>
+    {% endif %}
+    {% if aEntreprise %}
+    <a href="/mes-entreprises">Mes entreprises</a>
     {% endif %}
     {% if user %}
     <span class="nav-username">Bonjour, {{ user.prenom }} {{ user.nom }}</span>

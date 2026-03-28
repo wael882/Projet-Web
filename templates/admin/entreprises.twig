@@ -5,6 +5,14 @@
 {% block content %}
 <div style="max-width:900px; margin:2rem auto;">
 
+  <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
+    <span style="font-size:0.9rem; font-weight:600;">Créations</span>
+    <span style="color:var(--gris);">|</span>
+    <a href="/admin/modifications" style="color:var(--gris); font-size:0.9rem; text-decoration:none;">Modifications</a>
+    <span style="color:var(--gris);">|</span>
+    <a href="/admin/suppressions" style="color:var(--gris); font-size:0.9rem; text-decoration:none;">Suppressions</a>
+  </div>
+
   <h1 style="margin-bottom:0.25rem;">Demandes de création d'entreprise</h1>
   <p style="color:var(--gris); font-size:0.9rem; margin-bottom:1.5rem;">{{ demandes|length }} demande{{ demandes|length > 1 ? 's' : '' }} en attente</p>
 

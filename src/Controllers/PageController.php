@@ -1562,6 +1562,170 @@ class PageController
         exit;
     }
 
+    public function adminEtudiants(): void
+    {
+        $this->requireRole('admin');
+        $recherche = trim($_GET['search'] ?? '');
+        $etudiants = (new PiloteModel())->getTousEtudiants($recherche);
+        echo $this->twig->render('admin/etudiants.twig', [
+            'etudiants'  => $etudiants,
+            'recherche'  => $recherche,
+            'success'    => $_SESSION['success'] ?? null,
+            'error'      => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function adminEtudiant(): void
+    {
+        $this->requireRole('admin');
+        $idEtudiant   = (int) ($_GET['id'] ?? 0);
+        $piloteModel  = new PiloteModel();
+        $etudiant     = $piloteModel->getEtudiantAdmin($idEtudiant);
+        if (!$etudiant) {
+            $_SESSION['error'] = 'Étudiant introuvable.';
+            header('Location: /admin/etudiants');
+            exit;
+        }
+        $candidatures = $piloteModel->getCandidaturesEtudiant($etudiant['id_utilisateur']);
+        echo $this->twig->render('admin/etudiant.twig', [
+            'etudiant'    => $etudiant,
+            'candidatures' => $candidatures,
+            'success'     => $_SESSION['success'] ?? null,
+            'error'       => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function adminEtudiantCreer(): void
+    {
+        $this->requireRole('admin');
+        $pilotes = (new PiloteModel())->getTous();
+        echo $this->twig->render('admin/etudiant-creer.twig', [
+            'pilotes' => $pilotes,
+            'error'   => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['error']);
+    }
+
+    public function adminEtudiantCreerPost(): void
+    {
+        $this->requireRole('admin');
+        $nom        = trim($_POST['nom'] ?? '');
+        $prenom     = trim($_POST['prenom'] ?? '');
+        $email      = trim($_POST['email'] ?? '');
+        $motDePasse = trim($_POST['mot_de_passe'] ?? '');
+        $ecole      = trim($_POST['ecole'] ?? '');
+        $idPilote   = ($_POST['id_pilote'] ?? '') !== '' ? (int) $_POST['id_pilote'] : null;
+
+        if (!$nom || !$prenom || !$email || !$motDePasse) {
+            $_SESSION['error'] = 'Tous les champs obligatoires doivent être remplis.';
+            header('Location: /admin/etudiant/creer');
+            exit;
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['error'] = 'Adresse email invalide.';
+            header('Location: /admin/etudiant/creer');
+            exit;
+        }
+        if ((new UtilisateurModel())->findByEmail($email)) {
+            $_SESSION['error'] = 'Cette adresse email est déjà utilisée.';
+            header('Location: /admin/etudiant/creer');
+            exit;
+        }
+
+        (new PiloteModel())->creerEtudiantAdmin($idPilote, $nom, $prenom, $email, password_hash($motDePasse, PASSWORD_DEFAULT), $ecole);
+        $_SESSION['success'] = 'Compte étudiant créé avec succès.';
+        header('Location: /admin/etudiants');
+        exit;
+    }
+
+    public function adminEtudiantModifier(): void
+    {
+        $this->requireRole('admin');
+        $idEtudiant = (int) ($_GET['id'] ?? 0);
+        $piloteModel = new PiloteModel();
+        $etudiant   = $piloteModel->getEtudiantAdmin($idEtudiant);
+        if (!$etudiant) {
+            $_SESSION['error'] = 'Étudiant introuvable.';
+            header('Location: /admin/etudiants');
+            exit;
+        }
+        $pilotes = $piloteModel->getTous();
+        echo $this->twig->render('admin/etudiant-modifier.twig', [
+            'etudiant' => $etudiant,
+            'pilotes'  => $pilotes,
+            'error'    => $_SESSION['error'] ?? null,
+            'success'  => $_SESSION['success'] ?? null,
+        ]);
+        unset($_SESSION['error'], $_SESSION['success']);
+    }
+
+    public function adminEtudiantModifierPost(): void
+    {
+        $this->requireRole('admin');
+        $idEtudiant = (int) ($_POST['id_etudiant'] ?? 0);
+        $nom        = trim($_POST['nom'] ?? '');
+        $prenom     = trim($_POST['prenom'] ?? '');
+        $email      = trim($_POST['email'] ?? '');
+        $ecole      = trim($_POST['ecole'] ?? '');
+        $promotion  = trim($_POST['promotion'] ?? '');
+        $motDePasse = trim($_POST['mot_de_passe'] ?? '');
+        $idPilote   = ($_POST['id_pilote'] ?? '') !== '' ? (int) $_POST['id_pilote'] : null;
+
+        if (!$nom || !$prenom || !$email) {
+            $_SESSION['error'] = 'Nom, prénom et email sont obligatoires.';
+            header('Location: /admin/etudiant/modifier?id=' . $idEtudiant);
+            exit;
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['error'] = 'Adresse email invalide.';
+            header('Location: /admin/etudiant/modifier?id=' . $idEtudiant);
+            exit;
+        }
+
+        $piloteModel    = new PiloteModel();
+        $etudiantActuel = $piloteModel->getEtudiantAdmin($idEtudiant);
+        if (!$etudiantActuel) {
+            $_SESSION['error'] = 'Étudiant introuvable.';
+            header('Location: /admin/etudiants');
+            exit;
+        }
+
+        if ($email !== $etudiantActuel['email']) {
+            $existant = (new UtilisateurModel())->findByEmail($email);
+            if ($existant) {
+                $_SESSION['error'] = 'Cette adresse email est déjà utilisée.';
+                header('Location: /admin/etudiant/modifier?id=' . $idEtudiant);
+                exit;
+            }
+        }
+
+        $hash = $motDePasse !== '' ? password_hash($motDePasse, PASSWORD_DEFAULT) : null;
+        $piloteModel->modifierEtudiantAdmin($idEtudiant, $nom, $prenom, $email, $ecole, $promotion, $idPilote, $hash);
+
+        $_SESSION['success'] = 'Compte étudiant modifié avec succès.';
+        header('Location: /admin/etudiant?id=' . $idEtudiant);
+        exit;
+    }
+
+    public function adminEtudiantSupprimerPost(): void
+    {
+        $this->requireRole('admin');
+        $idEtudiant  = (int) ($_POST['id_etudiant'] ?? 0);
+        $piloteModel = new PiloteModel();
+        $etudiant    = $piloteModel->getEtudiantAdmin($idEtudiant);
+        if (!$etudiant) {
+            $_SESSION['error'] = 'Étudiant introuvable.';
+            header('Location: /admin/etudiants');
+            exit;
+        }
+        $piloteModel->supprimerEtudiantAdmin($idEtudiant);
+        $_SESSION['success'] = 'Le compte de ' . $etudiant['prenom'] . ' ' . $etudiant['nom'] . ' a été supprimé.';
+        header('Location: /admin/etudiants');
+        exit;
+    }
+
     public function adminPilotes(): void
     {
         $this->requireRole('admin');

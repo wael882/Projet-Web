@@ -43,6 +43,13 @@ $router->add('POST', '/admin/entreprise/rejeter',              [$controller, 'ad
 $router->add('POST', '/admin/entreprise/supprimer',            [$controller, 'adminEntrepriseSupprimer']);
 $router->add('GET',  '/admin/entreprise/modifier',             [$controller, 'adminEntrepriseModifierDirect']);
 $router->add('POST', '/admin/entreprise/modifier',             [$controller, 'adminEntrepriseModifierDirectPost']);
+$router->add('GET',  '/admin/etudiants',                        [$controller, 'adminEtudiants']);
+$router->add('GET',  '/admin/etudiant',                         [$controller, 'adminEtudiant']);
+$router->add('GET',  '/admin/etudiant/creer',                   [$controller, 'adminEtudiantCreer']);
+$router->add('POST', '/admin/etudiant/creer',                   [$controller, 'adminEtudiantCreerPost']);
+$router->add('GET',  '/admin/etudiant/modifier',                [$controller, 'adminEtudiantModifier']);
+$router->add('POST', '/admin/etudiant/modifier',                [$controller, 'adminEtudiantModifierPost']);
+$router->add('POST', '/admin/etudiant/supprimer',               [$controller, 'adminEtudiantSupprimerPost']);
 $router->add('GET',  '/admin/suppressions',                    [$controller, 'adminSuppressions']);
 $router->add('POST', '/admin/suppression/approuver',           [$controller, 'adminSuppressionApprouver']);
 $router->add('POST', '/admin/suppression/rejeter',             [$controller, 'adminSuppressionRejeter']);

@@ -80,7 +80,7 @@ class OffreModel
 
     public function findById(int $id): array|false {
         $requete = $this->pdo->prepare('
-            SELECT OFFRE.*, ENTREPRISE.nom AS nom_entreprise, ENTREPRISE.email_contact, ENTREPRISE.telephone_contact
+            SELECT OFFRE.*, ENTREPRISE.nom AS nom_entreprise, ENTREPRISE.email_contact, ENTREPRISE.telephone_contact, ENTREPRISE.logo AS logo_entreprise
             FROM OFFRE
             JOIN ENTREPRISE ON OFFRE.id_entreprise = ENTREPRISE.id_entreprise
             WHERE OFFRE.id_offre = :id
@@ -89,16 +89,17 @@ class OffreModel
         return $requete->fetch();
     }
 
-    public function creer(int $idEntreprise, string $titre, string $description, ?float $remunerationBase, ?string $dateOffre): int {
+    public function creer(int $idEntreprise, string $titre, string $description, ?float $remunerationBase, ?string $dateOffre, ?string $photo = null): int {
         $requete = $this->pdo->prepare('
-            INSERT INTO OFFRE (titre, description, remuneration_base, date_offre, id_entreprise)
-            VALUES (:titre, :description, :remunerationBase, :dateOffre, :idEntreprise)
+            INSERT INTO OFFRE (titre, description, remuneration_base, date_offre, photo, id_entreprise)
+            VALUES (:titre, :description, :remunerationBase, :dateOffre, :photo, :idEntreprise)
         ');
         $requete->execute([
             ':titre'            => $titre,
             ':description'      => $description,
             ':remunerationBase' => $remunerationBase,
             ':dateOffre'        => $dateOffre,
+            ':photo'            => $photo,
             ':idEntreprise'     => $idEntreprise,
         ]);
         return (int) $this->pdo->lastInsertId();

@@ -15,8 +15,15 @@
     <div class="offer-main">
 
       <div class="offer-header">
-        <h1 class="offer-titre">{{ offre.titre }}</h1>
-        <a href="/entreprise?id={{ offre.id_entreprise }}" class="offer-entreprise">{{ offre.nom_entreprise }}</a>
+        <div class="offer-header-top">
+          {% if offre.logo_entreprise %}
+            <img src="{{ base_url }}{{ offre.logo_entreprise }}" alt="Logo {{ offre.nom_entreprise }}" class="offer-logo-entreprise">
+          {% endif %}
+          <div>
+            <h1 class="offer-titre">{{ offre.titre }}</h1>
+            <a href="/entreprise?id={{ offre.id_entreprise }}" class="offer-entreprise">{{ offre.nom_entreprise }}</a>
+          </div>
+        </div>
       </div>
 
       <div class="offer-meta">

@@ -22,7 +22,7 @@
         <p class="alert alert-error">{{ error }}</p>
       {% endif %}
 
-      <form method="POST" action="/offre/creer" class="postuler-form">
+      <form method="POST" action="/offre/creer" enctype="multipart/form-data" class="postuler-form">
 
         <div class="form-group">
           <label for="saisie-entreprise">Entreprise</label>
@@ -53,6 +53,11 @@
         <div class="form-group">
           <label for="date_offre">Date de début du stage <span class="hint">optionnel</span></label>
           <input type="date" id="date_offre" name="date_offre">
+        </div>
+
+        <div class="form-group">
+          <label for="photo">Photo de l'offre <span class="hint">optionnel — JPG/PNG/WEBP, 5 Mo max</span></label>
+          <input type="file" id="photo" name="photo" accept="image/jpeg,image/png,image/webp">
         </div>
 
         <div class="form-group">

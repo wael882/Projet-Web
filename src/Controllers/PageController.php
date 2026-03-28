@@ -669,7 +669,28 @@ class PageController
             exit;
         }
 
-        (new EntrepriseModel())->demanderCreation($nom, $description, $email, $telephone, $ville, $siteWeb);
+        $cheminLogo = null;
+        if (!empty($_FILES['logo']['name'])) {
+            $fichier       = $_FILES['logo'];
+            $typesAutorises = ['image/jpeg', 'image/png', 'image/webp'];
+            $finfo         = new \finfo(FILEINFO_MIME_TYPE);
+            $mimeReel      = $finfo->file($fichier['tmp_name']);
+
+            if ($fichier['error'] === UPLOAD_ERR_OK && $fichier['size'] <= 2 * 1024 * 1024 && in_array($mimeReel, $typesAutorises)) {
+                $ext         = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$mimeReel];
+                $nomFichier  = 'logo_' . uniqid() . '.' . $ext;
+                $destination = UPLOAD_PATH . '/logos/' . $nomFichier;
+                if (move_uploaded_file($fichier['tmp_name'], $destination)) {
+                    $cheminLogo = 'uploads/logos/' . $nomFichier;
+                }
+            } else {
+                $_SESSION['error'] = 'Logo invalide (JPG/PNG/WEBP, 2 Mo max).';
+                header('Location: /entreprise/inscription');
+                exit;
+            }
+        }
+
+        (new EntrepriseModel())->demanderCreation($nom, $description, $email, $telephone, $ville, $siteWeb, $cheminLogo);
         $_SESSION['success'] = 'Votre demande a bien été envoyée. Un administrateur va l\'examiner.';
         header('Location: /entreprise/inscription');
         exit;
@@ -765,8 +786,29 @@ class PageController
             exit;
         }
 
+        $cheminPhoto = null;
+        if (!empty($_FILES['photo']['name'])) {
+            $fichier        = $_FILES['photo'];
+            $typesAutorises = ['image/jpeg', 'image/png', 'image/webp'];
+            $finfo          = new \finfo(FILEINFO_MIME_TYPE);
+            $mimeReel       = $finfo->file($fichier['tmp_name']);
+
+            if ($fichier['error'] === UPLOAD_ERR_OK && $fichier['size'] <= 5 * 1024 * 1024 && in_array($mimeReel, $typesAutorises)) {
+                $ext         = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$mimeReel];
+                $nomFichier  = 'offre_' . uniqid() . '.' . $ext;
+                $destination = UPLOAD_PATH . '/offres/' . $nomFichier;
+                if (move_uploaded_file($fichier['tmp_name'], $destination)) {
+                    $cheminPhoto = 'uploads/offres/' . $nomFichier;
+                }
+            } else {
+                $_SESSION['error'] = 'Photo invalide (JPG/PNG/WEBP, 5 Mo max).';
+                header('Location: /offre/creer');
+                exit;
+            }
+        }
+
         $modeleOffre = new OffreModel();
-        $idOffre     = $modeleOffre->creer($idEntreprise, $titre, $description, $remunerationBase, $dateOffre);
+        $idOffre     = $modeleOffre->creer($idEntreprise, $titre, $description, $remunerationBase, $dateOffre, $cheminPhoto);
 
         // Compétences existantes cochées
         foreach ($competencesChoisies as $idCompetence) {
@@ -871,12 +913,17 @@ class PageController
 
     public function adminEntrepriseSupprimer(): void {
         $this->requireRole('admin');
-        $id = (int) ($_POST['id_entreprise'] ?? 0);
+        $id     = (int) ($_POST['id_entreprise'] ?? 0);
+        $retour = $_POST['retour'] ?? '/entreprises';
+        // Sécurité : on n'accepte que les URLs internes
+        if (!str_starts_with($retour, '/')) {
+            $retour = '/entreprises';
+        }
         if ($id) {
             (new EntrepriseModel())->supprimer($id);
             $_SESSION['success'] = 'Entreprise supprimée.';
         }
-        header('Location: /admin/entreprises');
+        header('Location: ' . $retour);
         exit;
     }
 
@@ -936,6 +983,55 @@ class PageController
         unset($_SESSION['success'], $_SESSION['error']);
     }
 
+    public function adminEntreprisesGerer(): void {
+        $this->requireRole('admin');
+        // La page de gestion est désormais fusionnée avec /entreprises
+        $search = trim($_GET['search'] ?? '');
+        $redirectUrl = '/entreprises' . ($search ? '?search=' . urlencode($search) : '');
+        header('Location: ' . $redirectUrl);
+        exit;
+    }
+
+    public function adminEntrepriseCreerPost(): void {
+        $this->requireRole('admin');
+        $nom         = trim($_POST['nom'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $email       = trim($_POST['email_contact'] ?? '');
+        $telephone   = trim($_POST['telephone_contact'] ?? '');
+        $ville       = trim($_POST['ville'] ?? '');
+        $siteWeb     = trim($_POST['site_web'] ?? '');
+
+        if (!$nom) {
+            $_SESSION['error'] = 'Le nom est obligatoire.';
+            header('Location: /entreprises');
+            exit;
+        }
+
+        $cheminLogo = null;
+        if (!empty($_FILES['logo']['name'])) {
+            $fichier        = $_FILES['logo'];
+            $typesAutorises = ['image/jpeg', 'image/png', 'image/webp'];
+            $finfo          = new \finfo(FILEINFO_MIME_TYPE);
+            $mimeReel       = $finfo->file($fichier['tmp_name']);
+            if ($fichier['error'] === UPLOAD_ERR_OK && $fichier['size'] <= 2 * 1024 * 1024 && in_array($mimeReel, $typesAutorises)) {
+                $ext         = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$mimeReel];
+                $nomFichier  = 'logo_' . uniqid() . '.' . $ext;
+                if (move_uploaded_file($fichier['tmp_name'], UPLOAD_PATH . '/logos/' . $nomFichier)) {
+                    $cheminLogo = 'uploads/logos/' . $nomFichier;
+                }
+            } else {
+                $_SESSION['error'] = 'Logo invalide (JPG/PNG/WEBP, 2 Mo max).';
+                header('Location: /entreprises');
+                exit;
+            }
+        }
+
+        $id = (new EntrepriseModel())->creerDirect($nom, $description, $email, $telephone, $ville, $siteWeb, $cheminLogo);
+        $_SESSION['success'] = 'Entreprise créée et approuvée.';
+        header('Location: /entreprise?id=' . $id);
+        exit;
+    }
+
     public function adminEntreprises(): void {
         $this->requireRole('admin');
         $model    = new EntrepriseModel();
@@ -971,20 +1067,35 @@ class PageController
     }
 
     public function entreprises(): void {
-        $model       = new EntrepriseModel();
-        $search      = trim($_GET['search'] ?? '');
-        $page        = max(1, (int) ($_GET['page'] ?? 1));
-        $limite      = 10;
-        $offset      = ($page - 1) * $limite;
-        $entreprises = $model->findAll($search, $limite, $offset);
-        $total       = $model->count($search);
-        $totalPages  = (int) ceil($total / $limite);
-        echo $this->twig->render('entreprises.twig', [
-            'entreprises' => $entreprises,
-            'search'      => $search,
-            'page'        => $page,
-            'totalPages'  => $totalPages,
-        ]);
+        $model      = new EntrepriseModel();
+        $search     = trim($_GET['search'] ?? '');
+        $estAdmin   = ($_SESSION['user']['role'] ?? '') === 'admin';
+
+        if ($estAdmin) {
+            // L'admin voit toutes les entreprises (tous statuts, sans pagination)
+            $entreprises = $model->findAllAdmin($search);
+            echo $this->twig->render('entreprises.twig', [
+                'entreprises' => $entreprises,
+                'search'      => $search,
+                'success'     => $_SESSION['success'] ?? null,
+                'error'       => $_SESSION['error'] ?? null,
+            ]);
+            unset($_SESSION['success'], $_SESSION['error']);
+        } else {
+            // Les autres voient uniquement les entreprises approuvées avec pagination
+            $page        = max(1, (int) ($_GET['page'] ?? 1));
+            $limite      = 10;
+            $offset      = ($page - 1) * $limite;
+            $entreprises = $model->findAll($search, $limite, $offset);
+            $total       = $model->count($search);
+            $totalPages  = (int) ceil($total / $limite);
+            echo $this->twig->render('entreprises.twig', [
+                'entreprises' => $entreprises,
+                'search'      => $search,
+                'page'        => $page,
+                'totalPages'  => $totalPages,
+            ]);
+        }
     }
 
     public function oubliMdp() {

@@ -29,6 +29,8 @@ $router->add('POST', '/entreprise/modifier',           [$controller, 'entreprise
 $router->add('POST', '/entreprise/supprimer/demande',          [$controller, 'entrepriseDemanderSuppression']);
 $router->add('GET',  '/admin',                                  [$controller, 'adminDashboard']);
 $router->add('GET',  '/admin/entreprises',                     [$controller, 'adminEntreprises']);
+$router->add('GET',  '/admin/entreprises/gerer',               [$controller, 'adminEntreprisesGerer']);
+$router->add('POST', '/admin/entreprise/creer',                [$controller, 'adminEntrepriseCreerPost']);
 $router->add('POST', '/admin/entreprise/approuver',            [$controller, 'adminEntrepriseApprouver']);
 $router->add('POST', '/admin/entreprise/rejeter',              [$controller, 'adminEntrepriseRejeter']);
 $router->add('POST', '/admin/entreprise/supprimer',            [$controller, 'adminEntrepriseSupprimer']);

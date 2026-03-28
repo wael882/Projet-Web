@@ -107,10 +107,10 @@ class EntrepriseModel {
         ]);
     }
 
-    public function demanderCreation(string $nom, string $description, string $email, string $telephone, string $ville, string $siteWeb): void {
+    public function creerDirect(string $nom, string $description, string $email, string $telephone, string $ville, string $siteWeb, ?string $logo = null): int {
         $stmt = $this->pdo->prepare('
-            INSERT INTO ENTREPRISE (nom, description, email_contact, telephone_contact, ville, site_web, active, statut)
-            VALUES (:nom, :description, :email, :telephone, :ville, :site_web, FALSE, "en_attente")
+            INSERT INTO ENTREPRISE (nom, description, email_contact, telephone_contact, ville, site_web, logo, active, statut)
+            VALUES (:nom, :description, :email, :telephone, :ville, :site_web, :logo, TRUE, "approuvee")
         ');
         $stmt->execute([
             ':nom'         => $nom,
@@ -119,6 +119,38 @@ class EntrepriseModel {
             ':telephone'   => $telephone,
             ':ville'       => $ville,
             ':site_web'    => $siteWeb,
+            ':logo'        => $logo,
+        ]);
+        return (int) $this->pdo->lastInsertId();
+    }
+
+    public function findAllAdmin(string $search = ''): array {
+        if ($search !== '') {
+            $stmt = $this->pdo->prepare('
+                SELECT * FROM ENTREPRISE
+                WHERE nom LIKE :search OR ville LIKE :search
+                ORDER BY date_creation DESC
+            ');
+            $stmt->execute([':search' => '%' . $search . '%']);
+        } else {
+            $stmt = $this->pdo->query('SELECT * FROM ENTREPRISE ORDER BY date_creation DESC');
+        }
+        return $stmt->fetchAll();
+    }
+
+    public function demanderCreation(string $nom, string $description, string $email, string $telephone, string $ville, string $siteWeb, ?string $logo = null): void {
+        $stmt = $this->pdo->prepare('
+            INSERT INTO ENTREPRISE (nom, description, email_contact, telephone_contact, ville, site_web, logo, active, statut)
+            VALUES (:nom, :description, :email, :telephone, :ville, :site_web, :logo, FALSE, "en_attente")
+        ');
+        $stmt->execute([
+            ':nom'         => $nom,
+            ':description' => $description,
+            ':email'       => $email,
+            ':telephone'   => $telephone,
+            ':ville'       => $ville,
+            ':site_web'    => $siteWeb,
+            ':logo'        => $logo,
         ]);
     }
 

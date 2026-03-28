@@ -21,11 +21,39 @@
 
 /* === EN-TÊTE === */
 .offer-header {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--ligne, #e5e7eb);
+}
+
+.offer-header-top {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.offer-logo-entreprise {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 1px solid var(--ligne);
+  background: var(--blanc);
+  padding: 6px;
+  flex-shrink: 0;
+}
+
+.offer-logo-placeholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  background: var(--bleu);
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .offer-titre {

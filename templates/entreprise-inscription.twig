@@ -1,0 +1,69 @@
+{% extends 'base-index.html.twig' %}
+
+{% block title %}Stagio - Inscrire mon entreprise{% endblock %}
+
+{% block description %}content="Stagio - Inscrire une entreprise"{% endblock %}
+
+{% block content %}
+<div style="max-width:640px; margin:2rem auto;">
+
+  <a href="/entreprises" style="color:var(--gris); text-decoration:none; font-size:0.9rem;">← Retour aux entreprises</a>
+
+  <h1 style="margin:1.5rem 0 0.25rem;">Inscrire mon entreprise</h1>
+  <p style="color:var(--gris); font-size:0.9rem; margin-bottom:1.5rem;">Votre demande sera examinée par un administrateur avant publication sur la plateforme.</p>
+
+  {% if error %}
+    <div class="alert alert-error" style="margin-bottom:1rem;">{{ error }}</div>
+  {% endif %}
+  {% if success %}
+    <div class="alert alert-success" style="margin-bottom:1rem;">{{ success }}</div>
+  {% endif %}
+
+  <form method="POST" action="/entreprise/inscription" style="background:var(--blanc); border:1px solid var(--ligne); border-radius:12px; padding:2rem; display:flex; flex-direction:column; gap:1.1rem;">
+
+    <div style="display:flex; flex-direction:column; gap:0.3rem;">
+      <label style="font-weight:600; font-size:0.9rem;">Nom de l'entreprise <span style="color:red;">*</span></label>
+      <input type="text" name="nom" required placeholder="Ex : Airbus, Thales..."
+             style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:0.3rem;">
+      <label style="font-weight:600; font-size:0.9rem;">Description <span style="color:red;">*</span></label>
+      <textarea name="description" rows="5" required placeholder="Présentez votre entreprise : secteur d'activité, missions proposées, valeurs..."
+                style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit; resize:vertical;"></textarea>
+    </div>
+
+    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+      <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1; min-width:200px;">
+        <label style="font-weight:600; font-size:0.9rem;">Email de contact <span style="color:red;">*</span></label>
+        <input type="email" name="email_contact" required placeholder="contact@entreprise.fr"
+               style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1; min-width:200px;">
+        <label style="font-weight:600; font-size:0.9rem;">Téléphone de contact</label>
+        <input type="tel" name="telephone_contact" placeholder="01 23 45 67 89"
+               style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+      </div>
+    </div>
+
+    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+      <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1; min-width:200px;">
+        <label style="font-weight:600; font-size:0.9rem;">Ville</label>
+        <input type="text" name="ville" placeholder="Paris, Lyon, Bordeaux..."
+               style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1; min-width:200px;">
+        <label style="font-weight:600; font-size:0.9rem;">Site web</label>
+        <input type="url" name="site_web" placeholder="https://www.entreprise.fr"
+               style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; margin-top:0.5rem;">
+      <button type="submit" class="btn-principal">Envoyer la demande</button>
+    </div>
+
+  </form>
+
+</div>
+{% endblock %}

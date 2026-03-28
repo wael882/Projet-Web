@@ -618,6 +618,257 @@ class PageController
         exit;
     }
 
+    public function entrepriseInscription(): void {
+        $this->requireAuth();
+        echo $this->twig->render('entreprise-inscription.twig', [
+            'error'   => $_SESSION['error'] ?? null,
+            'success' => $_SESSION['success'] ?? null,
+        ]);
+        unset($_SESSION['error'], $_SESSION['success']);
+    }
+
+    public function entrepriseInscriptionPost(): void {
+        $this->requireAuth();
+        $nom         = trim($_POST['nom'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $email       = trim($_POST['email_contact'] ?? '');
+        $telephone   = trim($_POST['telephone_contact'] ?? '');
+        $ville       = trim($_POST['ville'] ?? '');
+        $siteWeb     = trim($_POST['site_web'] ?? '');
+        $idUser      = (int) $_SESSION['user']['id_utilisateur'];
+
+        if (!$nom) {
+            $_SESSION['error'] = 'Le nom de l\'entreprise est obligatoire.';
+            header('Location: /entreprise/inscription');
+            exit;
+        }
+
+        (new EntrepriseModel())->demanderCreation($nom, $description, $email, $telephone, $ville, $siteWeb, $idUser);
+        $_SESSION['success'] = 'Votre demande a bien été envoyée. Un administrateur va l\'examiner.';
+        header('Location: /entreprise/inscription');
+        exit;
+    }
+
+    public function entrepriseModifier(): void {
+        $this->requireAuth();
+        $id     = (int) ($_GET['id'] ?? 0);
+        $model  = new EntrepriseModel();
+        $entreprise = $model->findById($id);
+
+        if (!$entreprise || (int) $entreprise['id_utilisateur'] !== (int) $_SESSION['user']['id_utilisateur']) {
+            header('Location: /entreprises');
+            exit;
+        }
+
+        $dejaEnAttente = $model->aDemandeEnAttente($id, (int) $_SESSION['user']['id_utilisateur']);
+
+        echo $this->twig->render('entreprise-modifier.twig', [
+            'entreprise'     => $entreprise,
+            'dejaEnAttente'  => $dejaEnAttente,
+            'error'          => $_SESSION['error'] ?? null,
+            'success'        => $_SESSION['success'] ?? null,
+        ]);
+        unset($_SESSION['error'], $_SESSION['success']);
+    }
+
+    public function entrepriseModifierPost(): void {
+        $this->requireAuth();
+        $id          = (int) ($_POST['id_entreprise'] ?? 0);
+        $nom         = trim($_POST['nom'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $email       = trim($_POST['email_contact'] ?? '');
+        $telephone   = trim($_POST['telephone_contact'] ?? '');
+        $ville       = trim($_POST['ville'] ?? '');
+        $siteWeb     = trim($_POST['site_web'] ?? '');
+        $idUser      = (int) $_SESSION['user']['id_utilisateur'];
+
+        $model      = new EntrepriseModel();
+        $entreprise = $model->findById($id);
+
+        if (!$entreprise || (int) $entreprise['id_utilisateur'] !== $idUser) {
+            header('Location: /entreprises');
+            exit;
+        }
+
+        if (!$nom) {
+            $_SESSION['error'] = 'Le nom est obligatoire.';
+            header('Location: /entreprise/modifier?id=' . $id);
+            exit;
+        }
+
+        $model->demanderModification($id, $idUser, $nom, $description, $email, $telephone, $ville, $siteWeb);
+        $_SESSION['success'] = 'Votre demande de modification a été envoyée. Un administrateur va l\'examiner.';
+        header('Location: /entreprise?id=' . $id);
+        exit;
+    }
+
+    public function mesEntreprises(): void {
+        $this->requireAuth();
+        $model      = new EntrepriseModel();
+        $entreprises = $model->findByUtilisateur((int) $_SESSION['user']['id_utilisateur']);
+        if (empty($entreprises)) {
+            header('Location: /entreprises');
+            exit;
+        }
+        echo $this->twig->render('mes-entreprises.twig', ['entreprises' => $entreprises]);
+    }
+
+    public function entrepriseDemanderSuppression(): void {
+        $this->requireAuth();
+        $id     = (int) ($_POST['id_entreprise'] ?? 0);
+        $idUser = (int) $_SESSION['user']['id_utilisateur'];
+        $ok     = (new EntrepriseModel())->demanderSuppression($id, $idUser);
+        $_SESSION['success'] = $ok ? 'Demande de suppression envoyée.' : 'Impossible d\'effectuer cette action.';
+        header('Location: /entreprise?id=' . $id);
+        exit;
+    }
+
+    public function adminSuppressions(): void {
+        $this->requireRole('admin');
+        $model = new EntrepriseModel();
+        echo $this->twig->render('admin/suppressions.twig', [
+            'demandes' => $model->getSuppressionsDemandees(),
+            'success'  => $_SESSION['success'] ?? null,
+            'error'    => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function adminSuppressionApprouver(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_POST['id_entreprise'] ?? 0);
+        if ($id) {
+            (new EntrepriseModel())->supprimer($id);
+            $_SESSION['success'] = 'Entreprise supprimée.';
+        }
+        header('Location: /admin/suppressions');
+        exit;
+    }
+
+    public function adminSuppressionRejeter(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_POST['id_entreprise'] ?? 0);
+        if ($id) {
+            (new EntrepriseModel())->rejeterSuppression($id);
+            $_SESSION['success'] = 'Demande de suppression rejetée.';
+        }
+        header('Location: /admin/suppressions');
+        exit;
+    }
+
+    public function adminEntrepriseModifierDirect(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_GET['id'] ?? 0);
+        $entreprise = (new EntrepriseModel())->findById($id);
+        if (!$entreprise) { header('Location: /admin/entreprises'); exit; }
+        echo $this->twig->render('admin/entreprise-modifier.twig', [
+            'entreprise' => $entreprise,
+            'success'    => $_SESSION['success'] ?? null,
+            'error'      => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function adminEntrepriseModifierDirectPost(): void {
+        $this->requireRole('admin');
+        $id          = (int) ($_POST['id_entreprise'] ?? 0);
+        $nom         = trim($_POST['nom'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $email       = trim($_POST['email_contact'] ?? '');
+        $telephone   = trim($_POST['telephone_contact'] ?? '');
+        $ville       = trim($_POST['ville'] ?? '');
+        $siteWeb     = trim($_POST['site_web'] ?? '');
+
+        if (!$nom) {
+            $_SESSION['error'] = 'Le nom est obligatoire.';
+            header('Location: /admin/entreprise/modifier?id=' . $id);
+            exit;
+        }
+
+        (new EntrepriseModel())->adminModifierDirect($id, $nom, $description, $email, $telephone, $ville, $siteWeb);
+        $_SESSION['success'] = 'Entreprise modifiée.';
+        header('Location: /entreprise?id=' . $id);
+        exit;
+    }
+
+    public function adminEntrepriseSupprimer(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_POST['id_entreprise'] ?? 0);
+        if ($id) {
+            (new EntrepriseModel())->supprimer($id);
+            $_SESSION['success'] = 'Entreprise supprimée.';
+        }
+        header('Location: /admin/entreprises');
+        exit;
+    }
+
+    public function adminModifications(): void {
+        $this->requireRole('admin');
+        $model = new EntrepriseModel();
+        echo $this->twig->render('admin/modifications.twig', [
+            'demandes' => $model->getModificationsEnAttente(),
+            'success'  => $_SESSION['success'] ?? null,
+            'error'    => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function adminModificationApprouver(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_POST['id_demande'] ?? 0);
+        if ($id) {
+            (new EntrepriseModel())->approuverModification($id);
+            $_SESSION['success'] = 'Modification approuvée.';
+        }
+        header('Location: /admin/modifications');
+        exit;
+    }
+
+    public function adminModificationRejeter(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_POST['id_demande'] ?? 0);
+        if ($id) {
+            (new EntrepriseModel())->rejeterModification($id);
+            $_SESSION['success'] = 'Modification rejetée.';
+        }
+        header('Location: /admin/modifications');
+        exit;
+    }
+
+    public function adminEntreprises(): void {
+        $this->requireRole('admin');
+        $model    = new EntrepriseModel();
+        $demandes = $model->getDemandesEnAttente();
+        echo $this->twig->render('admin/entreprises.twig', [
+            'demandes' => $demandes,
+            'success'  => $_SESSION['success'] ?? null,
+            'error'    => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function adminEntrepriseApprouver(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_POST['id_entreprise'] ?? 0);
+        if ($id) {
+            (new EntrepriseModel())->approuver($id);
+            $_SESSION['success'] = 'Entreprise approuvée.';
+        }
+        header('Location: /admin/entreprises');
+        exit;
+    }
+
+    public function adminEntrepriseRejeter(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_POST['id_entreprise'] ?? 0);
+        if ($id) {
+            (new EntrepriseModel())->rejeter($id);
+            $_SESSION['success'] = 'Entreprise rejetée.';
+        }
+        header('Location: /admin/entreprises');
+        exit;
+    }
+
     public function entreprises(): void {
         $model       = new EntrepriseModel();
         $search      = trim($_GET['search'] ?? '');

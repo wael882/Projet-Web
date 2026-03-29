@@ -68,26 +68,6 @@
           {% endfor %}
         </datalist>
         <input type="hidden" name="id_pilote" id="id-pilote-cache" value="">
-        <script>
-          (function () {
-            var champPilote   = document.getElementById('champ-pilote');
-            var idPiloteCache = document.getElementById('id-pilote-cache');
-            var options       = document.querySelectorAll('#liste-pilotes option');
-
-            champPilote.addEventListener('change', function () {
-              var valeurSaisie = champPilote.value.trim();
-              var idTrouve     = '';
-
-              options.forEach(function (option) {
-                if (option.value === valeurSaisie) {
-                  idTrouve = option.getAttribute('data-id') || '';
-                }
-              });
-
-              idPiloteCache.value = idTrouve;
-            });
-          })();
-        </script>
       </div>
 
       <div style="display:flex; gap:0.75rem; justify-content:flex-end;">
@@ -99,4 +79,9 @@
   </div>
 
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ parent() }}
+<script src="{{ base_url }}js/pages/etudiant-formulaire.js" defer></script>
 {% endblock %}

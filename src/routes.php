@@ -77,6 +77,7 @@ $router->add('POST', '/offre/supprimer',      [$controller, 'offreSupprimerPost'
 $router->add('GET',  '/offre/statistiques',   [$controller, 'offreStatistiques']);
 $router->add('GET',  '/postuler',          [$controller, 'postuler']);
 $router->add('POST', '/candidature',       [$controller, 'candidaturePost']);
+$router->add('GET',  '/candidature/cv',    [$controller, 'telechargerCv']);
 $router->add('GET',  '/oubliMdp',          [$controller, 'oubliMdp']);
 $router->add('POST', '/oubliMdp',          [$controller, 'oubliMdpPost']);
 $router->add('GET',  '/reinitMdp',         [$controller, 'reinitMdp']);

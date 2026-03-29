@@ -30,6 +30,18 @@ class CandidatureModel
         return $stmt->fetchAll();
     }
 
+    public function findById(int $idCandidature): array|false {
+        $stmt = $this->pdo->prepare('
+            SELECT c.*, o.titre AS titre_offre, e.nom AS nom_entreprise
+            FROM CANDIDATURE c
+            JOIN OFFRE o ON c.id_offre = o.id_offre
+            JOIN ENTREPRISE e ON o.id_entreprise = e.id_entreprise
+            WHERE c.id_candidature = :id
+        ');
+        $stmt->execute([':id' => $idCandidature]);
+        return $stmt->fetch();
+    }
+
     public function dejaPostule(int $idUtilisateur, int $idOffre): bool {
         $stmt = $this->pdo->prepare('
             SELECT COUNT(*) FROM CANDIDATURE

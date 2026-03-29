@@ -246,6 +246,68 @@
   border-color: var(--bleu);
 }
 
+.cand-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.lien-document {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+.lien-cv {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--bleu);
+}
+
+.lien-cv:hover {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.lien-lm {
+  background: rgba(255, 87, 34, 0.1);
+  color: var(--orange);
+  list-style: none;
+}
+
+.lien-lm:hover {
+  background: rgba(255, 87, 34, 0.2);
+}
+
+.detail-lm {
+  display: inline-block;
+}
+
+.detail-lm .contenu-lm {
+  position: absolute;
+  z-index: 10;
+  background: var(--blanc);
+  border: 1px solid var(--ligne);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  max-width: 420px;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--texte);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  white-space: pre-wrap;
+  margin-top: 0.4rem;
+}
+
 /* === ALERTS === */
 
 

@@ -638,6 +638,77 @@ class PageController
         exit;
     }
 
+    public function telechargerCv()
+    {
+        $this->requireAuth();
+
+        $idCandidature = (int) ($_GET['id'] ?? 0);
+        if (!$idCandidature) {
+            http_response_code(400);
+            exit('Requête invalide.');
+        }
+
+        $model       = new CandidatureModel();
+        $candidature = $model->findById($idCandidature);
+
+        if (!$candidature || empty($candidature['cv_fichier'])) {
+            http_response_code(404);
+            exit('CV introuvable.');
+        }
+
+        $utilisateur = $_SESSION['user'];
+        $acces       = false;
+
+        // L'étudiant peut télécharger son propre CV
+        if ($utilisateur['role'] === 'etudiant' &&
+            (int) $candidature['id_utilisateur'] === (int) $utilisateur['id_utilisateur']) {
+            $acces = true;
+        }
+
+        // Le pilote peut télécharger les CV de ses étudiants
+        if ($utilisateur['role'] === 'pilote') {
+            $modelePilote = new PiloteModel();
+            $pilote       = $modelePilote->findByUtilisateur((int) $utilisateur['id_utilisateur']);
+            if ($pilote) {
+                $etudiant = $modelePilote->getEtudiant(
+                    0, // non utilisé directement, on cherche par id_utilisateur
+                    (int) $pilote['id_pilote']
+                );
+                // Vérifie que l'étudiant propriétaire de la candidature appartient à ce pilote
+                $etudiants = $modelePilote->getEtudiants((int) $pilote['id_pilote']);
+                foreach ($etudiants as $e) {
+                    if ((int) $e['id_utilisateur'] === (int) $candidature['id_utilisateur']) {
+                        $acces = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // L'admin a accès à tout
+        if ($utilisateur['role'] === 'admin') {
+            $acces = true;
+        }
+
+        if (!$acces) {
+            http_response_code(403);
+            exit('Accès refusé.');
+        }
+
+        $cheminFichier = UPLOAD_PATH . '/cv/' . basename($candidature['cv_fichier']);
+        if (!file_exists($cheminFichier)) {
+            http_response_code(404);
+            exit('Fichier introuvable.');
+        }
+
+        $nomTelechargement = 'CV_' . $candidature['id_utilisateur'] . '_' . $candidature['id_offre'] . '.pdf';
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="' . $nomTelechargement . '"');
+        header('Content-Length: ' . filesize($cheminFichier));
+        readfile($cheminFichier);
+        exit;
+    }
+
     public function rechercher()
     {
         $modeleOffre = new OffreModel();

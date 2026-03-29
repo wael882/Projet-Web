@@ -57,10 +57,10 @@
               <a href="/entreprise?id={{ entreprise.id_entreprise }}" class="entreprise-nom">{{ entreprise.nom }}</a>
               <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; margin-top:0.2rem;">
                 {% if entreprise.ville %}
-                  <span class="entreprise-ville">📍 {{ entreprise.ville }}</span>
+                  <span class="entreprise-ville"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ entreprise.ville }}</span>
                 {% endif %}
                 {% if entreprise.email_contact %}
-                  <span class="entreprise-ville">✉ {{ entreprise.email_contact }}</span>
+                  <span class="entreprise-ville"><i class="fa-solid fa-envelope" aria-hidden="true"></i> {{ entreprise.email_contact }}</span>
                 {% endif %}
                 <span class="statut-badge statut-badge--{{ entreprise.statut }}">{{ entreprise.statut|replace({'_': ' '}) }}</span>
               </div>

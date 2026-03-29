@@ -30,8 +30,8 @@
             <div>
               <div style="font-weight:700; font-size:1rem;">{{ d.nom }}</div>
               <div style="font-size:0.82rem; color:var(--gris);">Demande de <strong>{{ d.prenom }} {{ d.nom_user }}</strong></div>
-              {% if d.ville %}<div style="font-size:0.82rem; color:var(--gris);">📍 {{ d.ville }}</div>{% endif %}
-              {% if d.email_contact %}<div style="font-size:0.82rem; color:var(--gris);">✉ {{ d.email_contact }}</div>{% endif %}
+              {% if d.ville %}<div style="font-size:0.82rem; color:var(--gris);"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ d.ville }}</div>{% endif %}
+              {% if d.email_contact %}<div style="font-size:0.82rem; color:var(--gris);"><i class="fa-solid fa-envelope" aria-hidden="true"></i> {{ d.email_contact }}</div>{% endif %}
             </div>
             <a href="/entreprise?id={{ d.id_entreprise }}" style="font-size:0.85rem; color:var(--bleu);">Voir la fiche</a>
           </div>

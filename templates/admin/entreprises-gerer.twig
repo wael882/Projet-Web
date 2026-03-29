@@ -54,8 +54,8 @@
               <a href="/entreprise?id={{ e.id_entreprise }}" style="color:var(--bleu); text-decoration:none;">{{ e.nom }}</a>
             </div>
             <div style="font-size:0.82rem; color:var(--gris); display:flex; gap:1rem; margin-top:0.2rem; flex-wrap:wrap;">
-              {% if e.ville %}<span>📍 {{ e.ville }}</span>{% endif %}
-              {% if e.email_contact %}<span>✉ {{ e.email_contact }}</span>{% endif %}
+              {% if e.ville %}<span><i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ e.ville }}</span>{% endif %}
+              {% if e.email_contact %}<span><i class="fa-solid fa-envelope" aria-hidden="true"></i> {{ e.email_contact }}</span>{% endif %}
               <span style="padding:0.1rem 0.5rem; border-radius:20px; font-size:0.75rem; font-weight:600;
                 {% if e.statut == 'approuvee' %}background:#dcfce7; color:#15803d;
                 {% elseif e.statut == 'en_attente' %}background:#fef3c7; color:#d97706;

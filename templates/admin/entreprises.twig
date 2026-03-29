@@ -45,13 +45,13 @@
               <p style="margin:0; font-size:0.9rem;">{{ d.description }}</p>
             {% endif %}
             {% if d.ville %}
-              <p style="margin:0; font-size:0.85rem; color:var(--gris);">📍 {{ d.ville }}</p>
+              <p style="margin:0; font-size:0.85rem; color:var(--gris);"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ d.ville }}</p>
             {% endif %}
             {% if d.email_contact %}
-              <p style="margin:0; font-size:0.85rem; color:var(--gris);">✉ {{ d.email_contact }}</p>
+              <p style="margin:0; font-size:0.85rem; color:var(--gris);"><i class="fa-solid fa-envelope" aria-hidden="true"></i> {{ d.email_contact }}</p>
             {% endif %}
             {% if d.telephone_contact %}
-              <p style="margin:0; font-size:0.85rem; color:var(--gris);">📞 {{ d.telephone_contact }}</p>
+              <p style="margin:0; font-size:0.85rem; color:var(--gris);"><i class="fa-solid fa-phone" aria-hidden="true"></i> {{ d.telephone_contact }}</p>
             {% endif %}
             {% if d.site_web %}
               <p style="margin:0; font-size:0.85rem;"><a href="{{ d.site_web }}" target="_blank" style="color:var(--bleu);">{{ d.site_web }}</a></p>

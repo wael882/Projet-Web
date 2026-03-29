@@ -49,13 +49,13 @@
       <h1>{{ entreprise.nom }}</h1>
       <ul class="entreprise-meta-liste">
         {% if entreprise.ville %}
-          <li>📍 {{ entreprise.ville }}</li>
+          <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ entreprise.ville }}</li>
         {% endif %}
         {% if entreprise.email_contact %}
-          <li>✉ <a href="mailto:{{ entreprise.email_contact }}">{{ entreprise.email_contact }}</a></li>
+          <li><i class="fa-solid fa-envelope" aria-hidden="true"></i> <a href="mailto:{{ entreprise.email_contact }}">{{ entreprise.email_contact }}</a></li>
         {% endif %}
         {% if entreprise.telephone_contact %}
-          <li>📞 {{ entreprise.telephone_contact }}</li>
+          <li><i class="fa-solid fa-phone" aria-hidden="true"></i> {{ entreprise.telephone_contact }}</li>
         {% endif %}
         {% if entreprise.site_web %}
           <li>🌐 <a href="{{ entreprise.site_web }}" target="_blank">{{ entreprise.site_web }}</a></li>

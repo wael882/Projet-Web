@@ -61,11 +61,20 @@ class PageController
             exit;
         }
 
-        $etudiants = $model->getEtudiants((int) $pilote['id_pilote']);
+        $nombreParPage  = 10;
+        $pageCourante   = max(1, (int) ($_GET['page'] ?? 1));
+        $totalEtudiants = $model->compterEtudiants((int) $pilote['id_pilote']);
+        $totalPages     = (int) ceil($totalEtudiants / $nombreParPage);
+        $decalage       = ($pageCourante - 1) * $nombreParPage;
+
+        $etudiants = $model->getEtudiants((int) $pilote['id_pilote'], $nombreParPage, $decalage);
         echo $this->twig->render('pilote/dashboard.twig', [
-            'etudiants' => $etudiants,
-            'success'   => $_SESSION['success'] ?? null,
-            'error'     => $_SESSION['error'] ?? null,
+            'etudiants'      => $etudiants,
+            'totalEtudiants' => $totalEtudiants,
+            'pageCourante'   => $pageCourante,
+            'totalPages'     => $totalPages,
+            'success'        => $_SESSION['success'] ?? null,
+            'error'          => $_SESSION['error'] ?? null,
         ]);
         unset($_SESSION['success'], $_SESSION['error']);
     }
@@ -1341,12 +1350,20 @@ class PageController
 
     public function adminEntreprises(): void {
         $this->requireRole('admin');
-        $model    = new EntrepriseModel();
-        $demandes = $model->getDemandesEnAttente();
+        $nombreParPage = 10;
+        $pageCourante  = max(1, (int) ($_GET['page'] ?? 1));
+        $modele        = new EntrepriseModel();
+        $totalDemandes = $modele->compterDemandesEnAttente();
+        $totalPages    = (int) ceil($totalDemandes / $nombreParPage);
+        $decalage      = ($pageCourante - 1) * $nombreParPage;
+        $demandes      = $modele->getDemandesEnAttente($nombreParPage, $decalage);
         echo $this->twig->render('admin/entreprises.twig', [
-            'demandes' => $demandes,
-            'success'  => $_SESSION['success'] ?? null,
-            'error'    => $_SESSION['error'] ?? null,
+            'demandes'      => $demandes,
+            'totalDemandes' => $totalDemandes,
+            'pageCourante'  => $pageCourante,
+            'totalPages'    => $totalPages,
+            'success'       => $_SESSION['success'] ?? null,
+            'error'         => $_SESSION['error'] ?? null,
         ]);
         unset($_SESSION['success'], $_SESSION['error']);
     }
@@ -1636,13 +1653,22 @@ class PageController
     public function adminEtudiants(): void
     {
         $this->requireRole('admin');
-        $recherche = trim($_GET['search'] ?? '');
-        $etudiants = (new PiloteModel())->getTousEtudiants($recherche);
+        $recherche     = trim($_GET['search'] ?? '');
+        $nombreParPage = 10;
+        $pageCourante  = max(1, (int) ($_GET['page'] ?? 1));
+        $modele        = new PiloteModel();
+        $totalEtudiants = $modele->compterTousEtudiants($recherche);
+        $totalPages    = (int) ceil($totalEtudiants / $nombreParPage);
+        $decalage      = ($pageCourante - 1) * $nombreParPage;
+        $etudiants     = $modele->getTousEtudiants($recherche, $nombreParPage, $decalage);
         echo $this->twig->render('admin/etudiants.twig', [
-            'etudiants'  => $etudiants,
-            'recherche'  => $recherche,
-            'success'    => $_SESSION['success'] ?? null,
-            'error'      => $_SESSION['error'] ?? null,
+            'etudiants'      => $etudiants,
+            'recherche'      => $recherche,
+            'totalEtudiants' => $totalEtudiants,
+            'pageCourante'   => $pageCourante,
+            'totalPages'     => $totalPages,
+            'success'        => $_SESSION['success'] ?? null,
+            'error'          => $_SESSION['error'] ?? null,
         ]);
         unset($_SESSION['success'], $_SESSION['error']);
     }
@@ -1800,13 +1826,22 @@ class PageController
     public function adminPilotes(): void
     {
         $this->requireRole('admin');
-        $recherche = trim($_GET['search'] ?? '');
-        $pilotes   = (new PiloteModel())->getTous($recherche);
+        $recherche     = trim($_GET['search'] ?? '');
+        $nombreParPage = 10;
+        $pageCourante  = max(1, (int) ($_GET['page'] ?? 1));
+        $modele        = new PiloteModel();
+        $totalPilotes  = $modele->compterTous($recherche);
+        $totalPages    = (int) ceil($totalPilotes / $nombreParPage);
+        $decalage      = ($pageCourante - 1) * $nombreParPage;
+        $pilotes       = $modele->getTous($recherche, $nombreParPage, $decalage);
         echo $this->twig->render('admin/pilotes.twig', [
-            'pilotes'   => $pilotes,
-            'recherche' => $recherche,
-            'success'   => $_SESSION['success'] ?? null,
-            'error'     => $_SESSION['error'] ?? null,
+            'pilotes'      => $pilotes,
+            'recherche'    => $recherche,
+            'totalPilotes' => $totalPilotes,
+            'pageCourante' => $pageCourante,
+            'totalPages'   => $totalPages,
+            'success'      => $_SESSION['success'] ?? null,
+            'error'        => $_SESSION['error'] ?? null,
         ]);
         unset($_SESSION['success'], $_SESSION['error']);
     }

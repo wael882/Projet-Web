@@ -226,11 +226,17 @@ class EntrepriseModel {
         return (int) $stmt->fetchColumn() > 0;
     }
 
-    public function getDemandesEnAttente(): array {
-        $stmt = $this->pdo->query('
-            SELECT * FROM ENTREPRISE WHERE statut = "en_attente" ORDER BY date_creation DESC
-        ');
-        return $stmt->fetchAll();
+    public function compterDemandesEnAttente(): int {
+        $stmt = $this->pdo->query('SELECT COUNT(*) FROM ENTREPRISE WHERE statut = "en_attente"');
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function getDemandesEnAttente(int $limite = 0, int $decalage = 0): array {
+        $sql = 'SELECT * FROM ENTREPRISE WHERE statut = "en_attente" ORDER BY date_creation DESC';
+        if ($limite > 0) {
+            $sql .= ' LIMIT ' . $limite . ' OFFSET ' . $decalage;
+        }
+        return $this->pdo->query($sql)->fetchAll();
     }
 
     public function approuver(int $id): void {

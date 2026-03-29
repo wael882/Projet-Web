@@ -764,3 +764,40 @@ footer a:hover {
   color: #ef4444;
   font-weight: 700;
 }
+
+/* === PAGINATION === */
+.pagination-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.pagination-btn {
+  padding: 0.55rem 1.1rem;
+  background: var(--carte);
+  color: var(--bleu);
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.pagination-btn:hover {
+  background: var(--bleu);
+  color: #fff;
+}
+
+.pagination-btn--desactive {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+
+.pagination-info {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--bleu);
+}

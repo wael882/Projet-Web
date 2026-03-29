@@ -14,7 +14,7 @@
   </div>
 
   <h1 style="margin-bottom:0.25rem;">Demandes de création d'entreprise</h1>
-  <p style="color:var(--gris); font-size:0.9rem; margin-bottom:1.5rem;">{{ demandes|length }} demande{{ demandes|length > 1 ? 's' : '' }} en attente</p>
+  <p style="color:var(--gris); font-size:0.9rem; margin-bottom:1.5rem;">{{ totalDemandes }} demande{{ totalDemandes > 1 ? 's' : '' }} en attente</p>
 
   {% if success %}
     <div class="alert alert-success" style="margin-bottom:1rem;">{{ success }}</div>
@@ -73,6 +73,8 @@
       {% endfor %}
     </div>
   {% endif %}
+
+  {% include 'partials/pagination.html.twig' with {pageCourante: pageCourante, totalPages: totalPages, urlBase: '/admin/entreprises'} %}
 
 </div>
 {% endblock %}

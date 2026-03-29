@@ -22,9 +22,16 @@ class PiloteModel
         return $stmt->fetch();
     }
 
-    public function getEtudiants(int $idPilote): array
+    public function compterEtudiants(int $idPilote): int
     {
-        $stmt = $this->pdo->prepare('
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM ETUDIANT WHERE id_pilote = :id_pilote');
+        $stmt->execute([':id_pilote' => $idPilote]);
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function getEtudiants(int $idPilote, int $limite = 0, int $decalage = 0): array
+    {
+        $sql = '
             SELECT e.*, u.nom, u.prenom, u.email,
                    COUNT(c.id_candidature) AS nb_candidatures
             FROM ETUDIANT e
@@ -33,7 +40,11 @@ class PiloteModel
             WHERE e.id_pilote = :id_pilote
             GROUP BY e.id_etudiant
             ORDER BY u.nom, u.prenom
-        ');
+        ';
+        if ($limite > 0) {
+            $sql .= ' LIMIT ' . $limite . ' OFFSET ' . $decalage;
+        }
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':id_pilote' => $idPilote]);
         return $stmt->fetchAll();
     }
@@ -196,10 +207,26 @@ class PiloteModel
         return (int) $this->pdo->lastInsertId();
     }
 
-    public function getTous(string $recherche = ''): array
+    public function compterTous(string $recherche = ''): int
     {
         if ($recherche !== '') {
             $stmt = $this->pdo->prepare('
+                SELECT COUNT(DISTINCT p.id_pilote)
+                FROM PILOTE p
+                JOIN UTILISATEUR u ON p.id_utilisateur = u.id_utilisateur
+                WHERE u.nom LIKE :recherche OR u.prenom LIKE :recherche OR u.email LIKE :recherche
+            ');
+            $stmt->execute([':recherche' => '%' . $recherche . '%']);
+        } else {
+            $stmt = $this->pdo->query('SELECT COUNT(*) FROM PILOTE');
+        }
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function getTous(string $recherche = '', int $limite = 0, int $decalage = 0): array
+    {
+        if ($recherche !== '') {
+            $sql = '
                 SELECT p.id_pilote, p.id_utilisateur,
                        u.nom, u.prenom, u.email, u.ecole, u.date_creation,
                        COUNT(e.id_etudiant) AS nb_etudiants
@@ -209,10 +236,14 @@ class PiloteModel
                 WHERE u.nom LIKE :recherche OR u.prenom LIKE :recherche OR u.email LIKE :recherche
                 GROUP BY p.id_pilote
                 ORDER BY u.nom, u.prenom
-            ');
+            ';
+            if ($limite > 0) {
+                $sql .= ' LIMIT ' . $limite . ' OFFSET ' . $decalage;
+            }
+            $stmt = $this->pdo->prepare($sql);
             $stmt->execute([':recherche' => '%' . $recherche . '%']);
         } else {
-            $stmt = $this->pdo->query('
+            $sql = '
                 SELECT p.id_pilote, p.id_utilisateur,
                        u.nom, u.prenom, u.email, u.ecole, u.date_creation,
                        COUNT(e.id_etudiant) AS nb_etudiants
@@ -221,7 +252,11 @@ class PiloteModel
                 LEFT JOIN ETUDIANT e ON e.id_pilote = p.id_pilote
                 GROUP BY p.id_pilote
                 ORDER BY u.nom, u.prenom
-            ');
+            ';
+            if ($limite > 0) {
+                $sql .= ' LIMIT ' . $limite . ' OFFSET ' . $decalage;
+            }
+            $stmt = $this->pdo->query($sql);
         }
         return $stmt->fetchAll();
     }
@@ -258,10 +293,26 @@ class PiloteModel
 
     // ── Méthodes réservées à l'admin (sans restriction de pilote) ──────────────
 
-    public function getTousEtudiants(string $recherche = ''): array
+    public function compterTousEtudiants(string $recherche = ''): int
     {
         if ($recherche !== '') {
             $stmt = $this->pdo->prepare('
+                SELECT COUNT(DISTINCT e.id_etudiant)
+                FROM ETUDIANT e
+                JOIN UTILISATEUR u ON e.id_utilisateur = u.id_utilisateur
+                WHERE u.nom LIKE :recherche OR u.prenom LIKE :recherche OR u.email LIKE :recherche
+            ');
+            $stmt->execute([':recherche' => '%' . $recherche . '%']);
+        } else {
+            $stmt = $this->pdo->query('SELECT COUNT(*) FROM ETUDIANT');
+        }
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function getTousEtudiants(string $recherche = '', int $limite = 0, int $decalage = 0): array
+    {
+        if ($recherche !== '') {
+            $sql = '
                 SELECT e.id_etudiant, e.id_utilisateur, e.promotion, e.statut_recherche_stage, e.id_pilote,
                        u.nom, u.prenom, u.email, u.ecole, u.date_creation,
                        COUNT(c.id_candidature) AS nb_candidatures,
@@ -274,10 +325,14 @@ class PiloteModel
                 WHERE u.nom LIKE :recherche OR u.prenom LIKE :recherche OR u.email LIKE :recherche
                 GROUP BY e.id_etudiant
                 ORDER BY u.nom, u.prenom
-            ');
+            ';
+            if ($limite > 0) {
+                $sql .= ' LIMIT ' . $limite . ' OFFSET ' . $decalage;
+            }
+            $stmt = $this->pdo->prepare($sql);
             $stmt->execute([':recherche' => '%' . $recherche . '%']);
         } else {
-            $stmt = $this->pdo->query('
+            $sql = '
                 SELECT e.id_etudiant, e.id_utilisateur, e.promotion, e.statut_recherche_stage, e.id_pilote,
                        u.nom, u.prenom, u.email, u.ecole, u.date_creation,
                        COUNT(c.id_candidature) AS nb_candidatures,
@@ -289,7 +344,11 @@ class PiloteModel
                 LEFT JOIN UTILISATEUR p_u ON p.id_utilisateur = p_u.id_utilisateur
                 GROUP BY e.id_etudiant
                 ORDER BY u.nom, u.prenom
-            ');
+            ';
+            if ($limite > 0) {
+                $sql .= ' LIMIT ' . $limite . ' OFFSET ' . $decalage;
+            }
+            $stmt = $this->pdo->query($sql);
         }
         return $stmt->fetchAll();
     }

@@ -8,7 +8,7 @@
   <div style="background:var(--bleu); border-radius:16px; padding:2rem 2.5rem; margin-bottom:2rem; color:#fff; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
     <div>
       <h1 style="color:#fff; font-size:1.8rem; margin-bottom:0.25rem;">Pilotes de promotion</h1>
-      <p style="color:rgba(255,255,255,0.65); margin:0;">{{ pilotes|length }} pilote{{ pilotes|length != 1 ? 's' : '' }}{% if recherche %} pour « {{ recherche }} »{% endif %}</p>
+      <p style="color:rgba(255,255,255,0.65); margin:0;">{{ totalPilotes }} pilote{{ totalPilotes != 1 ? 's' : '' }}{% if recherche %} pour « {{ recherche }} »{% endif %}</p>
     </div>
     <div style="display:flex; align-items:center; gap:1rem;">
       <a href="/admin/pilote/creer" style="background:var(--orange); color:#fff; padding:0.6rem 1.2rem; border-radius:8px; font-weight:600; font-size:0.88rem;">+ Nouveau pilote</a>
@@ -63,6 +63,9 @@
       {% endfor %}
     </div>
   {% endif %}
+
+  {% set urlBase = recherche ? '/admin/pilotes?search=' ~ recherche : '/admin/pilotes' %}
+  {% include 'partials/pagination.html.twig' with {pageCourante: pageCourante, totalPages: totalPages, urlBase: urlBase} %}
 
 </div>
 {% endblock %}

@@ -3,39 +3,6 @@
    =========================================== */
 
 .profil-section {
-  max-width: 800px;
-  margin: 3rem auto;
-  padding: 2rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(28, 55, 91, 0.08);
-}
-
-.profile-header {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  margin-bottom: 3rem;
-}
-
-.profile-avatar {
-  width: 100px;
-  height: 100px;
-  background: var(--carte);
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2.5rem;
-  color: var(--bleu);
-}
-
-
-/* ===========================================
-   PROFIL.CSS — Page profil étudiant
-   =========================================== */
-
-.profil-section {
   max-width: 700px;
   margin: 2rem auto;
   background: var(--blanc);
@@ -46,7 +13,8 @@
 
 .profile-header {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 1.5rem;
   margin-bottom: 2rem;
   padding-bottom: 2rem;
@@ -125,7 +93,7 @@
 
 .form-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 1rem;
 }
 
@@ -195,8 +163,13 @@
 
 
 
-@media (max-width: 600px) {
+@media (min-width: 601px) {
+  .profile-header {
+    flex-direction: row;
+    align-items: center;
+  }
+
   .form-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 }

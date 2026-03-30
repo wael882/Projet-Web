@@ -11,7 +11,7 @@ section h2 {
 
 .favoris-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: 1fr;
   gap: 2rem;
 }
 
@@ -35,4 +35,11 @@ section h2 {
   margin-bottom: 1rem;
   object-fit: contain;
   padding: 5px;
+}
+
+/* Desktop */
+@media (min-width: 601px) {
+  .favoris-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
 }

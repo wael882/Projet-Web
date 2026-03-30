@@ -8,6 +8,10 @@
 
 .entreprises-header {
   display: flex;
+<<<<<<< HEAD
+=======
+  flex-direction: column;
+>>>>>>> origin/mathildeduv
   align-items: flex-start;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -33,6 +37,7 @@
 .search-form {
   display: flex;
   gap: 0.5rem;
+  width: 100%;
 }
 
 .search-form input {
@@ -41,7 +46,7 @@
   border-radius: 8px;
   font-family: inherit;
   font-size: 0.9rem;
-  width: 220px;
+  width: 100%;
 }
 
 .search-form input:focus {
@@ -160,6 +165,7 @@
   color: var(--gris);
 }
 
+<<<<<<< HEAD
 .btn-reinitialiser {
   padding: 0.55rem 1rem;
   border: 1px solid var(--ligne);
@@ -299,11 +305,20 @@
 }
 
 @media (max-width: 600px) {
+=======
+/* Desktop */
+@media (min-width: 601px) {
+>>>>>>> origin/mathildeduv
   .entreprises-header {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
   }
 
+  .search-form {
+    width: auto;
+  }
+
+<<<<<<< HEAD
   .search-form input,
   .search-form--barre input {
     width: 100%;
@@ -322,3 +337,9 @@
     justify-content: flex-end;
   }
 }
+=======
+  .search-form input {
+    width: 220px;
+  }
+}
+>>>>>>> origin/mathildeduv

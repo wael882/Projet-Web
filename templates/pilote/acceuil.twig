@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stagio - Accueil{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/acceuil.css" />
+  <link rel="stylesheet" href="{{ base_url }}css/pages/pilote.css" />
+{% endblock %}
+
+{% block content %}
+<div id="acceuil-layout">
+
+  <section id="bienvenue">
+    <h1>Bonjour, {{ user.prenom }} {{ user.nom }}</h1>
+    <p>Voici un résumé de votre promotion.</p>
+  </section>
+
+  <aside class="sidebar">
+    <h2>Mon profil</h2>
+    <p><strong>{{ user.prenom }} {{ user.nom }}</strong></p>
+    <p>{{ user.email }}</p>
+    <p>Pilote</p>
+    <hr>
+    <a href="{{ base_url }}profil" class="btn btn-primary">Modifier mon profil</a>
+  </aside>
+
+  <section>
+    <h2>Votre activité</h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <strong>{{ nbEtudiants }}</strong>
+        <p>Étudiant{{ nbEtudiants > 1 ? 's' : '' }} suivi{{ nbEtudiants > 1 ? 's' : '' }}</p>
+        <a href="{{ base_url }}pilote" class="btn btn-secondary">Gérer mes étudiants</a>
+      </div>
+      <div class="stat-card">
+        <strong>{{ nbAvecStage }}</strong>
+        <p>Stage{{ nbAvecStage > 1 ? 's' : '' }} trouvé{{ nbAvecStage > 1 ? 's' : '' }}</p>
+      </div>
+      <div class="stat-card">
+        <strong>{{ nbCandidaturesTotales }}</strong>
+        <p>Candidature{{ nbCandidaturesTotales > 1 ? 's' : '' }} au total</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Mes étudiants</h2>
+    {% if derniersEtudiants is empty %}
+      <p>Aucun étudiant ne vous est assigné pour le moment.</p>
+    {% else %}
+      <div class="etudiants-list">
+        {% for e in derniersEtudiants %}
+          <a href="/pilote/etudiant?id={{ e.id_etudiant }}" class="etudiant-card">
+            <div class="etudiant-avatar">
+              {{ e.prenom|slice(0,1)|upper }}{{ e.nom|slice(0,1)|upper }}
+            </div>
+            <div class="etudiant-info">
+              <span class="etudiant-nom">{{ e.prenom }} {{ e.nom }}</span>
+              <span class="etudiant-promo">{{ e.promotion ?? 'Promotion non renseignée' }}</span>
+              <span class="etudiant-email">{{ e.email }}</span>
+            </div>
+            <div class="etudiant-stats">
+              <span class="stat-badge">{{ e.nb_candidatures }} candidature{{ e.nb_candidatures > 1 ? 's' : '' }}</span>
+              {% if e.statut_recherche_stage %}
+                <span class="statut-badge statut-{{ e.statut_recherche_stage|replace({' ': '-'})|lower }}">
+                  {{ e.statut_recherche_stage }}
+                </span>
+              {% endif %}
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+      {% if nbEtudiants > 5 %}
+        <a href="{{ base_url }}pilote" class="btn btn-secondary" style="margin-top: 1rem; display: inline-block;">
+          Voir tous les étudiants ({{ nbEtudiants }})
+        </a>
+      {% endif %}
+    {% endif %}
+  </section>
+
+</div>
+{% endblock %}

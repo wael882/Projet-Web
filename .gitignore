@@ -4,7 +4,7 @@ uploads/
 logs/
 cache/
 stagio.local-key.pem
-stagio.local.pem 
+stagio.local.pem
 config/config.php
 Makefile
 .DS_Store

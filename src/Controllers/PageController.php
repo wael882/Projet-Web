@@ -244,8 +244,27 @@ class PageController
 
         $role = $_SESSION['user']['role'] ?? '';
         if ($role === 'pilote') {
-            header('Location: /pilote');
-            exit;
+            $modelePilote  = new PiloteModel();
+            $pilote        = $modelePilote->findByUtilisateur((int) $_SESSION['user']['id_utilisateur']);
+
+            if (!$pilote) {
+                header('Location: /identification?error=pilote_introuvable');
+                exit;
+            }
+
+            $tousEtudiants         = $modelePilote->getEtudiants((int) $pilote['id_pilote']);
+            $nbEtudiants           = count($tousEtudiants);
+            $nbAvecStage           = count(array_filter($tousEtudiants, fn($e) => $e['statut_recherche_stage'] === 'Stage trouvé'));
+            $nbCandidaturesTotales = (int) array_sum(array_column($tousEtudiants, 'nb_candidatures'));
+            $derniersEtudiants     = array_slice($tousEtudiants, 0, 5);
+
+            echo $this->twig->render('pilote/acceuil.twig', [
+                'nbEtudiants'           => $nbEtudiants,
+                'nbAvecStage'           => $nbAvecStage,
+                'nbCandidaturesTotales' => $nbCandidaturesTotales,
+                'derniersEtudiants'     => $derniersEtudiants,
+            ]);
+            return;
         }
         if ($role === 'admin') {
             header('Location: /admin');
@@ -295,7 +314,7 @@ class PageController
 
     public function candidature()
     {
-        $this->requireAuth();
+        $this->requireRole('etudiant');
         $model = new CandidatureModel();
         $candidatures = $model->findByUtilisateur((int) $_SESSION['user']['id_utilisateur']);
         echo $this->twig->render('candidature.twig', ['candidatures' => $candidatures]);
@@ -500,14 +519,14 @@ class PageController
     }
 
     public function favoris(){
-        $this->requireAuth();
+        $this->requireRole('etudiant');
         $model = new WishlistModel();
         $favoris = $model->findByUtilisateur((int) $_SESSION['user']['id_utilisateur']);
         echo $this->twig->render('favoris.twig',['favoris' => $favoris]);
     }
 
     public function favorisPost(){
-        $this->requireAuth();
+        $this->requireRole('etudiant');
         $model = new WishlistModel();
         $model->add((int) $_SESSION['user']['id_utilisateur'], (int) $_POST['id_offre']);
         header("location:" . $_SERVER['HTTP_REFERER']);
@@ -515,7 +534,7 @@ class PageController
     }
 
     public function favorisDelete(){
-        $this->requireAuth();
+        $this->requireRole('etudiant');
         $model = new WishlistModel();
         $model->remove((int) $_SESSION['user']['id_utilisateur'], (int) $_POST['id_offre']);
         header("location:" . $_SERVER['HTTP_REFERER']);
@@ -554,7 +573,7 @@ class PageController
 
     public function postuler()
     {
-        $this->requireAuth();
+        $this->requireRole('etudiant');
 
         $model = new OffreModel();
         $offre = $model->findById((int) ($_GET['id'] ?? 0));
@@ -581,7 +600,7 @@ class PageController
 
     public function candidaturePost()
     {
-        $this->requireAuth();
+        $this->requireRole('etudiant');
 
         $idUtilisateur = (int) ($_SESSION['user']['id_utilisateur'] ?? 0);
         $idOffre       = (int) ($_POST['id_offre'] ?? 0);
@@ -870,7 +889,7 @@ class PageController
     }
 
     public function entrepriseModifier(): void {
-        $this->requireRole('admin');
+        $this->requireRoles(['admin', 'pilote']);
         $id         = (int) ($_GET['id'] ?? 0);
         $model      = new EntrepriseModel();
         $entreprise = $model->findById($id);
@@ -889,7 +908,7 @@ class PageController
     }
 
     public function entrepriseModifierPost(): void {
-        $this->requireRole('admin');
+        $this->requireRoles(['admin', 'pilote']);
         $id          = (int) ($_POST['id_entreprise'] ?? 0);
         $nom         = trim($_POST['nom'] ?? '');
         $description = trim($_POST['description'] ?? '');
@@ -1060,7 +1079,7 @@ class PageController
     }
 
     public function offreStatistiques(): void {
-        $this->requireRoles(['admin', 'pilote']);
+        // SFx11 : accessible à tous (admin, pilote, étudiant, anonyme)
 
         $modeleOffre = new OffreModel();
 
@@ -1652,7 +1671,7 @@ class PageController
 
     public function adminEtudiants(): void
     {
-        $this->requireRole('admin');
+        $this->requireRoles(['admin', 'pilote']);
         $recherche     = trim($_GET['search'] ?? '');
         $nombreParPage = 10;
         $pageCourante  = max(1, (int) ($_GET['page'] ?? 1));
@@ -1675,7 +1694,7 @@ class PageController
 
     public function adminEtudiant(): void
     {
-        $this->requireRole('admin');
+        $this->requireRoles(['admin', 'pilote']);
         $idEtudiant   = (int) ($_GET['id'] ?? 0);
         $piloteModel  = new PiloteModel();
         $etudiant     = $piloteModel->getEtudiantAdmin($idEtudiant);

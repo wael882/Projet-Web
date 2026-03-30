@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stagio - Modifier une offre{% endblock %}
+
+{% block description %}content="Stagio - Modifier une offre de stage"{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/postuler.css" />
+{% endblock %}
+
+{% block content %}
+
+  <main class="postuler-container">
+    <div class="postuler-card">
+
+      <div class="postuler-header">
+        <h1>Modifier l'offre de stage</h1>
+      </div>
+
+      {% if error %}
+        <p class="alert alert-error">{{ error }}</p>
+      {% endif %}
+
+      <form method="POST" action="/offre/modifier" class="postuler-form">
+        <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
+
+        <div class="form-group">
+          <label for="saisie-entreprise">Entreprise</label>
+          <input type="text" id="saisie-entreprise" list="liste-entreprises"
+                 value="{{ offre.nom_entreprise }}" autocomplete="off" required>
+          <datalist id="liste-entreprises">
+            {% for entreprise in entreprises %}
+              <option value="{{ entreprise.nom }}" data-id="{{ entreprise.id_entreprise }}"></option>
+            {% endfor %}
+          </datalist>
+          <input type="hidden" id="id_entreprise" name="id_entreprise" value="{{ offre.id_entreprise }}">
+        </div>
+
+        <div class="form-group">
+          <label for="titre">Titre du poste</label>
+          <input type="text" id="titre" name="titre"
+                 value="{{ offre.titre }}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" rows="8" required>{{ offre.description }}</textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="remuneration_base">Rémunération de base (€/an) <span class="hint">optionnel</span></label>
+          <input type="number" id="remuneration_base" name="remuneration_base"
+                 value="{{ offre.remuneration_base }}" min="0" step="0.01">
+        </div>
+
+        <div class="form-group">
+          <label for="date_offre">Date de début du stage <span class="hint">optionnel</span></label>
+          <input type="date" id="date_offre" name="date_offre"
+                 value="{{ offre.date_offre ? offre.date_offre|date('Y-m-d') : '' }}">
+        </div>
+
+        <div class="form-group">
+          <label>Compétences requises <span class="hint">optionnel</span></label>
+
+          {# Compétences déjà associées à l'offre #}
+          <div class="tags-nouvelles-competences" id="tags-competences-existantes">
+            {% for comp in competences %}
+              <span class="tag-competence tag-competence-existante">
+                <span>{{ comp }}</span>
+                <input type="hidden" name="nouvelles_competences[]" value="{{ comp }}">
+                <button type="button" onclick="this.parentElement.remove(); mettreAJourRecapitulatif();" title="Retirer">×</button>
+              </span>
+            {% endfor %}
+          </div>
+
+          <div class="nouvelle-competence-zone" style="margin-top:8px;">
+            <input type="text" id="saisie-competence" placeholder="Ajouter une compétence..." autocomplete="off">
+            <button type="button" class="btn-ajouter-competence" onclick="ajouterCompetence()">Ajouter</button>
+          </div>
+          <div class="tags-nouvelles-competences" id="tags-nouvelles-competences"></div>
+
+          <div class="recapitulatif-competences" id="recapitulatif-competences">
+            <div class="recapitulatif-entete">
+              <span class="recapitulatif-titre">Compétences</span>
+              <span class="recapitulatif-compteur" id="compteur-competences">{{ competences|length }}</span>
+            </div>
+            <p class="recapitulatif-vide" id="recapitulatif-vide" {% if competences|length > 0 %}style="display:none"{% endif %}>Aucune compétence ajoutée pour le moment.</p>
+            <div class="recapitulatif-liste" id="recapitulatif-liste"></div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a href="/offre?id={{ offre.id_offre }}" class="btn-annuler">Annuler</a>
+          <button type="submit" class="btn-postuler">Enregistrer les modifications</button>
+        </div>
+
+      </form>
+
+    </div>
+  </main>
+
+{% endblock %}
+
+{% block scripts %}
+{{ parent() }}
+<script src="{{ base_url }}js/pages/offre-formulaire.js" defer></script>
+{% endblock %}

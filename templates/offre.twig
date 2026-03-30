@@ -15,15 +15,22 @@
     <div class="offer-main">
 
       <div class="offer-header">
-        <h1 class="offer-titre">{{ offre.titre }}</h1>
-        <a href="/entreprise?id={{ offre.id_entreprise }}" class="offer-entreprise">{{ offre.nom_entreprise }}</a>
+        <div class="offer-header-top">
+          {% if offre.logo_entreprise %}
+            <img src="{{ base_url }}{{ offre.logo_entreprise }}" alt="Logo {{ offre.nom_entreprise }}" class="offer-logo-entreprise">
+          {% endif %}
+          <div>
+            <h1 class="offer-titre">{{ offre.titre }}</h1>
+            <a href="/entreprise?id={{ offre.id_entreprise }}" class="offer-entreprise">{{ offre.nom_entreprise }}</a>
+          </div>
+        </div>
       </div>
 
       <div class="offer-meta">
         {% if offre.remuneration_base %}
         <div class="meta-item">
           <span class="meta-label">Rémunération</span>
-          <span class="meta-value">{{ offre.remuneration_base }} € / mois</span>
+          <span class="meta-value">{{ offre.remuneration_base }} € / an</span>
         </div>
         {% endif %}
         {% if offre.duree_stage %}
@@ -38,6 +45,10 @@
           <span class="meta-value">{{ offre.date_offre }}</span>
         </div>
         {% endif %}
+        <div class="meta-item">
+          <span class="meta-label">Candidatures reçues</span>
+          <span class="meta-value">{{ nbCandidatures }}</span>
+        </div>
       </div>
 
       <div class="offer-section">
@@ -85,22 +96,34 @@
         <p class="alert alert-error">{{ error }}</p>
       {% endif %}
 
-      {% if dejaPostule %}
-        <p class="deja-postule">Candidature envoyée</p>
-      {% elseif offre.active %}
-        <a href="/postuler?id={{ offre.id_offre }}" class="btn-postuler">Postuler</a>
+      {% if user and user.role == 'etudiant' %}
+        {% if dejaPostule %}
+          <p class="deja-postule">Candidature envoyée</p>
+        {% elseif offre.active %}
+          <a href="/postuler?id={{ offre.id_offre }}" class="btn-postuler">Postuler</a>
+        {% endif %}
       {% endif %}
 
-      {% if offre.id_offre in favorisIds %}
-      <form method="POST" action="{{ base_url }}favoris/supprimer">
-        <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
-        <button type="submit" class="btn-favoris actif">Retirer des favoris</button>
-      </form>
-      {% else %}
-      <form method="POST" action="{{ base_url }}favoris">
-        <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
-        <button type="submit" class="btn-favoris">Ajouter aux favoris</button>
-      </form>
+      {% if user %}
+        {% if offre.id_offre in favorisIds %}
+        <form method="POST" action="{{ base_url }}favoris/supprimer">
+          <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
+          <button type="submit" class="btn-favoris actif">Retirer des favoris</button>
+        </form>
+        {% else %}
+        <form method="POST" action="{{ base_url }}favoris">
+          <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
+          <button type="submit" class="btn-favoris">Ajouter aux favoris</button>
+        </form>
+        {% endif %}
+      {% endif %}
+
+      {% if user and user.role in ['admin', 'pilote'] %}
+        <a href="/offre/modifier?id={{ offre.id_offre }}" class="btn-retour">Modifier l'offre</a>
+        <form method="POST" action="{{ base_url }}offre/supprimer" onsubmit="return confirm('Confirmer la suppression de cette offre ?')">
+          <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
+          <button type="submit" class="btn-supprimer">Supprimer l'offre</button>
+        </form>
       {% endif %}
 
       <a href="/rechercher" class="btn-retour">Retour aux offres</a>

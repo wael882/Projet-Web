@@ -4,5 +4,8 @@ uploads/
 logs/
 cache/
 stagio.local-key.pem
-stagio.local.pem 
-config/config.php 
+stagio.local.pem
+config/config.php
+Makefile
+.DS_Store
+CLAUDE.md

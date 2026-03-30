@@ -1,3 +1,175 @@
+<<<<<<< HEAD
+#identite {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  flex-wrap: wrap;
+  background: var(--blanc);
+  border-radius: 16px;
+  padding: 2rem 2.5rem;
+  border: 1px solid var(--ligne);
+}
+
+.entreprise-logo-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 14px;
+  object-fit: contain;
+  background: #f8f9fb;
+  border: 1px solid var(--ligne);
+  padding: 8px;
+  flex-shrink: 0;
+}
+
+.entreprise-logo-placeholder {
+  width: 100px;
+  height: 100px;
+  background: var(--bleu);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+  letter-spacing: 0.05em;
+}
+
+.entreprise-identite-infos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.entreprise-identite-infos h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.75rem;
+}
+
+.entreprise-meta-liste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.entreprise-meta-liste li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  color: var(--gris);
+}
+
+.entreprise-meta-liste li a {
+  color: var(--bleu);
+  text-decoration: none;
+}
+
+.entreprise-meta-liste li a:hover {
+  text-decoration: underline;
+}
+
+#description {
+  background: var(--blanc);
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid var(--ligne);
+}
+
+#description p {
+  text-align: justify;
+}
+
+.stat-card {
+  background: var(--blanc);
+  border: 1px solid var(--ligne);
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 160px;
+}
+
+.stat-card strong {
+  font-size: 1.4rem;
+  color: var(--bleu);
+}
+
+.stat-card span {
+  font-size: 0.82rem;
+  color: var(--gris);
+}
+
+/* Étoiles interactives dans le formulaire */
+.star-rating {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 0.3rem;
+  width: fit-content;
+}
+
+.star-rating input[type="radio"] {
+  display: none;
+}
+
+.star-rating label {
+  font-size: 2rem;
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.star-rating input[type="radio"]:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  color: var(--orange, #f59e0b);
+}
+
+/* Affichage étoiles (stat card + liste évaluations) */
+.stars-display {
+  display: inline-flex;
+  gap: 0.1rem;
+}
+
+.stars-display .star {
+  font-size: 1.2rem;
+}
+
+.stars-display .star.full,
+.stars-display .star.half {
+  color: var(--orange, #f59e0b);
+}
+
+.stars-display .star.empty {
+  color: #ccc;
+}
+
+/* Boutons modifier / supprimer un avis */
+.btn-avis-action {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.2rem 0.3rem;
+  border-radius: 6px;
+  opacity: 0.6;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.btn-avis-action:hover {
+  opacity: 1;
+  background: var(--carte, #f5f5f5);
+}
+
+.btn-avis-delete:hover {
+  background: #fee2e2;
+}
+=======
 #entreprise-layout {
   display: grid;
   grid-template-columns: 1fr;
@@ -75,3 +247,4 @@
 #description p {
   text-align: justify;
 }
+>>>>>>> origin/mathildeduv

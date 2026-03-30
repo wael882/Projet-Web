@@ -1,6 +1,6 @@
 <header>
   <nav class="navbar">
-    <a href="{{ base_url }}" class="logo">
+    <a href="{{ base_url }}acceuil" class="logo">
       <img src="{{ base_url }}image/logo.webp" alt="Logo Stagio" />
     </a>
 
@@ -21,13 +21,13 @@
       {% if user and user.role == 'admin' %}
         <a href="{{ base_url }}admin">Administration</a>
       {% endif %}
+          
+      {% if user %}
+        <a href="/deconnexion" class="nav-cta">Se déconnecter</a>
+      {% else %}
+        <a href="{{ base_url }}identification" class="nav-cta">Se connecter</a>
+      {% endif %}
     </div>
-
-    {% if user %}
-      <a href="/deconnexion" class="nav-cta">Se déconnecter</a>
-    {% else %}
-      <a href="{{ base_url }}identification" class="nav-cta">Se connecter</a>
-    {% endif %}
 
     <button class="menu-toggle" type="button" aria-label="Ouvrir le menu">
       ☰

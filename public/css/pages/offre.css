@@ -21,11 +21,39 @@
 
 /* === EN-TÊTE === */
 .offer-header {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--ligne, #e5e7eb);
+}
+
+.offer-header-top {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.offer-logo-entreprise {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 1px solid var(--ligne);
+  background: var(--blanc);
+  padding: 6px;
+  flex-shrink: 0;
+}
+
+.offer-logo-placeholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  background: var(--bleu);
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .offer-titre {
@@ -255,25 +283,33 @@
   color: var(--color-text, #111827);
 }
 
-.alert {
-  padding: 0.65rem 0.9rem;
+.btn-supprimer {
+  width: 100%;
+  padding: 0.7rem;
   border-radius: 8px;
-  font-size: 0.85rem;
-}
-
-.alert-success {
-  background: #dcfce7;
-  color: #16a34a;
-  border: 1px solid #bbf7d0;
-}
-
-.alert-error {
-  background: #fef2f2;
+  border: 2px solid #dc2626;
+  background: transparent;
   color: #dc2626;
-  border: 1px solid #fecaca;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  box-sizing: border-box;
 }
 
+<<<<<<< HEAD
+.btn-supprimer:hover {
+  background: #dc2626;
+  color: #fff;
+}
+
+
+
+
+@media (max-width: 768px) {
+=======
 @media (min-width: 769px) {
+>>>>>>> origin/mathildeduv
   .offer-detail {
     grid-template-columns: 1fr 260px;
   }

@@ -38,6 +38,22 @@
               </span>
             </div>
 
+            {% if c.cv_fichier or c.lettre_motivation %}
+              <div class="candidature-documents">
+                {% if c.cv_fichier %}
+                  <a href="/candidature/cv?id={{ c.id_candidature }}" target="_blank" class="lien-document lien-cv">
+                    <i class="fa-solid fa-file" aria-hidden="true"></i> Voir mon CV
+                  </a>
+                {% endif %}
+                {% if c.lettre_motivation %}
+                  <details class="detail-lm">
+                    <summary class="lien-document lien-lm"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Lettre de motivation</summary>
+                    <div class="contenu-lm">{{ c.lettre_motivation|nl2br }}</div>
+                  </details>
+                {% endif %}
+              </div>
+            {% endif %}
+
           </div>
         {% endfor %}
       </div>

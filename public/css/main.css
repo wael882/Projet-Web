@@ -789,6 +789,98 @@ footer a:hover {
     align-items: center;
     text-align: center;
   }
+<<<<<<< HEAD
+}
+/* ===========================================
+   ALERTES GLOBALES
+   =========================================== */
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  animation: alertSlideIn 0.25s ease;
+}
+
+@keyframes alertSlideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.alert::before {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+
+.alert-success {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #86efac;
+  border-left: 4px solid #22c55e;
+}
+
+.alert-success::before {
+  content: '✓';
+  color: #22c55e;
+  font-weight: 700;
+}
+
+.alert-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  border-left: 4px solid #ef4444;
+}
+
+.alert-error::before {
+  content: '✕';
+  color: #ef4444;
+  font-weight: 700;
+}
+
+/* === PAGINATION === */
+.pagination-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.pagination-btn {
+  padding: 0.55rem 1.1rem;
+  background: var(--carte);
+  color: var(--bleu);
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.pagination-btn:hover {
+  background: var(--bleu);
+  color: #fff;
+}
+
+.pagination-btn--desactive {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+
+.pagination-info {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--bleu);
+}
+=======
 
   .timeline-dot {
     margin-bottom: 1.2rem;
@@ -816,3 +908,4 @@ footer a:hover {
     text-align: left;
   }
 }
+>>>>>>> origin/mathildeduv

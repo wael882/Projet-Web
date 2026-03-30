@@ -1,0 +1,54 @@
+{% extends 'base-index.html.twig' %}
+
+{% block title %}Admin - Demandes de suppression{% endblock %}
+
+{% block content %}
+<div style="max-width:900px; margin:2rem auto;">
+
+  <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
+    <a href="/admin/entreprises" style="color:var(--gris); font-size:0.9rem; text-decoration:none;">Créations</a>
+    <span style="color:var(--gris);">|</span>
+    <a href="/admin/modifications" style="color:var(--gris); font-size:0.9rem; text-decoration:none;">Modifications</a>
+    <span style="color:var(--gris);">|</span>
+    <span style="font-size:0.9rem; font-weight:600;">Suppressions</span>
+  </div>
+
+  <h1 style="margin-bottom:0.25rem;">Demandes de suppression</h1>
+  <p style="color:var(--gris); font-size:0.9rem; margin-bottom:1.5rem;">{{ demandes|length }} demande{{ demandes|length > 1 ? 's' : '' }} en attente</p>
+
+  {% if success %}
+    <div class="alert alert-success" style="margin-bottom:1rem;">{{ success }}</div>
+  {% endif %}
+
+  {% if demandes is empty %}
+    <p style="color:var(--gris);">Aucune demande de suppression en attente.</p>
+  {% else %}
+    <div style="display:flex; flex-direction:column; gap:1rem;">
+      {% for d in demandes %}
+        <div style="background:var(--blanc); border:1px solid #fca5a5; border-radius:12px; padding:1.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <div>
+              <div style="font-weight:700; font-size:1rem;">{{ d.nom }}</div>
+              <div style="font-size:0.82rem; color:var(--gris);">Demande de <strong>{{ d.prenom }} {{ d.nom_user }}</strong></div>
+              {% if d.ville %}<div style="font-size:0.82rem; color:var(--gris);"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ d.ville }}</div>{% endif %}
+              {% if d.email_contact %}<div style="font-size:0.82rem; color:var(--gris);"><i class="fa-solid fa-envelope" aria-hidden="true"></i> {{ d.email_contact }}</div>{% endif %}
+            </div>
+            <a href="/entreprise?id={{ d.id_entreprise }}" style="font-size:0.85rem; color:var(--bleu);">Voir la fiche</a>
+          </div>
+          <div style="display:flex; gap:0.75rem;">
+            <form method="POST" action="/admin/suppression/approuver" onsubmit="return confirm('Supprimer définitivement cette entreprise ?');">
+              <input type="hidden" name="id_entreprise" value="{{ d.id_entreprise }}">
+              <button type="submit" style="padding:0.5rem 1rem; border-radius:8px; border:1px solid #f87171; color:#dc2626; background:none; cursor:pointer; font-size:0.9rem;">Approuver la suppression</button>
+            </form>
+            <form method="POST" action="/admin/suppression/rejeter">
+              <input type="hidden" name="id_entreprise" value="{{ d.id_entreprise }}">
+              <button type="submit" class="btn-principal" style="font-size:0.9rem;">Rejeter</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

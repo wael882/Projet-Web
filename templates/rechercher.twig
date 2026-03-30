@@ -13,8 +13,58 @@
     <div class="recherche-container">
 
       <form method="GET" action="/rechercher">
-        <input type="text" name="motCle" value="{{ motCle }}" placeholder="Rechercher une offre ou une entreprise...">
-        <button type="submit">Rechercher</button>
+
+        <div class="barre-recherche-principale">
+          <input type="text" name="motCle" value="{{ filtres.motCle }}" placeholder="Rechercher une offre, une entreprise...">
+          <button type="submit">Rechercher</button>
+        </div>
+
+        <div class="filtres-grille">
+
+          <div class="filtre-champ">
+            <label for="titre">Titre du poste</label>
+            <input type="text" id="titre" name="titre" value="{{ filtres.titre }}" placeholder="Tous les titres" list="liste-titres" autocomplete="off">
+            <datalist id="liste-titres">
+              {% for titre in titres %}
+                <option value="{{ titre }}">
+              {% endfor %}
+            </datalist>
+          </div>
+
+          <div class="filtre-champ">
+            <label for="entreprise">Entreprise</label>
+            <input type="text" id="entreprise" name="entreprise" value="{{ filtres.entreprise }}" placeholder="Nom de l'entreprise" list="liste-entreprises" autocomplete="off">
+            <datalist id="liste-entreprises">
+              {% for entreprise in entreprises %}
+                <option value="{{ entreprise.nom }}">
+              {% endfor %}
+            </datalist>
+          </div>
+
+          <div class="filtre-champ">
+            <label for="competence">Compétence</label>
+            <select id="competence" name="competence">
+              <option value="">Toutes les compétences</option>
+              {% for comp in competences %}
+                <option value="{{ comp.libelle }}" {% if filtres.competence == comp.libelle %}selected{% endif %}>
+                  {{ comp.libelle }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="filtre-champ">
+            <label for="remuneration_min">Rémunération min (€)</label>
+            <input type="number" id="remuneration_min" name="remuneration_min" value="{{ filtres.remuneration_min }}" placeholder="0" min="0" step="50">
+          </div>
+
+          <div class="filtre-champ">
+            <label for="remuneration_max">Rémunération max (€)</label>
+            <input type="number" id="remuneration_max" name="remuneration_max" value="{{ filtres.remuneration_max }}" placeholder="Illimitée" min="0" step="50">
+          </div>
+
+        </div>
+
       </form>
 
       <div class="results-grid">
@@ -28,28 +78,32 @@
             <div class="recherche-item-meta">{{ offre.duree_stage }}</div>
             <a href="/offre?id={{ offre.id_offre }}">Voir l'offre</a>
 
-            {% if offre.id_offre in favorisIds %}
-            <form method="POST" action="{{ base_url }}favoris/supprimer">
-                <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
-                <button type="submit">&#10084;</button>
-            </form>
-            {% else %}
-            <form method="POST" action="{{ base_url }}favoris">
-                <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
-                <button type="submit">&#9825;</button>
-            </form>
+            {% if user %}
+              {% if offre.id_offre in favorisIds %}
+              <form method="POST" action="{{ base_url }}favoris/supprimer">
+                  <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
+                  <button type="submit">&#10084;</button>
+              </form>
+              {% else %}
+              <form method="POST" action="{{ base_url }}favoris">
+                  <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
+                  <button type="submit">&#9825;</button>
+              </form>
+              {% endif %}
             {% endif %}
 
           </div>
         {% endfor %}
       </div>
 
+      {% set parametresFiltres = 'motCle=' ~ filtres.motCle ~ '&titre=' ~ filtres.titre ~ '&entreprise=' ~ filtres.entreprise ~ '&competence=' ~ filtres.competence ~ '&remuneration_min=' ~ filtres.remuneration_min ~ '&remuneration_max=' ~ filtres.remuneration_max %}
       {% if pageCourante > 1 %}
-      <a href="/rechercher?page={{ pageCourante - 1 }}&motCle={{ motCle }}">← Précédent</a>
+      <a href="/rechercher?page={{ pageCourante - 1 }}&{{ parametresFiltres }}">← Précédent</a>
       {% endif %}
       {% if pageCourante < totalPages %}
-      <a href="/rechercher?page={{ pageCourante + 1 }}&motCle={{ motCle }}">Suivant →</a>
+      <a href="/rechercher?page={{ pageCourante + 1 }}&{{ parametresFiltres }}">Suivant →</a>
       {% endif %}
 
     </div>
 {% endblock %}
+

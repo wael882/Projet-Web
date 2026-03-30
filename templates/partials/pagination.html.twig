@@ -1,31 +1,26 @@
-<style>
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1.5rem;
-    margin: 3rem 0;
-    font-weight: 500;
-  }
-  .pagination a {
-    padding: 0.6rem 1.2rem;
-    background: #E0EFFF;
-    color: #1C375B;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-  }
-  .pagination a:hover {
-    background: #1C375B;
-    color: #ffffff;
-  }
-  .pagination span {
-    color: #1C375B;
-    font-weight: 700;
-  }
-</style>
-<nav class="pagination">
-  <a href="?page={{ page - 1 }}">&laquo; Précédent</a>
-  <span>Page {{ page }}</span>
-  <a href="?page={{ page + 1 }}">Suivant &raquo;</a>
-</nav>
+{#
+  Partial de pagination réutilisable.
+  Variables attendues :
+    - pageCourante  : numéro de la page actuelle
+    - totalPages    : nombre total de pages
+    - urlBase       : URL de base sans paramètre page (ex: "/admin/pilotes?search=foo")
+                      Si urlBase contient déjà "?", on ajoute "&page=X", sinon "?page=X"
+#}
+{% if totalPages > 1 %}
+  {% set separateur = '?' in urlBase ? '&' : '?' %}
+  <nav class="pagination-nav">
+    {% if pageCourante > 1 %}
+      <a href="{{ urlBase }}{{ separateur }}page={{ pageCourante - 1 }}" class="pagination-btn">← Précédent</a>
+    {% else %}
+      <span class="pagination-btn pagination-btn--desactive">← Précédent</span>
+    {% endif %}
+
+    <span class="pagination-info">Page {{ pageCourante }} / {{ totalPages }}</span>
+
+    {% if pageCourante < totalPages %}
+      <a href="{{ urlBase }}{{ separateur }}page={{ pageCourante + 1 }}" class="pagination-btn">Suivant →</a>
+    {% else %}
+      <span class="pagination-btn pagination-btn--desactive">Suivant →</span>
+    {% endif %}
+  </nav>
+{% endif %}

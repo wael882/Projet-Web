@@ -13,7 +13,7 @@
   <div class="pilote-header">
     <div>
       <h1>Espace pilote</h1>
-      <p>{{ etudiants|length }} étudiant{{ etudiants|length > 1 ? 's' : '' }} dans votre promotion</p>
+      <p>{{ totalEtudiants }} étudiant{{ totalEtudiants > 1 ? 's' : '' }} dans votre promotion</p>
     </div>
     <button class="btn-principal" onclick="document.getElementById('modal-creer').style.display='flex'">+ Ajouter un étudiant</button>
   </div>
@@ -74,6 +74,8 @@
       {% endfor %}
     </div>
   {% endif %}
+
+  {% include 'partials/pagination.html.twig' with {pageCourante: pageCourante, totalPages: totalPages, urlBase: '/pilote'} %}
 
 </div>
 {% endblock %}

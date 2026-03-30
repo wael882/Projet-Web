@@ -123,22 +123,201 @@
   text-decoration: underline;
 }
 
-.alert {
-  padding: 0.75rem 1rem;
+.competences-choix {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border, #d1d5db);
   border-radius: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.competence-choix-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   font-size: 0.9rem;
-  margin-bottom: 1rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background: var(--color-bg, #f9fafb);
+  border: 1px solid var(--color-border, #e5e7eb);
 }
 
-.alert-error {
-  background: #fef2f2;
+<<<<<<< HEAD
+.competence-choix-item input[type="checkbox"] {
+  accent-color: var(--color-primary, #2563eb);
+  cursor: pointer;
+}
+
+.recapitulatif-competences {
+  margin-top: 1rem;
+  border: 1px solid var(--ligne, #d8e6f3);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  background: var(--fond, #f0f7ff);
+}
+
+.recapitulatif-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.recapitulatif-titre {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--bleu, #1c375b);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.recapitulatif-compteur {
+  background: var(--bleu, #1c375b);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 20px;
+  padding: 0.1rem 0.6rem;
+  min-width: 22px;
+  text-align: center;
+}
+
+.recapitulatif-vide {
+  color: var(--gris, #64748b);
+  font-size: 0.875rem;
+  font-style: italic;
+  margin: 0;
+}
+
+.recapitulatif-liste {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.recapitulatif-ligne {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+}
+
+.recapitulatif-numero {
+  width: 20px;
+  height: 20px;
+  background: var(--bleu-clair, #2a5082);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.recapitulatif-nom {
+  color: var(--texte, #1a2332);
+  font-weight: 500;
+}
+
+.nouvelle-competence-zone {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.nouvelle-competence-zone input[type="text"] {
+  flex: 1;
+}
+
+.btn-ajouter-competence {
+  background: var(--bleu, #1c375b);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.btn-ajouter-competence:hover {
+  background: var(--bleu-clair, #2a5082);
+  transform: none;
+}
+
+.tags-nouvelles-competences {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.tag-competence {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #93c5fd;
+  border-radius: 20px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.tag-competence button {
+  background: none;
+  border: none;
+  color: #1d4ed8;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+  line-height: 1;
+  font-weight: 700;
+  transition: color 0.15s;
+}
+
+.tag-competence button:hover {
   color: #dc2626;
-  border: 1px solid #fecaca;
+  background: none;
+  transform: none;
 }
 
+.form-group select,
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"] {
+  border: 1px solid var(--color-border, #d1d5db);
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  background: #fff;
+}
+
+.form-group select:focus,
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group input[type="date"]:focus {
+  outline: none;
+  border-color: var(--color-primary, #2563eb);
+}
+
+
+=======
 @media (min-width: 601px) {
   .form-actions {
     flex-direction: row;
     align-items: center;
   }
 }
+>>>>>>> origin/mathildeduv

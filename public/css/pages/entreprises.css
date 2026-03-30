@@ -8,11 +8,21 @@
 
 .entreprises-header {
   display: flex;
+<<<<<<< HEAD
+=======
   flex-direction: column;
+>>>>>>> origin/mathildeduv
   align-items: flex-start;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 1rem;
+}
+
+.entreprises-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .entreprises-header h1 {
@@ -155,8 +165,150 @@
   color: var(--gris);
 }
 
+<<<<<<< HEAD
+.btn-reinitialiser {
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--ligne);
+  border-radius: 8px;
+  color: var(--gris);
+  font-size: 0.9rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* Barre de recherche pleine largeur */
+.search-form--barre {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.search-form--barre input {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--ligne);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.search-form--barre input:focus {
+  outline: none;
+  border-color: var(--bleu);
+}
+
+/* Carte admin */
+.entreprise-card-admin {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: var(--blanc);
+  border: 1px solid var(--ligne);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.entreprise-card-admin:hover {
+  border-color: var(--bleu);
+  box-shadow: 0 2px 8px rgba(28, 55, 91, 0.08);
+}
+
+.entreprise-card-lien {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex: 1;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.entreprise-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+/* Badges de statut */
+.statut-badge {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.statut-badge--approuvee {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.statut-badge--en_attente {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.statut-badge--rejetee {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+/* Actions admin */
+.entreprise-admin-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.btn-modifier {
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--ligne);
+  border-radius: 7px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--bleu);
+  background: var(--blanc);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-modifier:hover {
+  background: var(--carte);
+  border-color: var(--bleu);
+}
+
+.btn-supprimer {
+  padding: 0.45rem 1rem;
+  border: 1px solid #fca5a5;
+  border-radius: 7px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #dc2626;
+  background: var(--blanc);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+
+.btn-supprimer:hover {
+  background: #fee2e2;
+}
+
+@media (max-width: 600px) {
+=======
 /* Desktop */
 @media (min-width: 601px) {
+>>>>>>> origin/mathildeduv
   .entreprises-header {
     flex-direction: row;
     align-items: center;
@@ -166,7 +318,28 @@
     width: auto;
   }
 
+<<<<<<< HEAD
+  .search-form input,
+  .search-form--barre input {
+    width: 100%;
+  }
+
+  .search-form--barre {
+    flex-wrap: wrap;
+  }
+
+  .entreprise-card-admin {
+    flex-wrap: wrap;
+  }
+
+  .entreprise-admin-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+=======
   .search-form input {
     width: 220px;
   }
 }
+>>>>>>> origin/mathildeduv

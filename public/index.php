@@ -29,6 +29,8 @@ $twig->addGlobal('base_url', BASE_URL);
 // Test connexion BDD
 $db = Database::getInstance()->getPdo();
 
+$twig->addGlobal('aEntreprise', false);
+
 // Router
 $router = new Router();
 require_once dirname(__DIR__) . '/src/routes.php';

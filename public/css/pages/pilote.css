@@ -1,7 +1,3 @@
-/* ===========================================
-   PILOTE.CSS — Espace pilote
-   =========================================== */
-
 .pilote-container {
   max-width: 900px;
   margin: 2rem auto;
@@ -15,9 +11,11 @@
   align-items: center;
   justify-content: space-between;
 }
+
 .pilote-header h1 {
   margin-bottom: 0.25rem;
 }
+
 .pilote-header p {
   color: var(--gris);
   margin: 0;
@@ -134,10 +132,12 @@
   background: #eff6ff;
   color: #2563eb;
 }
+
 .statut-ouvert-aux-opportunités {
   background: #fefce8;
   color: #ca8a04;
 }
+
 .statut-stage-trouvé,
 .statut-non_disponible {
   background: #dcfce7;
@@ -150,6 +150,7 @@
   text-decoration: none;
   font-size: 0.9rem;
 }
+
 .btn-retour:hover {
   color: var(--bleu);
 }
@@ -182,6 +183,7 @@
   font-size: 1.3rem;
   margin-bottom: 0.2rem;
 }
+
 .fiche-info p {
   font-size: 0.88rem;
   color: var(--gris);
@@ -218,6 +220,7 @@
   color: var(--bleu);
   text-decoration: none;
 }
+
 .cand-titre:hover {
   text-decoration: underline;
 }
@@ -243,19 +246,68 @@
   border-color: var(--bleu);
 }
 
+.cand-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.lien-document {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+.lien-cv {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--bleu);
+}
+
+.lien-cv:hover {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.lien-lm {
+  background: rgba(255, 87, 34, 0.1);
+  color: var(--orange);
+  list-style: none;
+}
+
+.lien-lm:hover {
+  background: rgba(255, 87, 34, 0.2);
+}
+
+.detail-lm {
+  display: inline-block;
+}
+
+.detail-lm .contenu-lm {
+  position: absolute;
+  z-index: 10;
+  background: var(--blanc);
+  border: 1px solid var(--ligne);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  max-width: 420px;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--texte);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  white-space: pre-wrap;
+  margin-top: 0.4rem;
+}
+
 /* === ALERTS === */
-.alert {
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-}
-.alert-success {
-  background: #dcfce7;
-  color: #16a34a;
-  border: 1px solid #bbf7d0;
-}
-.alert-error {
-  background: #fef2f2;
-  color: #dc2626;
-  border: 1px solid #fecaca;
-}
+
+

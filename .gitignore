@@ -8,3 +8,4 @@ stagio.local.pem
 config/config.php
 Makefile
 .DS_Store
+CLAUDE.md

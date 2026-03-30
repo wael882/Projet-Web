@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stagio - Créer une offre{% endblock %}
+
+{% block description %}content="Stagio - Créer une offre de stage"{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/postuler.css" />
+{% endblock %}
+
+{% block content %}
+
+  <main class="postuler-container">
+    <div class="postuler-card">
+
+      <div class="postuler-header">
+        <h1>Créer une offre de stage</h1>
+      </div>
+
+      {% if error %}
+        <p class="alert alert-error">{{ error }}</p>
+      {% endif %}
+
+      <form method="POST" action="/offre/creer" class="postuler-form">
+
+        <div class="form-group">
+          <label for="saisie-entreprise">Entreprise</label>
+          <input type="text" id="saisie-entreprise" list="liste-entreprises" placeholder="Rechercher une entreprise..." autocomplete="off" required>
+          <datalist id="liste-entreprises">
+            {% for entreprise in entreprises %}
+              <option value="{{ entreprise.nom }}" data-id="{{ entreprise.id_entreprise }}"></option>
+            {% endfor %}
+          </datalist>
+          <input type="hidden" id="id_entreprise" name="id_entreprise" value="">
+        </div>
+
+        <div class="form-group">
+          <label for="titre">Titre du poste</label>
+          <input type="text" id="titre" name="titre" placeholder="Ex : Développeur web junior" required>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" rows="8" placeholder="Décrivez le poste, les missions, le profil recherché..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="remuneration_base">Rémunération de base (€/an) <span class="hint">optionnel</span></label>
+          <input type="number" id="remuneration_base" name="remuneration_base" placeholder="Ex : 7200" min="0" step="0.01">
+        </div>
+
+        <div class="form-group">
+          <label for="date_offre">Date de début du stage <span class="hint">optionnel</span></label>
+          <input type="date" id="date_offre" name="date_offre">
+        </div>
+
+        <div class="form-group">
+          <label>Compétences requises <span class="hint">optionnel</span></label>
+          <div class="nouvelle-competence-zone">
+            <input type="text" id="saisie-competence" placeholder="Ex : React, Node.js, Docker..." autocomplete="off">
+            <button type="button" class="btn-ajouter-competence" onclick="ajouterCompetence()">Ajouter</button>
+          </div>
+          <div class="tags-nouvelles-competences" id="tags-competences"></div>
+
+          <div class="recapitulatif-competences" id="recapitulatif-competences">
+            <div class="recapitulatif-entete">
+              <span class="recapitulatif-titre">Compétences ajoutées</span>
+              <span class="recapitulatif-compteur" id="compteur-competences">0</span>
+            </div>
+            <p class="recapitulatif-vide" id="recapitulatif-vide">Aucune compétence ajoutée pour le moment.</p>
+            <div class="recapitulatif-liste" id="recapitulatif-liste"></div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a href="/entreprises" class="btn-annuler">Annuler</a>
+          <button type="submit" class="btn-postuler">Publier l'offre</button>
+        </div>
+
+      </form>
+
+    </div>
+  </main>
+
+{% endblock %}
+
+{% block scripts %}
+{{ parent() }}
+<script src="{{ base_url }}js/pages/offre-formulaire.js" defer></script>
+{% endblock %}

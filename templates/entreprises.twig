@@ -1,6 +1,6 @@
 {% extends 'base-index.html.twig' %}
 
-{% block title %}Stagio - Entreprises{% endblock %}
+{% block title %}Stagio - {{ user and user.role == 'admin' ? 'Gestion des entreprises' : 'Entreprises' }}{% endblock %}
 
 {% block description %}content="Stagio - Liste des entreprises partenaires"{% endblock %}
 
@@ -14,44 +14,96 @@
 
   <div class="entreprises-header">
     <div>
-      <h1>Entreprises partenaires</h1>
-      <p>{{ entreprises|length }} entreprise{{ entreprises|length > 1 ? 's' : '' }} trouvée{{ entreprises|length > 1 ? 's' : '' }}</p>
+      <h1>{{ user and user.role == 'admin' ? 'Gestion des entreprises' : 'Entreprises partenaires' }}</h1>
+      <p>{{ entreprises|length }} entreprise{{ entreprises|length > 1 ? 's' : '' }} {{ user and user.role == 'admin' ? 'au total' : 'trouvée' ~ (entreprises|length > 1 ? 's' : '') }}</p>
     </div>
-    <form method="GET" action="/entreprises" class="search-form">
-      <input type="text" name="search" value="{{ search }}" placeholder="Rechercher une entreprise...">
-      <button type="submit" class="btn-principal">Rechercher</button>
-    </form>
+    {% if user and user.role == 'admin' %}
+      <button onclick="document.getElementById('modal-creer').style.display='flex'" class="btn-principal">+ Créer une entreprise</button>
+    {% endif %}
   </div>
+
+  <form method="GET" action="/entreprises" class="search-form search-form--barre">
+    <input type="text" name="search" value="{{ search }}" placeholder="Rechercher par nom, ville...">
+    {% if search %}
+      <a href="/entreprises" class="btn-reinitialiser">Réinitialiser</a>
+    {% endif %}
+    <button type="submit" class="btn-principal">Rechercher</button>
+  </form>
+
+  {% if success is defined and success %}
+    <div class="alert alert-success">{{ success }}</div>
+  {% endif %}
+  {% if error is defined and error %}
+    <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
 
   {% if entreprises is empty %}
     <p class="empty-msg">Aucune entreprise trouvée.</p>
   {% else %}
     <div class="entreprises-grid">
       {% for entreprise in entreprises %}
-        <a href="/entreprise?id={{ entreprise.id_entreprise }}" class="entreprise-card">
-          <div class="entreprise-logo">
-            {% if entreprise.logo %}
-              <img src="{{ base_url }}{{ entreprise.logo }}" alt="{{ entreprise.nom }}">
-            {% else %}
-              <span>{{ entreprise.nom|slice(0,2)|upper }}</span>
-            {% endif %}
+
+        {% if user and user.role == 'admin' %}
+          {# Carte admin #}
+          <div class="entreprise-card" style="cursor:default;">
+            <div class="entreprise-logo">
+              {% if entreprise.logo %}
+                <img src="{{ base_url }}{{ entreprise.logo }}" alt="{{ entreprise.nom }}">
+              {% else %}
+                <span>{{ entreprise.nom|slice(0,2)|upper }}</span>
+              {% endif %}
+            </div>
+            <div class="entreprise-info">
+              <a href="/entreprise?id={{ entreprise.id_entreprise }}" class="entreprise-nom">{{ entreprise.nom }}</a>
+              <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; margin-top:0.2rem;">
+                {% if entreprise.ville %}
+                  <span class="entreprise-ville"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ entreprise.ville }}</span>
+                {% endif %}
+                {% if entreprise.email_contact %}
+                  <span class="entreprise-ville"><i class="fa-solid fa-envelope" aria-hidden="true"></i> {{ entreprise.email_contact }}</span>
+                {% endif %}
+                <span class="statut-badge statut-badge--{{ entreprise.statut }}">{{ entreprise.statut|replace({'_': ' '}) }}</span>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.5rem; flex-shrink:0;">
+              <a href="/admin/entreprise/modifier?id={{ entreprise.id_entreprise }}" class="btn-modifier">Modifier</a>
+              <form method="POST" action="/admin/entreprise/supprimer" style="margin:0;"
+                    onsubmit="return confirm('Supprimer définitivement {{ entreprise.nom }} ?');">
+                <input type="hidden" name="id_entreprise" value="{{ entreprise.id_entreprise }}">
+                <input type="hidden" name="retour" value="/entreprises{% if search %}?search={{ search|url_encode }}{% endif %}">
+                <button type="submit" class="btn-supprimer">Supprimer</button>
+              </form>
+            </div>
           </div>
-          <div class="entreprise-info">
-            <span class="entreprise-nom">{{ entreprise.nom }}</span>
-            {% if entreprise.ville %}
-              <span class="entreprise-ville">{{ entreprise.ville }}</span>
-            {% endif %}
-            {% if entreprise.description %}
-              <span class="entreprise-desc">{{ entreprise.description|slice(0,100) }}{% if entreprise.description|length > 100 %}…{% endif %}</span>
-            {% endif %}
-          </div>
-          <svg class="entreprise-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </a>
+
+        {% else %}
+          {# Carte publique : lien simple #}
+          <a href="/entreprise?id={{ entreprise.id_entreprise }}" class="entreprise-card">
+            <div class="entreprise-logo">
+              {% if entreprise.logo %}
+                <img src="{{ base_url }}{{ entreprise.logo }}" alt="{{ entreprise.nom }}">
+              {% else %}
+                <span>{{ entreprise.nom|slice(0,2)|upper }}</span>
+              {% endif %}
+            </div>
+            <div class="entreprise-info">
+              <span class="entreprise-nom">{{ entreprise.nom }}</span>
+              {% if entreprise.ville %}
+                <span class="entreprise-ville">{{ entreprise.ville }}</span>
+              {% endif %}
+              {% if entreprise.description %}
+                <span class="entreprise-desc">{{ entreprise.description|slice(0,100) }}{% if entreprise.description|length > 100 %}…{% endif %}</span>
+              {% endif %}
+            </div>
+            <svg class="entreprise-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+        {% endif %}
+
       {% endfor %}
     </div>
   {% endif %}
 
-  {% if totalPages > 1 %}
+  {% if totalPages is defined and totalPages > 1 %}
     <nav class="pagination">
       {% if page > 1 %}
         <a href="?page={{ page - 1 }}&search={{ search }}" class="page-btn">&laquo; Précédent</a>
@@ -64,4 +116,75 @@
   {% endif %}
 
 </div>
+
+{% if user and user.role == 'admin' %}
+{# Modal création d'entreprise #}
+<div id="modal-creer" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:200; align-items:center; justify-content:center; padding:1rem;">
+  <div style="background:#fff; border-radius:16px; padding:2rem; width:100%; max-width:560px; max-height:90vh; overflow-y:auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+      <h2 style="margin:0;">Créer une entreprise</h2>
+      <button type="button" onclick="document.getElementById('modal-creer').style.display='none'"
+              style="background:none; border:none; font-size:1.4rem; color:var(--gris); cursor:pointer; padding:0;">×</button>
+    </div>
+
+    <form method="POST" action="/admin/entreprise/creer" enctype="multipart/form-data"
+          style="display:flex; flex-direction:column; gap:1rem;">
+
+      <div style="display:flex; flex-direction:column; gap:0.3rem;">
+        <label style="font-weight:600; font-size:0.9rem;">Nom <span style="color:red;">*</span></label>
+        <input type="text" name="nom" required placeholder="Ex : Airbus, Thales..."
+               style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:0.3rem;">
+        <label style="font-weight:600; font-size:0.9rem;">Description</label>
+        <textarea name="description" rows="3" placeholder="Secteur d'activité, missions..."
+                  style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit; resize:vertical;"></textarea>
+      </div>
+
+      <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+        <div style="flex:1; min-width:180px; display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-weight:600; font-size:0.9rem;">Email de contact</label>
+          <input type="email" name="email_contact" placeholder="contact@entreprise.fr"
+                 style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+        </div>
+        <div style="flex:1; min-width:180px; display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-weight:600; font-size:0.9rem;">Téléphone</label>
+          <input type="tel" name="telephone_contact" placeholder="01 23 45 67 89"
+                 style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+        </div>
+      </div>
+
+      <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+        <div style="flex:1; min-width:180px; display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-weight:600; font-size:0.9rem;">Ville</label>
+          <input type="text" name="ville" placeholder="Paris, Lyon..."
+                 style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+        </div>
+        <div style="flex:1; min-width:180px; display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-weight:600; font-size:0.9rem;">Site web</label>
+          <input type="url" name="site_web" placeholder="https://..."
+                 style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:0.3rem;">
+        <label style="font-weight:600; font-size:0.9rem;">Logo <span style="color:var(--gris); font-weight:400;">optionnel — JPG/PNG/WEBP, 2 Mo max</span></label>
+        <input type="file" name="logo" accept="image/jpeg,image/png,image/webp"
+               style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+      </div>
+
+      <div style="display:flex; gap:0.75rem; justify-content:flex-end; margin-top:0.5rem;">
+        <button type="button" onclick="document.getElementById('modal-creer').style.display='none'"
+                style="padding:.6rem 1.2rem; border:1px solid var(--ligne); border-radius:8px; background:#fff; color:var(--gris); font-family:inherit; cursor:pointer;">
+          Annuler
+        </button>
+        <button type="submit" class="btn-principal">Créer l'entreprise</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endif %}
+
 {% endblock %}

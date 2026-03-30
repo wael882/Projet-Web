@@ -39,6 +39,16 @@ class PageController
         }
     }
 
+    private function requireRoles(array $roles): void
+    {
+        $this->requireAuth();
+        if (!in_array($_SESSION['user']['role'] ?? '', $roles, true)) {
+            $_SESSION['error'] = 'Accès refusé.';
+            header('Location: /acceuil');
+            exit;
+        }
+    }
+
     public function pilote()
     {
         $this->requireRole('pilote');
@@ -51,11 +61,20 @@ class PageController
             exit;
         }
 
-        $etudiants = $model->getEtudiants((int) $pilote['id_pilote']);
+        $nombreParPage  = 10;
+        $pageCourante   = max(1, (int) ($_GET['page'] ?? 1));
+        $totalEtudiants = $model->compterEtudiants((int) $pilote['id_pilote']);
+        $totalPages     = (int) ceil($totalEtudiants / $nombreParPage);
+        $decalage       = ($pageCourante - 1) * $nombreParPage;
+
+        $etudiants = $model->getEtudiants((int) $pilote['id_pilote'], $nombreParPage, $decalage);
         echo $this->twig->render('pilote/dashboard.twig', [
-            'etudiants' => $etudiants,
-            'success'   => $_SESSION['success'] ?? null,
-            'error'     => $_SESSION['error'] ?? null,
+            'etudiants'      => $etudiants,
+            'totalEtudiants' => $totalEtudiants,
+            'pageCourante'   => $pageCourante,
+            'totalPages'     => $totalPages,
+            'success'        => $_SESSION['success'] ?? null,
+            'error'          => $_SESSION['error'] ?? null,
         ]);
         unset($_SESSION['success'], $_SESSION['error']);
     }
@@ -133,6 +152,72 @@ class PageController
         exit;
     }
 
+    public function piloteModifierEtudiant()
+    {
+        $this->requireRole('pilote');
+        $model      = new PiloteModel();
+        $pilote     = $model->findByUtilisateur((int) $_SESSION['user']['id_utilisateur']);
+        $idEtudiant = (int) ($_GET['id'] ?? 0);
+        $etudiant   = $model->getEtudiant($idEtudiant, (int) $pilote['id_pilote']);
+
+        if (!$etudiant) {
+            $_SESSION['error'] = 'Étudiant introuvable.';
+            header('Location: /pilote');
+            exit;
+        }
+
+        echo $this->twig->render('pilote/etudiant-modifier.twig', [
+            'etudiant' => $etudiant,
+            'error'    => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['error']);
+    }
+
+    public function piloteModifierEtudiantPost()
+    {
+        $this->requireRole('pilote');
+        $model      = new PiloteModel();
+        $pilote     = $model->findByUtilisateur((int) $_SESSION['user']['id_utilisateur']);
+        $idEtudiant = (int) ($_POST['id_etudiant'] ?? 0);
+        $nom        = trim($_POST['nom'] ?? '');
+        $prenom     = trim($_POST['prenom'] ?? '');
+        $email      = trim($_POST['email'] ?? '');
+        $ecole      = trim($_POST['ecole'] ?? '');
+        $promotion  = trim($_POST['promotion'] ?? '');
+        $motDePasse = trim($_POST['mot_de_passe'] ?? '');
+
+        if (!$nom || !$prenom || !$email) {
+            $_SESSION['error'] = 'Nom, prénom et email sont obligatoires.';
+            header('Location: /pilote/modifier-etudiant?id=' . $idEtudiant);
+            exit;
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['error'] = 'Adresse email invalide.';
+            header('Location: /pilote/modifier-etudiant?id=' . $idEtudiant);
+            exit;
+        }
+
+        $etudiantActuel = $model->getEtudiant($idEtudiant, (int) $pilote['id_pilote']);
+        if (!$etudiantActuel) {
+            $_SESSION['error'] = 'Étudiant introuvable.';
+            header('Location: /pilote');
+            exit;
+        }
+
+        if ($email !== $etudiantActuel['email'] && (new UtilisateurModel())->findByEmail($email)) {
+            $_SESSION['error'] = 'Cette adresse email est déjà utilisée.';
+            header('Location: /pilote/modifier-etudiant?id=' . $idEtudiant);
+            exit;
+        }
+
+        $hash = $motDePasse !== '' ? password_hash($motDePasse, PASSWORD_DEFAULT) : null;
+        $model->modifierEtudiant($idEtudiant, (int) $pilote['id_pilote'], $nom, $prenom, $email, $ecole, $promotion, $hash);
+
+        $_SESSION['success'] = 'Compte étudiant modifié avec succès.';
+        header('Location: /pilote/etudiant?id=' . $idEtudiant);
+        exit;
+    }
+
     public function piloteUpdateStatut()
     {
         $this->requireRole('pilote');
@@ -169,15 +254,42 @@ class PageController
 
         $candidatureModel = new CandidatureModel();
         $wishlistModel    = new WishlistModel();
+        $modeleOffre      = new OffreModel();
 
         $candidatures = $candidatureModel->findByUtilisateur((int) $_SESSION['user']['id_utilisateur']);
         $nbFavoris    = count($wishlistModel->getIdOffres((int) $_SESSION['user']['id_utilisateur']));
 
+        $cartesStatistiques = [
+            [
+                'titre'  => 'Offres disponibles',
+                'type'   => 'chiffre',
+                'valeur' => $modeleOffre->count(),
+                'unite'  => 'offres actives en base',
+            ],
+            [
+                'titre'  => 'Candidatures moyennes',
+                'type'   => 'chiffre',
+                'valeur' => $modeleOffre->moyenneCandidaturesParOffre(),
+                'unite'  => 'candidatures par offre en moyenne',
+            ],
+            [
+                'titre'  => 'Top des offres en favoris',
+                'type'   => 'liste',
+                'items'  => $modeleOffre->topOffresWishlist(5),
+            ],
+            [
+                'titre'  => 'Répartition par durée de stage',
+                'type'   => 'repartition',
+                'items'  => $modeleOffre->repartitionParDureeStage(),
+            ],
+        ];
+
         echo $this->twig->render('acceuil.twig', [
-            'candidatures'       => $candidatures,
-            'nbCandidatures'     => count($candidatures),
-            'nbFavoris'          => $nbFavoris,
+            'candidatures'          => $candidatures,
+            'nbCandidatures'        => count($candidatures),
+            'nbFavoris'             => $nbFavoris,
             'dernieresCandidatures' => array_slice($candidatures, 0, 3),
+            'cartesStatistiques'    => $cartesStatistiques,
         ]);
     }
 
@@ -203,11 +315,88 @@ class PageController
         }
 
         $offresEntreprise = $offreModel->findByEntreprise((int) $_GET['id']);
+        $evaluations      = $entrepriseModel->getEvaluations((int) $_GET['id']);
+        $dejaEvalue       = false;
+        if (!empty($_SESSION['user']) && $_SESSION['user']['role'] === 'etudiant') {
+            $dejaEvalue = $entrepriseModel->dejaEvalue(
+                (int) $_SESSION['user']['id_etudiant'],
+                (int) $_GET['id']
+            );
+        }
 
         echo $this->twig->render('entreprise.twig', [
-            'entreprise' => $entreprise,
-            'offresEntreprise' => $offresEntreprise
+            'entreprise'      => $entreprise,
+            'offresEntreprise'=> $offresEntreprise,
+            'evaluations'     => $evaluations,
+            'dejaEvalue'      => $dejaEvalue,
+            'success'         => $_SESSION['success'] ?? null,
+            'error'           => $_SESSION['error'] ?? null,
         ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function entrepriseEvaluer()
+    {
+        $this->requireRole('etudiant');
+        $idEntreprise = (int) ($_POST['id_entreprise'] ?? 0);
+        $note         = (int) ($_POST['note'] ?? 0);
+        $commentaire  = trim($_POST['commentaire'] ?? '');
+
+        if (!$idEntreprise || $note < 1 || $note > 5) {
+            $_SESSION['error'] = 'Données invalides.';
+            header('Location: /entreprise?id=' . $idEntreprise);
+            exit;
+        }
+
+        $model      = new EntrepriseModel();
+        $idEtudiant = (int) ($_SESSION['user']['id_etudiant'] ?? 0);
+
+        if ($model->dejaEvalue($idEtudiant, $idEntreprise)) {
+            $_SESSION['error'] = 'Vous avez déjà évalué cette entreprise.';
+            header('Location: /entreprise?id=' . $idEntreprise);
+            exit;
+        }
+
+        $model->evaluer($idEtudiant, $idEntreprise, $note, $commentaire);
+        $_SESSION['success'] = 'Évaluation envoyée, merci !';
+        header('Location: /entreprise?id=' . $idEntreprise);
+        exit;
+    }
+
+    public function entrepriseEvaluerModifier()
+    {
+        $this->requireRole('etudiant');
+        $idEvaluation = (int) ($_POST['id_evaluation'] ?? 0);
+        $idEntreprise = (int) ($_POST['id_entreprise'] ?? 0);
+        $note         = (int) ($_POST['note'] ?? 0);
+        $commentaire  = trim($_POST['commentaire'] ?? '');
+        $idEtudiant   = (int) ($_SESSION['user']['id_etudiant'] ?? 0);
+
+        if (!$idEvaluation || !$idEntreprise || $note < 1 || $note > 5) {
+            $_SESSION['error'] = 'Données invalides.';
+            header('Location: /entreprise?id=' . $idEntreprise);
+            exit;
+        }
+
+        (new EntrepriseModel())->modifierEvaluation($idEvaluation, $idEtudiant, $note, $commentaire);
+        $_SESSION['success'] = 'Évaluation modifiée.';
+        header('Location: /entreprise?id=' . $idEntreprise);
+        exit;
+    }
+
+    public function entrepriseEvaluerSupprimer()
+    {
+        $this->requireRole('etudiant');
+        $idEvaluation = (int) ($_POST['id_evaluation'] ?? 0);
+        $idEntreprise = (int) ($_POST['id_entreprise'] ?? 0);
+        $idEtudiant   = (int) ($_SESSION['user']['id_etudiant'] ?? 0);
+
+        if ($idEvaluation && $idEntreprise) {
+            (new EntrepriseModel())->supprimerEvaluation($idEvaluation, $idEtudiant);
+            $_SESSION['success'] = 'Évaluation supprimée.';
+        }
+        header('Location: /entreprise?id=' . $idEntreprise);
+        exit;
     }
 
     public function inscription()
@@ -346,13 +535,15 @@ class PageController
                 ? $candidature->dejaPostule((int) $_SESSION['user']['id_utilisateur'], (int) $offre['id_offre'])
                 : false;
             $competences = $model->findCompetencesByOffre((int) $offre['id_offre']);
+            $nbCandidatures = $candidature->compterParOffre((int) $offre['id_offre']);
             echo $this->twig->render('offre.twig', [
-                'offre'       => $offre,
-                'favorisIds'  => $favorisIds,
-                'dejaPostule' => $dejaPostule,
-                'competences' => $competences,
-                'success'     => $_SESSION['success'] ?? null,
-                'error'       => $_SESSION['error'] ?? null,
+                'offre'          => $offre,
+                'favorisIds'     => $favorisIds,
+                'dejaPostule'    => $dejaPostule,
+                'competences'    => $competences,
+                'nbCandidatures' => $nbCandidatures,
+                'success'        => $_SESSION['success'] ?? null,
+                'error'          => $_SESSION['error'] ?? null,
             ]);
             unset($_SESSION['success'], $_SESSION['error']);
         } else {
@@ -456,31 +647,117 @@ class PageController
         exit;
     }
 
+    public function telechargerCv()
+    {
+        $this->requireAuth();
+
+        $idCandidature = (int) ($_GET['id'] ?? 0);
+        if (!$idCandidature) {
+            http_response_code(400);
+            exit('Requête invalide.');
+        }
+
+        $model       = new CandidatureModel();
+        $candidature = $model->findById($idCandidature);
+
+        if (!$candidature || empty($candidature['cv_fichier'])) {
+            http_response_code(404);
+            exit('CV introuvable.');
+        }
+
+        $utilisateur = $_SESSION['user'];
+        $acces       = false;
+
+        // L'étudiant peut télécharger son propre CV
+        if ($utilisateur['role'] === 'etudiant' &&
+            (int) $candidature['id_utilisateur'] === (int) $utilisateur['id_utilisateur']) {
+            $acces = true;
+        }
+
+        // Le pilote peut télécharger les CV de ses étudiants
+        if ($utilisateur['role'] === 'pilote') {
+            $modelePilote = new PiloteModel();
+            $pilote       = $modelePilote->findByUtilisateur((int) $utilisateur['id_utilisateur']);
+            if ($pilote) {
+                $etudiant = $modelePilote->getEtudiant(
+                    0, // non utilisé directement, on cherche par id_utilisateur
+                    (int) $pilote['id_pilote']
+                );
+                // Vérifie que l'étudiant propriétaire de la candidature appartient à ce pilote
+                $etudiants = $modelePilote->getEtudiants((int) $pilote['id_pilote']);
+                foreach ($etudiants as $e) {
+                    if ((int) $e['id_utilisateur'] === (int) $candidature['id_utilisateur']) {
+                        $acces = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // L'admin a accès à tout
+        if ($utilisateur['role'] === 'admin') {
+            $acces = true;
+        }
+
+        if (!$acces) {
+            http_response_code(403);
+            exit('Accès refusé.');
+        }
+
+        $cheminFichier = UPLOAD_PATH . '/cv/' . basename($candidature['cv_fichier']);
+        if (!file_exists($cheminFichier)) {
+            http_response_code(404);
+            exit('Fichier introuvable.');
+        }
+
+        $nomTelechargement = 'CV_' . $candidature['id_utilisateur'] . '_' . $candidature['id_offre'] . '.pdf';
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="' . $nomTelechargement . '"');
+        header('Content-Length: ' . filesize($cheminFichier));
+        readfile($cheminFichier);
+        exit;
+    }
+
     public function rechercher()
     {
-        $model = new OffreModel();
-        $wishlist = new WishlistModel();
-        $pageCourante = $_GET['page'] ?? 1;
-        $motCle = trim($_GET['motCle'] ?? '');
+        $modeleOffre = new OffreModel();
+        $modeleWishlist = new WishlistModel();
+        $modeleEntreprise = new EntrepriseModel();
+        $pageCourante = (int) ($_GET['page'] ?? 1);
         $nombreParPage = 10;
-        $debutListe = ($pageCourante - 1) * $nombreParPage;
+        $debut = ($pageCourante - 1) * $nombreParPage;
 
-        if ($motCle !== '') {
-            $offres = $model->search($motCle, $nombreParPage, $debutListe);
-            $totalOffres = $model->countSearch($motCle);
+        $filtres = [
+            'motCle'           => trim($_GET['motCle'] ?? ''),
+            'titre'            => trim($_GET['titre'] ?? ''),
+            'entreprise'       => trim($_GET['entreprise'] ?? ''),
+            'competence'       => trim($_GET['competence'] ?? ''),
+            'remuneration_min' => trim($_GET['remuneration_min'] ?? ''),
+            'remuneration_max' => trim($_GET['remuneration_max'] ?? ''),
+        ];
+
+        $aucunFiltre = array_filter($filtres) === [];
+
+        if ($aucunFiltre) {
+            $offres = $modeleOffre->findAll($nombreParPage, $debut);
+            $totalOffres = $modeleOffre->count();
         } else {
-            $offres = $model->findAll($nombreParPage, $debutListe);
-            $totalOffres = $model->count();
+            $offres = $modeleOffre->rechercheAvancee($filtres, $nombreParPage, $debut);
+            $totalOffres = $modeleOffre->compterRechercheAvancee($filtres);
         }
 
         $totalPages = ceil($totalOffres / $nombreParPage);
-        $favorisIds = isset($_SESSION['user']) ? $wishlist->getIdOffres((int) $_SESSION['user']['id_utilisateur']) : [];
+        $favorisIds = isset($_SESSION['user']) ? $modeleWishlist->getIdOffres((int) $_SESSION['user']['id_utilisateur']) : [];
+
         echo $this->twig->render('rechercher.twig', [
-            'offres' => $offres,
+            'offres'       => $offres,
             'pageCourante' => $pageCourante,
-            'totalPages' => $totalPages,
-            'favorisIds' => $favorisIds,
-            'motCle' => $motCle
+            'totalPages'   => $totalPages,
+            'favorisIds'   => $favorisIds,
+            'filtres'      => $filtres,
+            'entreprises'  => $modeleEntreprise->listerToutesActives(),
+            'competences'  => $modeleOffre->listerCompetences(),
+            'titres'       => $modeleOffre->listerTitres(),
         ]);
     }
 
@@ -541,21 +818,608 @@ class PageController
         exit;
     }
 
-    public function entreprises(): void {
-        $model       = new EntrepriseModel();
-        $search      = trim($_GET['search'] ?? '');
-        $page        = max(1, (int) ($_GET['page'] ?? 1));
-        $limite      = 10;
-        $offset      = ($page - 1) * $limite;
-        $entreprises = $model->findAll($search, $limite, $offset);
-        $total       = $model->count($search);
-        $totalPages  = (int) ceil($total / $limite);
-        echo $this->twig->render('entreprises.twig', [
-            'entreprises' => $entreprises,
-            'search'      => $search,
-            'page'        => $page,
-            'totalPages'  => $totalPages,
+    public function entrepriseInscription(): void {
+        $this->requireRoles(['admin', 'pilote']);
+        echo $this->twig->render('entreprise-inscription.twig', [
+            'error'   => $_SESSION['error'] ?? null,
+            'success' => $_SESSION['success'] ?? null,
         ]);
+        unset($_SESSION['error'], $_SESSION['success']);
+    }
+
+    public function entrepriseInscriptionPost(): void {
+        $this->requireRoles(['admin', 'pilote']);
+        $nom         = trim($_POST['nom'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $email       = trim($_POST['email_contact'] ?? '');
+        $telephone   = trim($_POST['telephone_contact'] ?? '');
+        $ville       = trim($_POST['ville'] ?? '');
+        $siteWeb     = trim($_POST['site_web'] ?? '');
+
+        if (!$nom) {
+            $_SESSION['error'] = 'Le nom de l\'entreprise est obligatoire.';
+            header('Location: /entreprise/inscription');
+            exit;
+        }
+
+        $cheminLogo = null;
+        if (!empty($_FILES['logo']['name'])) {
+            $fichier       = $_FILES['logo'];
+            $typesAutorises = ['image/jpeg', 'image/png', 'image/webp'];
+            $finfo         = new \finfo(FILEINFO_MIME_TYPE);
+            $mimeReel      = $finfo->file($fichier['tmp_name']);
+
+            if ($fichier['error'] === UPLOAD_ERR_OK && $fichier['size'] <= 2 * 1024 * 1024 && in_array($mimeReel, $typesAutorises)) {
+                $ext         = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$mimeReel];
+                $nomFichier  = 'logo_' . uniqid() . '.' . $ext;
+                $destination = UPLOAD_PATH . '/logos/' . $nomFichier;
+                if (move_uploaded_file($fichier['tmp_name'], $destination)) {
+                    $cheminLogo = 'uploads/logos/' . $nomFichier;
+                }
+            } else {
+                $_SESSION['error'] = 'Logo invalide (JPG/PNG/WEBP, 2 Mo max).';
+                header('Location: /entreprise/inscription');
+                exit;
+            }
+        }
+
+        (new EntrepriseModel())->demanderCreation($nom, $description, $email, $telephone, $ville, $siteWeb, $cheminLogo);
+        $_SESSION['success'] = 'Votre demande a bien été envoyée. Un administrateur va l\'examiner.';
+        header('Location: /entreprise/inscription');
+        exit;
+    }
+
+    public function entrepriseModifier(): void {
+        $this->requireRole('admin');
+        $id         = (int) ($_GET['id'] ?? 0);
+        $model      = new EntrepriseModel();
+        $entreprise = $model->findById($id);
+
+        if (!$entreprise) {
+            header('Location: /entreprises');
+            exit;
+        }
+
+        echo $this->twig->render('entreprise-modifier.twig', [
+            'entreprise' => $entreprise,
+            'error'      => $_SESSION['error'] ?? null,
+            'success'    => $_SESSION['success'] ?? null,
+        ]);
+        unset($_SESSION['error'], $_SESSION['success']);
+    }
+
+    public function entrepriseModifierPost(): void {
+        $this->requireRole('admin');
+        $id          = (int) ($_POST['id_entreprise'] ?? 0);
+        $nom         = trim($_POST['nom'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $email       = trim($_POST['email_contact'] ?? '');
+        $telephone   = trim($_POST['telephone_contact'] ?? '');
+        $ville       = trim($_POST['ville'] ?? '');
+        $siteWeb     = trim($_POST['site_web'] ?? '');
+        $idUser      = (int) $_SESSION['user']['id_utilisateur'];
+
+        $model      = new EntrepriseModel();
+        $entreprise = $model->findById($id);
+
+        if (!$entreprise) {
+            header('Location: /entreprises');
+            exit;
+        }
+
+        if (!$nom) {
+            $_SESSION['error'] = 'Le nom est obligatoire.';
+            header('Location: /entreprise/modifier?id=' . $id);
+            exit;
+        }
+
+        $model->demanderModification($id, $idUser, $nom, $description, $email, $telephone, $ville, $siteWeb);
+        $_SESSION['success'] = 'Votre demande de modification a été envoyée. Un administrateur va l\'examiner.';
+        header('Location: /entreprise?id=' . $id);
+        exit;
+    }
+
+    public function offreCreer(): void {
+        $this->requireRoles(['admin', 'pilote']);
+        $modeleEntreprise = new EntrepriseModel();
+        $entreprises      = $modeleEntreprise->listerToutesActives();
+
+        if (empty($entreprises)) {
+            $_SESSION['error'] = 'Aucune entreprise approuvée disponible pour créer une offre.';
+            header('Location: /entreprises');
+            exit;
+        }
+
+        $modeleOffre = new OffreModel();
+        echo $this->twig->render('offre-creer.twig', [
+            'entreprises' => $entreprises,
+            'competences' => $modeleOffre->listerCompetences(),
+            'error'       => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['error']);
+    }
+
+    public function offreCreerPost(): void {
+        $this->requireRoles(['admin', 'pilote']);
+        $modeleEntreprise    = new EntrepriseModel();
+        $entreprisesActives  = $modeleEntreprise->listerToutesActives();
+
+        $idEntreprise        = (int) ($_POST['id_entreprise'] ?? 0);
+        $titre               = trim($_POST['titre'] ?? '');
+        $description         = trim($_POST['description'] ?? '');
+        $remunerationBase    = ($_POST['remuneration_base'] ?? '') !== '' ? (float) $_POST['remuneration_base'] : null;
+        $dateOffre           = ($_POST['date_offre'] ?? '') !== '' ? $_POST['date_offre'] : null;
+        $competencesChoisies = array_map('intval', $_POST['competences'] ?? []);
+
+        // Vérifie que l'entreprise choisie est bien une entreprise active approuvée
+        $idEntreprisesAutorisees = array_column($entreprisesActives, 'id_entreprise');
+        if (!$titre || !$description || !in_array($idEntreprise, $idEntreprisesAutorisees)) {
+            $_SESSION['error'] = 'Veuillez remplir tous les champs obligatoires.';
+            header('Location: /offre/creer');
+            exit;
+        }
+
+        $modeleOffre = new OffreModel();
+        $idOffre     = $modeleOffre->creer($idEntreprise, $titre, $description, $remunerationBase, $dateOffre);
+
+        // Compétences existantes cochées
+        foreach ($competencesChoisies as $idCompetence) {
+            $modeleOffre->ajouterCompetence($idOffre, $idCompetence);
+        }
+
+        // Nouvelles compétences saisies manuellement
+        $nouvellesCompetences = $_POST['nouvelles_competences'] ?? [];
+        foreach ($nouvellesCompetences as $libelle) {
+            $libelle = trim($libelle);
+            if ($libelle === '') continue;
+            $idCompetence = $modeleOffre->creerOuTrouverCompetence($libelle);
+            $modeleOffre->ajouterCompetence($idOffre, $idCompetence);
+        }
+
+        $_SESSION['success'] = 'L\'offre a bien été créée.';
+        header('Location: /offre?id=' . $idOffre);
+        exit;
+    }
+
+    public function offreModifier(): void {
+        $this->requireRoles(['admin', 'pilote']);
+
+        $idOffre     = (int) ($_GET['id'] ?? 0);
+        $modeleOffre = new OffreModel();
+        $offre       = $modeleOffre->findById($idOffre);
+
+        if (!$offre) {
+            $_SESSION['error'] = 'Offre introuvable.';
+            header('Location: /rechercher');
+            exit;
+        }
+
+        $modeleEntreprise = new EntrepriseModel();
+        $entreprises      = $modeleEntreprise->listerToutesActives();
+        $competences      = $modeleOffre->findCompetencesByOffre($idOffre);
+
+        echo $this->twig->render('offre-modifier.twig', [
+            'offre'       => $offre,
+            'entreprises' => $entreprises,
+            'competences' => $competences,
+            'error'       => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['error']);
+    }
+
+    public function offreModifierPost(): void {
+        $this->requireRoles(['admin', 'pilote']);
+
+        $idOffre     = (int) ($_POST['id_offre'] ?? 0);
+        $modeleOffre = new OffreModel();
+        $offre       = $modeleOffre->findById($idOffre);
+
+        if (!$offre) {
+            $_SESSION['error'] = 'Offre introuvable.';
+            header('Location: /rechercher');
+            exit;
+        }
+
+        $modeleEntreprise   = new EntrepriseModel();
+        $entreprisesActives = $modeleEntreprise->listerToutesActives();
+
+        $idEntreprise     = (int) ($_POST['id_entreprise'] ?? 0);
+        $titre            = trim($_POST['titre'] ?? '');
+        $description      = trim($_POST['description'] ?? '');
+        $remunerationBase = ($_POST['remuneration_base'] ?? '') !== '' ? (float) $_POST['remuneration_base'] : null;
+        $dateOffre        = ($_POST['date_offre'] ?? '') !== '' ? $_POST['date_offre'] : null;
+
+        $idEntreprisesAutorisees = array_column($entreprisesActives, 'id_entreprise');
+        if (!$titre || !$description || !in_array($idEntreprise, $idEntreprisesAutorisees)) {
+            $_SESSION['error'] = 'Veuillez remplir tous les champs obligatoires.';
+            header('Location: /offre/modifier?id=' . $idOffre);
+            exit;
+        }
+
+        $modeleOffre->modifier($idOffre, $idEntreprise, $titre, $description, $remunerationBase, $dateOffre);
+
+        // Réinitialise et recrée les compétences
+        $modeleOffre->supprimerToutesCompetences($idOffre);
+
+        $competencesExistantes = array_map('intval', $_POST['competences_existantes'] ?? []);
+        foreach ($competencesExistantes as $idCompetence) {
+            $modeleOffre->ajouterCompetence($idOffre, $idCompetence);
+        }
+
+        $nouvellesCompetences = $_POST['nouvelles_competences'] ?? [];
+        foreach ($nouvellesCompetences as $libelle) {
+            $libelle = trim($libelle);
+            if ($libelle === '') continue;
+            $idCompetence = $modeleOffre->creerOuTrouverCompetence($libelle);
+            $modeleOffre->ajouterCompetence($idOffre, $idCompetence);
+        }
+
+        $_SESSION['success'] = 'L\'offre a bien été modifiée.';
+        header('Location: /offre?id=' . $idOffre);
+        exit;
+    }
+
+    public function offreStatistiques(): void {
+        $this->requireRoles(['admin', 'pilote']);
+
+        $modeleOffre = new OffreModel();
+
+        $cartes = [
+            [
+                'titre'  => 'Offres disponibles',
+                'type'   => 'chiffre',
+                'valeur' => $modeleOffre->count(),
+                'unite'  => 'offres actives en base',
+            ],
+            [
+                'titre'  => 'Candidatures moyennes',
+                'type'   => 'chiffre',
+                'valeur' => $modeleOffre->moyenneCandidaturesParOffre(),
+                'unite'  => 'candidatures par offre en moyenne',
+            ],
+            [
+                'titre'  => 'Top des offres en favoris',
+                'type'   => 'liste',
+                'items'  => $modeleOffre->topOffresWishlist(5),
+            ],
+            [
+                'titre'  => 'Répartition par durée de stage',
+                'type'   => 'repartition',
+                'items'  => $modeleOffre->repartitionParDureeStage(),
+            ],
+        ];
+
+        echo $this->twig->render('offre-statistiques.twig', [
+            'cartes' => $cartes,
+        ]);
+    }
+
+    public function offreSupprimerPost(): void {
+        $this->requireRoles(['admin', 'pilote']);
+
+        $idOffre     = (int) ($_POST['id_offre'] ?? 0);
+        $modeleOffre = new OffreModel();
+        $offre       = $modeleOffre->findById($idOffre);
+
+        if (!$offre) {
+            $_SESSION['error'] = 'Offre introuvable.';
+            header('Location: /rechercher');
+            exit;
+        }
+
+        $modeleOffre->supprimer($idOffre);
+
+        $_SESSION['success'] = 'L\'offre a bien été supprimée.';
+        header('Location: /rechercher');
+        exit;
+    }
+
+    public function mesEntreprises(): void {
+        header('Location: /entreprises');
+        exit;
+    }
+
+    public function entrepriseDemanderSuppression(): void {
+        $this->requireRoles(['admin', 'pilote']);
+        $id = (int) ($_POST['id_entreprise'] ?? 0);
+        $ok = (new EntrepriseModel())->demanderSuppression($id);
+        $_SESSION['success'] = $ok ? 'Demande de suppression envoyée.' : 'Impossible d\'effectuer cette action.';
+        header('Location: /entreprise?id=' . $id);
+        exit;
+    }
+
+    public function adminSuppressions(): void {
+        $this->requireRole('admin');
+        $model = new EntrepriseModel();
+        echo $this->twig->render('admin/suppressions.twig', [
+            'demandes' => $model->getSuppressionsDemandees(),
+            'success'  => $_SESSION['success'] ?? null,
+            'error'    => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function adminSuppressionApprouver(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_POST['id_entreprise'] ?? 0);
+        if ($id) {
+            (new EntrepriseModel())->supprimer($id);
+            $_SESSION['success'] = 'Entreprise supprimée.';
+        }
+        header('Location: /admin/suppressions');
+        exit;
+    }
+
+    public function adminSuppressionRejeter(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_POST['id_entreprise'] ?? 0);
+        if ($id) {
+            (new EntrepriseModel())->rejeterSuppression($id);
+            $_SESSION['success'] = 'Demande de suppression rejetée.';
+        }
+        header('Location: /admin/suppressions');
+        exit;
+    }
+
+    public function adminEntrepriseModifierDirect(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_GET['id'] ?? 0);
+        $entreprise = (new EntrepriseModel())->findById($id);
+        if (!$entreprise) { header('Location: /admin/entreprises'); exit; }
+        echo $this->twig->render('admin/entreprise-modifier.twig', [
+            'entreprise' => $entreprise,
+            'success'    => $_SESSION['success'] ?? null,
+            'error'      => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function adminEntrepriseModifierDirectPost(): void {
+        $this->requireRole('admin');
+        $id          = (int) ($_POST['id_entreprise'] ?? 0);
+        $nom         = trim($_POST['nom'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $email       = trim($_POST['email_contact'] ?? '');
+        $telephone   = trim($_POST['telephone_contact'] ?? '');
+        $ville       = trim($_POST['ville'] ?? '');
+        $siteWeb     = trim($_POST['site_web'] ?? '');
+
+        if (!$nom) {
+            $_SESSION['error'] = 'Le nom est obligatoire.';
+            header('Location: /admin/entreprise/modifier?id=' . $id);
+            exit;
+        }
+
+        $modeleEntreprise  = new EntrepriseModel();
+        $entrepriseActuelle = $modeleEntreprise->findById($id);
+        $supprimerLogo     = !empty($_POST['supprimer_logo']);
+
+        $cheminLogo = null;
+        if (!empty($_FILES['logo']['name'])) {
+            $fichier        = $_FILES['logo'];
+            $typesAutorises = ['image/jpeg', 'image/png', 'image/webp'];
+            $finfo          = new \finfo(FILEINFO_MIME_TYPE);
+            $mimeReel       = $finfo->file($fichier['tmp_name']);
+
+            if ($fichier['error'] === UPLOAD_ERR_OK && $fichier['size'] <= 2 * 1024 * 1024 && in_array($mimeReel, $typesAutorises)) {
+                $ext        = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$mimeReel];
+                $nomFichier = 'logo_' . uniqid() . '.' . $ext;
+                if (move_uploaded_file($fichier['tmp_name'], UPLOAD_PATH . '/logos/' . $nomFichier)) {
+                    // Supprime l'ancien fichier si présent
+                    if (!empty($entrepriseActuelle['logo'])) {
+                        @unlink(dirname(UPLOAD_PATH) . '/public/' . $entrepriseActuelle['logo']);
+                    }
+                    $cheminLogo = 'uploads/logos/' . $nomFichier;
+                }
+            } else {
+                $_SESSION['error'] = 'Logo invalide (JPG/PNG/WEBP, 2 Mo max).';
+                header('Location: /admin/entreprise/modifier?id=' . $id);
+                exit;
+            }
+        } elseif ($supprimerLogo && !empty($entrepriseActuelle['logo'])) {
+            @unlink(UPLOAD_PATH . '/logos/' . basename($entrepriseActuelle['logo']));
+            $cheminLogo = '';  // chaîne vide pour mettre NULL en base
+        }
+
+        $modeleEntreprise->adminModifierDirect($id, $nom, $description, $email, $telephone, $ville, $siteWeb, $cheminLogo);
+        $_SESSION['success'] = 'Entreprise modifiée.';
+        header('Location: /entreprise?id=' . $id);
+        exit;
+    }
+
+    public function adminEntrepriseSupprimer(): void {
+        $this->requireRole('admin');
+        $id     = (int) ($_POST['id_entreprise'] ?? 0);
+        $retour = $_POST['retour'] ?? '/entreprises';
+        // Sécurité : on n'accepte que les URLs internes
+        if (!str_starts_with($retour, '/')) {
+            $retour = '/entreprises';
+        }
+        if ($id) {
+            (new EntrepriseModel())->supprimer($id);
+            $_SESSION['success'] = 'Entreprise supprimée.';
+        }
+        header('Location: ' . $retour);
+        exit;
+    }
+
+    public function adminModifications(): void {
+        $this->requireRole('admin');
+        $model = new EntrepriseModel();
+        echo $this->twig->render('admin/modifications.twig', [
+            'demandes' => $model->getModificationsEnAttente(),
+            'success'  => $_SESSION['success'] ?? null,
+            'error'    => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function adminModificationApprouver(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_POST['id_demande'] ?? 0);
+        if ($id) {
+            (new EntrepriseModel())->approuverModification($id);
+            $_SESSION['success'] = 'Modification approuvée.';
+        }
+        header('Location: /admin/modifications');
+        exit;
+    }
+
+    public function adminModificationRejeter(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_POST['id_demande'] ?? 0);
+        if ($id) {
+            (new EntrepriseModel())->rejeterModification($id);
+            $_SESSION['success'] = 'Modification rejetée.';
+        }
+        header('Location: /admin/modifications');
+        exit;
+    }
+
+    public function adminDashboard(): void {
+        $this->requireRole('admin');
+        $db = \App\Database::getInstance()->getPdo();
+
+        $stats = [
+            'nb_entreprises_en_attente'  => count((new EntrepriseModel())->getDemandesEnAttente()),
+            'nb_modifications_en_attente'=> count((new EntrepriseModel())->getModificationsEnAttente()),
+            'nb_suppressions_en_attente' => count((new EntrepriseModel())->getSuppressionsDemandees()),
+            'nb_offres'                  => (int) $db->query('SELECT COUNT(*) FROM OFFRE WHERE active = TRUE')->fetchColumn(),
+            'nb_entreprises'             => (int) $db->query('SELECT COUNT(*) FROM ENTREPRISE WHERE statut = "approuvee" AND active = TRUE')->fetchColumn(),
+            'nb_etudiants'               => (int) $db->query('SELECT COUNT(*) FROM ETUDIANT')->fetchColumn(),
+            'nb_pilotes'                 => (int) $db->query('SELECT COUNT(*) FROM PILOTE')->fetchColumn(),
+            'nb_candidatures'            => (int) $db->query('SELECT COUNT(*) FROM CANDIDATURE')->fetchColumn(),
+        ];
+
+        echo $this->twig->render('admin/dashboard.twig', [
+            'stats'   => $stats,
+            'success' => $_SESSION['success'] ?? null,
+            'error'   => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function adminEntreprisesGerer(): void {
+        $this->requireRole('admin');
+        // La page de gestion est désormais fusionnée avec /entreprises
+        $search = trim($_GET['search'] ?? '');
+        $redirectUrl = '/entreprises' . ($search ? '?search=' . urlencode($search) : '');
+        header('Location: ' . $redirectUrl);
+        exit;
+    }
+
+    public function adminEntrepriseCreerPost(): void {
+        $this->requireRole('admin');
+        $nom         = trim($_POST['nom'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $email       = trim($_POST['email_contact'] ?? '');
+        $telephone   = trim($_POST['telephone_contact'] ?? '');
+        $ville       = trim($_POST['ville'] ?? '');
+        $siteWeb     = trim($_POST['site_web'] ?? '');
+
+        if (!$nom) {
+            $_SESSION['error'] = 'Le nom est obligatoire.';
+            header('Location: /entreprises');
+            exit;
+        }
+
+        $cheminLogo = null;
+        if (!empty($_FILES['logo']['name'])) {
+            $fichier        = $_FILES['logo'];
+            $typesAutorises = ['image/jpeg', 'image/png', 'image/webp'];
+            $finfo          = new \finfo(FILEINFO_MIME_TYPE);
+            $mimeReel       = $finfo->file($fichier['tmp_name']);
+            if ($fichier['error'] === UPLOAD_ERR_OK && $fichier['size'] <= 2 * 1024 * 1024 && in_array($mimeReel, $typesAutorises)) {
+                $ext         = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$mimeReel];
+                $nomFichier  = 'logo_' . uniqid() . '.' . $ext;
+                if (move_uploaded_file($fichier['tmp_name'], UPLOAD_PATH . '/logos/' . $nomFichier)) {
+                    $cheminLogo = 'uploads/logos/' . $nomFichier;
+                }
+            } else {
+                $_SESSION['error'] = 'Logo invalide (JPG/PNG/WEBP, 2 Mo max).';
+                header('Location: /entreprises');
+                exit;
+            }
+        }
+
+        $id = (new EntrepriseModel())->creerDirect($nom, $description, $email, $telephone, $ville, $siteWeb, $cheminLogo);
+        $_SESSION['success'] = 'Entreprise créée et approuvée.';
+        header('Location: /entreprise?id=' . $id);
+        exit;
+    }
+
+    public function adminEntreprises(): void {
+        $this->requireRole('admin');
+        $nombreParPage = 10;
+        $pageCourante  = max(1, (int) ($_GET['page'] ?? 1));
+        $modele        = new EntrepriseModel();
+        $totalDemandes = $modele->compterDemandesEnAttente();
+        $totalPages    = (int) ceil($totalDemandes / $nombreParPage);
+        $decalage      = ($pageCourante - 1) * $nombreParPage;
+        $demandes      = $modele->getDemandesEnAttente($nombreParPage, $decalage);
+        echo $this->twig->render('admin/entreprises.twig', [
+            'demandes'      => $demandes,
+            'totalDemandes' => $totalDemandes,
+            'pageCourante'  => $pageCourante,
+            'totalPages'    => $totalPages,
+            'success'       => $_SESSION['success'] ?? null,
+            'error'         => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function adminEntrepriseApprouver(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_POST['id_entreprise'] ?? 0);
+        if ($id) {
+            (new EntrepriseModel())->approuver($id);
+            $_SESSION['success'] = 'Entreprise approuvée.';
+        }
+        header('Location: /admin/entreprises');
+        exit;
+    }
+
+    public function adminEntrepriseRejeter(): void {
+        $this->requireRole('admin');
+        $id = (int) ($_POST['id_entreprise'] ?? 0);
+        if ($id) {
+            (new EntrepriseModel())->rejeter($id);
+            $_SESSION['success'] = 'Entreprise rejetée.';
+        }
+        header('Location: /admin/entreprises');
+        exit;
+    }
+
+    public function entreprises(): void {
+        $model      = new EntrepriseModel();
+        $search     = trim($_GET['search'] ?? '');
+        $estAdmin   = ($_SESSION['user']['role'] ?? '') === 'admin';
+
+        if ($estAdmin) {
+            // L'admin voit toutes les entreprises (tous statuts, sans pagination)
+            $entreprises = $model->findAllAdmin($search);
+            echo $this->twig->render('entreprises.twig', [
+                'entreprises' => $entreprises,
+                'search'      => $search,
+                'success'     => $_SESSION['success'] ?? null,
+                'error'       => $_SESSION['error'] ?? null,
+            ]);
+            unset($_SESSION['success'], $_SESSION['error']);
+        } else {
+            // Les autres voient uniquement les entreprises approuvées avec pagination
+            $page        = max(1, (int) ($_GET['page'] ?? 1));
+            $limite      = 10;
+            $offset      = ($page - 1) * $limite;
+            $entreprises = $model->findAll($search, $limite, $offset);
+            $total       = $model->count($search);
+            $totalPages  = (int) ceil($total / $limite);
+            echo $this->twig->render('entreprises.twig', [
+                'entreprises' => $entreprises,
+                'search'      => $search,
+                'page'        => $page,
+                'totalPages'  => $totalPages,
+            ]);
+        }
     }
 
     public function oubliMdp() {
@@ -662,6 +1526,345 @@ class PageController
             header("location:/identification");
             exit;
         }
+    }
+
+    public function adminPiloteSupprimerPost(): void
+    {
+        $this->requireRole('admin');
+        $idPilote = (int) ($_POST['id_pilote'] ?? 0);
+        $piloteModel = new PiloteModel();
+        $pilote = $piloteModel->findById($idPilote);
+        if (!$pilote) {
+            $_SESSION['error'] = 'Pilote introuvable.';
+            header('Location: /admin/pilotes');
+            exit;
+        }
+        $piloteModel->supprimer($idPilote);
+        $_SESSION['success'] = 'Le compte de ' . $pilote['prenom'] . ' ' . $pilote['nom'] . ' a été supprimé.';
+        header('Location: /admin/pilotes');
+        exit;
+    }
+
+    public function adminPiloteModifier(): void
+    {
+        $this->requireRole('admin');
+        $idPilote = (int) ($_GET['id'] ?? 0);
+        $pilote   = (new PiloteModel())->findById($idPilote);
+        if (!$pilote) {
+            $_SESSION['error'] = 'Pilote introuvable.';
+            header('Location: /admin/pilotes');
+            exit;
+        }
+        echo $this->twig->render('admin/pilote-modifier.twig', [
+            'pilote'  => $pilote,
+            'error'   => $_SESSION['error'] ?? null,
+            'success' => $_SESSION['success'] ?? null,
+        ]);
+        unset($_SESSION['error'], $_SESSION['success']);
+    }
+
+    public function adminPiloteModifierPost(): void
+    {
+        $this->requireRole('admin');
+        $idPilote   = (int) ($_POST['id_pilote'] ?? 0);
+        $nom        = trim($_POST['nom'] ?? '');
+        $prenom     = trim($_POST['prenom'] ?? '');
+        $email      = trim($_POST['email'] ?? '');
+        $ecole      = trim($_POST['ecole'] ?? '');
+        $motDePasse = trim($_POST['mot_de_passe'] ?? '');
+
+        if (!$nom || !$prenom || !$email) {
+            $_SESSION['error'] = 'Nom, prénom et email sont obligatoires.';
+            header('Location: /admin/pilote/modifier?id=' . $idPilote);
+            exit;
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['error'] = 'Adresse email invalide.';
+            header('Location: /admin/pilote/modifier?id=' . $idPilote);
+            exit;
+        }
+
+        $piloteModel  = new PiloteModel();
+        $piloteActuel = $piloteModel->findById($idPilote);
+        if (!$piloteActuel) {
+            $_SESSION['error'] = 'Pilote introuvable.';
+            header('Location: /admin/pilotes');
+            exit;
+        }
+
+        // Vérifie l'unicité de l'email si changé
+        if ($email !== $piloteActuel['email']) {
+            $existant = (new UtilisateurModel())->findByEmail($email);
+            if ($existant) {
+                $_SESSION['error'] = 'Cette adresse email est déjà utilisée.';
+                header('Location: /admin/pilote/modifier?id=' . $idPilote);
+                exit;
+            }
+        }
+
+        $hash = $motDePasse !== '' ? password_hash($motDePasse, PASSWORD_DEFAULT) : null;
+        $piloteModel->modifier($idPilote, $nom, $prenom, $email, $ecole, $hash);
+
+        $_SESSION['success'] = 'Compte pilote modifié avec succès.';
+        header('Location: /admin/pilote?id=' . $idPilote);
+        exit;
+    }
+
+    public function adminPiloteCreer(): void
+    {
+        $this->requireRole('admin');
+        echo $this->twig->render('admin/pilote-creer.twig', [
+            'error' => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['error']);
+    }
+
+    public function adminPiloteCreerPost(): void
+    {
+        $this->requireRole('admin');
+        $nom    = trim($_POST['nom'] ?? '');
+        $prenom = trim($_POST['prenom'] ?? '');
+        $email  = trim($_POST['email'] ?? '');
+        $motDePasse = trim($_POST['mot_de_passe'] ?? '');
+        $ecole  = trim($_POST['ecole'] ?? '');
+
+        if (!$nom || !$prenom || !$email || !$motDePasse) {
+            $_SESSION['error'] = 'Tous les champs obligatoires doivent être remplis.';
+            header('Location: /admin/pilote/creer');
+            exit;
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['error'] = 'Adresse email invalide.';
+            header('Location: /admin/pilote/creer');
+            exit;
+        }
+        if ((new UtilisateurModel())->findByEmail($email)) {
+            $_SESSION['error'] = 'Cette adresse email est déjà utilisée.';
+            header('Location: /admin/pilote/creer');
+            exit;
+        }
+
+        $idPilote = (new PiloteModel())->creer($nom, $prenom, $email, password_hash($motDePasse, PASSWORD_DEFAULT), $ecole);
+        $_SESSION['success'] = 'Compte pilote créé avec succès.';
+        header('Location: /admin/pilote?id=' . $idPilote);
+        exit;
+    }
+
+    public function adminEtudiants(): void
+    {
+        $this->requireRole('admin');
+        $recherche     = trim($_GET['search'] ?? '');
+        $nombreParPage = 10;
+        $pageCourante  = max(1, (int) ($_GET['page'] ?? 1));
+        $modele        = new PiloteModel();
+        $totalEtudiants = $modele->compterTousEtudiants($recherche);
+        $totalPages    = (int) ceil($totalEtudiants / $nombreParPage);
+        $decalage      = ($pageCourante - 1) * $nombreParPage;
+        $etudiants     = $modele->getTousEtudiants($recherche, $nombreParPage, $decalage);
+        echo $this->twig->render('admin/etudiants.twig', [
+            'etudiants'      => $etudiants,
+            'recherche'      => $recherche,
+            'totalEtudiants' => $totalEtudiants,
+            'pageCourante'   => $pageCourante,
+            'totalPages'     => $totalPages,
+            'success'        => $_SESSION['success'] ?? null,
+            'error'          => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function adminEtudiant(): void
+    {
+        $this->requireRole('admin');
+        $idEtudiant   = (int) ($_GET['id'] ?? 0);
+        $piloteModel  = new PiloteModel();
+        $etudiant     = $piloteModel->getEtudiantAdmin($idEtudiant);
+        if (!$etudiant) {
+            $_SESSION['error'] = 'Étudiant introuvable.';
+            header('Location: /admin/etudiants');
+            exit;
+        }
+        $candidatures = $piloteModel->getCandidaturesEtudiant($etudiant['id_utilisateur']);
+        echo $this->twig->render('admin/etudiant.twig', [
+            'etudiant'    => $etudiant,
+            'candidatures' => $candidatures,
+            'success'     => $_SESSION['success'] ?? null,
+            'error'       => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function adminEtudiantCreer(): void
+    {
+        $this->requireRole('admin');
+        $pilotes = (new PiloteModel())->getTous();
+        echo $this->twig->render('admin/etudiant-creer.twig', [
+            'pilotes' => $pilotes,
+            'error'   => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['error']);
+    }
+
+    public function adminEtudiantCreerPost(): void
+    {
+        $this->requireRole('admin');
+        $nom        = trim($_POST['nom'] ?? '');
+        $prenom     = trim($_POST['prenom'] ?? '');
+        $email      = trim($_POST['email'] ?? '');
+        $motDePasse = trim($_POST['mot_de_passe'] ?? '');
+        $ecole      = trim($_POST['ecole'] ?? '');
+        $idPilote   = ($_POST['id_pilote'] ?? '') !== '' ? (int) $_POST['id_pilote'] : null;
+
+        if (!$nom || !$prenom || !$email || !$motDePasse) {
+            $_SESSION['error'] = 'Tous les champs obligatoires doivent être remplis.';
+            header('Location: /admin/etudiant/creer');
+            exit;
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['error'] = 'Adresse email invalide.';
+            header('Location: /admin/etudiant/creer');
+            exit;
+        }
+        if ((new UtilisateurModel())->findByEmail($email)) {
+            $_SESSION['error'] = 'Cette adresse email est déjà utilisée.';
+            header('Location: /admin/etudiant/creer');
+            exit;
+        }
+
+        (new PiloteModel())->creerEtudiantAdmin($idPilote, $nom, $prenom, $email, password_hash($motDePasse, PASSWORD_DEFAULT), $ecole);
+        $_SESSION['success'] = 'Compte étudiant créé avec succès.';
+        header('Location: /admin/etudiants');
+        exit;
+    }
+
+    public function adminEtudiantModifier(): void
+    {
+        $this->requireRole('admin');
+        $idEtudiant = (int) ($_GET['id'] ?? 0);
+        $piloteModel = new PiloteModel();
+        $etudiant   = $piloteModel->getEtudiantAdmin($idEtudiant);
+        if (!$etudiant) {
+            $_SESSION['error'] = 'Étudiant introuvable.';
+            header('Location: /admin/etudiants');
+            exit;
+        }
+        $pilotes = $piloteModel->getTous();
+        echo $this->twig->render('admin/etudiant-modifier.twig', [
+            'etudiant' => $etudiant,
+            'pilotes'  => $pilotes,
+            'error'    => $_SESSION['error'] ?? null,
+            'success'  => $_SESSION['success'] ?? null,
+        ]);
+        unset($_SESSION['error'], $_SESSION['success']);
+    }
+
+    public function adminEtudiantModifierPost(): void
+    {
+        $this->requireRole('admin');
+        $idEtudiant = (int) ($_POST['id_etudiant'] ?? 0);
+        $nom        = trim($_POST['nom'] ?? '');
+        $prenom     = trim($_POST['prenom'] ?? '');
+        $email      = trim($_POST['email'] ?? '');
+        $ecole      = trim($_POST['ecole'] ?? '');
+        $promotion  = trim($_POST['promotion'] ?? '');
+        $motDePasse = trim($_POST['mot_de_passe'] ?? '');
+        $idPilote   = ($_POST['id_pilote'] ?? '') !== '' ? (int) $_POST['id_pilote'] : null;
+
+        if (!$nom || !$prenom || !$email) {
+            $_SESSION['error'] = 'Nom, prénom et email sont obligatoires.';
+            header('Location: /admin/etudiant/modifier?id=' . $idEtudiant);
+            exit;
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['error'] = 'Adresse email invalide.';
+            header('Location: /admin/etudiant/modifier?id=' . $idEtudiant);
+            exit;
+        }
+
+        $piloteModel    = new PiloteModel();
+        $etudiantActuel = $piloteModel->getEtudiantAdmin($idEtudiant);
+        if (!$etudiantActuel) {
+            $_SESSION['error'] = 'Étudiant introuvable.';
+            header('Location: /admin/etudiants');
+            exit;
+        }
+
+        if ($email !== $etudiantActuel['email']) {
+            $existant = (new UtilisateurModel())->findByEmail($email);
+            if ($existant) {
+                $_SESSION['error'] = 'Cette adresse email est déjà utilisée.';
+                header('Location: /admin/etudiant/modifier?id=' . $idEtudiant);
+                exit;
+            }
+        }
+
+        $hash = $motDePasse !== '' ? password_hash($motDePasse, PASSWORD_DEFAULT) : null;
+        $piloteModel->modifierEtudiantAdmin($idEtudiant, $nom, $prenom, $email, $ecole, $promotion, $idPilote, $hash);
+
+        $_SESSION['success'] = 'Compte étudiant modifié avec succès.';
+        header('Location: /admin/etudiant?id=' . $idEtudiant);
+        exit;
+    }
+
+    public function adminEtudiantSupprimerPost(): void
+    {
+        $this->requireRole('admin');
+        $idEtudiant  = (int) ($_POST['id_etudiant'] ?? 0);
+        $piloteModel = new PiloteModel();
+        $etudiant    = $piloteModel->getEtudiantAdmin($idEtudiant);
+        if (!$etudiant) {
+            $_SESSION['error'] = 'Étudiant introuvable.';
+            header('Location: /admin/etudiants');
+            exit;
+        }
+        $piloteModel->supprimerEtudiantAdmin($idEtudiant);
+        $_SESSION['success'] = 'Le compte de ' . $etudiant['prenom'] . ' ' . $etudiant['nom'] . ' a été supprimé.';
+        header('Location: /admin/etudiants');
+        exit;
+    }
+
+    public function adminPilotes(): void
+    {
+        $this->requireRole('admin');
+        $recherche     = trim($_GET['search'] ?? '');
+        $nombreParPage = 10;
+        $pageCourante  = max(1, (int) ($_GET['page'] ?? 1));
+        $modele        = new PiloteModel();
+        $totalPilotes  = $modele->compterTous($recherche);
+        $totalPages    = (int) ceil($totalPilotes / $nombreParPage);
+        $decalage      = ($pageCourante - 1) * $nombreParPage;
+        $pilotes       = $modele->getTous($recherche, $nombreParPage, $decalage);
+        echo $this->twig->render('admin/pilotes.twig', [
+            'pilotes'      => $pilotes,
+            'recherche'    => $recherche,
+            'totalPilotes' => $totalPilotes,
+            'pageCourante' => $pageCourante,
+            'totalPages'   => $totalPages,
+            'success'      => $_SESSION['success'] ?? null,
+            'error'        => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function adminPilote(): void
+    {
+        $this->requireRole('admin');
+        $idPilote    = (int) ($_GET['id'] ?? 0);
+        $piloteModel = new PiloteModel();
+        $pilote      = $piloteModel->findById($idPilote);
+        if (!$pilote) {
+            $_SESSION['error'] = 'Pilote introuvable.';
+            header('Location: /admin/pilotes');
+            exit;
+        }
+        $etudiants = $piloteModel->getEtudiants($idPilote);
+        echo $this->twig->render('admin/pilote.twig', [
+            'pilote'    => $pilote,
+            'etudiants' => $etudiants,
+            'success'   => $_SESSION['success'] ?? null,
+            'error'     => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
     }
 
 }

@@ -4,11 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Stagio{% endblock %}</title>
+
     {% block styles %}
       <link rel="stylesheet" href="{{ base_url }}css/main.css" />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     {% endblock %}
+
+    <script src="{{ base_url }}js/main.js" defer></script>
+    {% block scripts %}{% endblock %}
+
     <meta name="description" {% block description %} content="Stagio"{% endblock %} />
   </head>
+
   <body>
 
     {% block header %}

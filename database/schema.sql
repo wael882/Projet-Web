@@ -83,6 +83,8 @@ CREATE TABLE ETUDIANT (
 
 -- ------------------------------------------------------------
 -- TABLE : ENTREPRISE
+-- Les entreprises sont indépendantes de tout utilisateur.
+-- Elles sont créées par un admin ou un pilote.
 -- ------------------------------------------------------------
 CREATE TABLE ENTREPRISE (
     id_entreprise       INT AUTO_INCREMENT PRIMARY KEY,
@@ -90,7 +92,11 @@ CREATE TABLE ENTREPRISE (
     description         TEXT         NULL,
     email_contact       VARCHAR(150) NULL,
     telephone_contact   VARCHAR(20)  NULL,
+    ville               VARCHAR(100) NULL,
+    site_web            VARCHAR(255) NULL,
     active              BOOLEAN      NOT NULL DEFAULT TRUE,
+    statut              VARCHAR(50)  NOT NULL DEFAULT 'en_attente'
+                            COMMENT 'en_attente | approuvee | rejetee | suppression_demandee',
     date_creation       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

@@ -123,7 +123,7 @@
   <section id="evaluations">
     <h2>Évaluations ({{ evaluations|length }})</h2>
 
-    {% if user and user.role == 'etudiant' %}
+    {% if user and (user.role == 'pilote' or user.role == 'admin') %}
       {% if dejaEvalue %}
         <p style="color:var(--gris); font-size:0.9rem;">Vous avez déjà évalué cette entreprise.</p>
       {% else %}
@@ -159,7 +159,7 @@
                     <span class="star {{ i <= ev.note ? 'full' : 'empty' }}">★</span>
                   {% endfor %}
                 </span>
-                {% if user and user.role == 'etudiant' and user.id_etudiant == ev.id_etudiant %}
+                {% if user and (user.role == 'pilote' or user.role == 'admin') and user.id_utilisateur == ev.id_utilisateur %}
                   <button type="button" class="btn-avis-action btn-avis-edit" title="Modifier"
                     data-id="{{ ev.id_evaluation }}"
                     data-note="{{ ev.note }}"
@@ -185,7 +185,7 @@
       </div>
 
       {# Modal d'édition #}
-      {% if user and user.role == 'etudiant' %}
+      {% if user and (user.role == 'pilote' or user.role == 'admin') %}
       <div id="modal-edit-avis" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:1000; align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:12px; padding:2rem; width:100%; max-width:440px; box-shadow:0 8px 32px rgba(0,0,0,0.18);">
           <h3 style="margin:0 0 1rem;">Modifier mon avis</h3>

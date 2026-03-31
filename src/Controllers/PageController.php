@@ -336,9 +336,10 @@ class PageController
         $offresEntreprise = $offreModel->findByEntreprise((int) $_GET['id']);
         $evaluations      = $entrepriseModel->getEvaluations((int) $_GET['id']);
         $dejaEvalue       = false;
-        if (!empty($_SESSION['user']) && $_SESSION['user']['role'] === 'etudiant') {
+        $roleUtilisateur  = $_SESSION['user']['role'] ?? '';
+        if (!empty($_SESSION['user']) && in_array($roleUtilisateur, ['pilote', 'admin'], true)) {
             $dejaEvalue = $entrepriseModel->dejaEvalue(
-                (int) $_SESSION['user']['id_etudiant'],
+                (int) $_SESSION['user']['id_utilisateur'],
                 (int) $_GET['id']
             );
         }
@@ -356,10 +357,10 @@ class PageController
 
     public function entrepriseEvaluer()
     {
-        $this->requireRole('etudiant');
-        $idEntreprise = (int) ($_POST['id_entreprise'] ?? 0);
-        $note         = (int) ($_POST['note'] ?? 0);
-        $commentaire  = trim($_POST['commentaire'] ?? '');
+        $this->requireRoles(['pilote', 'admin']);
+        $idEntreprise  = (int) ($_POST['id_entreprise'] ?? 0);
+        $note          = (int) ($_POST['note'] ?? 0);
+        $commentaire   = trim($_POST['commentaire'] ?? '');
 
         if (!$idEntreprise || $note < 1 || $note > 5) {
             $_SESSION['error'] = 'Données invalides.';
@@ -367,16 +368,16 @@ class PageController
             exit;
         }
 
-        $model      = new EntrepriseModel();
-        $idEtudiant = (int) ($_SESSION['user']['id_etudiant'] ?? 0);
+        $model         = new EntrepriseModel();
+        $idUtilisateur = (int) ($_SESSION['user']['id_utilisateur'] ?? 0);
 
-        if ($model->dejaEvalue($idEtudiant, $idEntreprise)) {
+        if ($model->dejaEvalue($idUtilisateur, $idEntreprise)) {
             $_SESSION['error'] = 'Vous avez déjà évalué cette entreprise.';
             header('Location: /entreprise?id=' . $idEntreprise);
             exit;
         }
 
-        $model->evaluer($idEtudiant, $idEntreprise, $note, $commentaire);
+        $model->evaluer($idUtilisateur, $idEntreprise, $note, $commentaire);
         $_SESSION['success'] = 'Évaluation envoyée, merci !';
         header('Location: /entreprise?id=' . $idEntreprise);
         exit;
@@ -384,12 +385,12 @@ class PageController
 
     public function entrepriseEvaluerModifier()
     {
-        $this->requireRole('etudiant');
-        $idEvaluation = (int) ($_POST['id_evaluation'] ?? 0);
-        $idEntreprise = (int) ($_POST['id_entreprise'] ?? 0);
-        $note         = (int) ($_POST['note'] ?? 0);
-        $commentaire  = trim($_POST['commentaire'] ?? '');
-        $idEtudiant   = (int) ($_SESSION['user']['id_etudiant'] ?? 0);
+        $this->requireRoles(['pilote', 'admin']);
+        $idEvaluation  = (int) ($_POST['id_evaluation'] ?? 0);
+        $idEntreprise  = (int) ($_POST['id_entreprise'] ?? 0);
+        $note          = (int) ($_POST['note'] ?? 0);
+        $commentaire   = trim($_POST['commentaire'] ?? '');
+        $idUtilisateur = (int) ($_SESSION['user']['id_utilisateur'] ?? 0);
 
         if (!$idEvaluation || !$idEntreprise || $note < 1 || $note > 5) {
             $_SESSION['error'] = 'Données invalides.';
@@ -397,7 +398,7 @@ class PageController
             exit;
         }
 
-        (new EntrepriseModel())->modifierEvaluation($idEvaluation, $idEtudiant, $note, $commentaire);
+        (new EntrepriseModel())->modifierEvaluation($idEvaluation, $idUtilisateur, $note, $commentaire);
         $_SESSION['success'] = 'Évaluation modifiée.';
         header('Location: /entreprise?id=' . $idEntreprise);
         exit;
@@ -405,13 +406,13 @@ class PageController
 
     public function entrepriseEvaluerSupprimer()
     {
-        $this->requireRole('etudiant');
-        $idEvaluation = (int) ($_POST['id_evaluation'] ?? 0);
-        $idEntreprise = (int) ($_POST['id_entreprise'] ?? 0);
-        $idEtudiant   = (int) ($_SESSION['user']['id_etudiant'] ?? 0);
+        $this->requireRoles(['pilote', 'admin']);
+        $idEvaluation  = (int) ($_POST['id_evaluation'] ?? 0);
+        $idEntreprise  = (int) ($_POST['id_entreprise'] ?? 0);
+        $idUtilisateur = (int) ($_SESSION['user']['id_utilisateur'] ?? 0);
 
         if ($idEvaluation && $idEntreprise) {
-            (new EntrepriseModel())->supprimerEvaluation($idEvaluation, $idEtudiant);
+            (new EntrepriseModel())->supprimerEvaluation($idEvaluation, $idUtilisateur);
             $_SESSION['success'] = 'Évaluation supprimée.';
         }
         header('Location: /entreprise?id=' . $idEntreprise);

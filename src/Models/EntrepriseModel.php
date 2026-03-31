@@ -52,10 +52,9 @@ class EntrepriseModel {
 
     public function getEvaluations(int $idEntreprise): array {
         $stmt = $this->pdo->prepare('
-            SELECT ev.id_evaluation, ev.id_etudiant, ev.note, ev.commentaire, ev.date_evaluation, u.prenom, u.nom
+            SELECT ev.id_evaluation, ev.id_utilisateur, ev.note, ev.commentaire, ev.date_evaluation, u.prenom, u.nom
             FROM EVALUATION_ENTREPRISE ev
-            JOIN ETUDIANT e ON ev.id_etudiant = e.id_etudiant
-            JOIN UTILISATEUR u ON e.id_utilisateur = u.id_utilisateur
+            JOIN UTILISATEUR u ON ev.id_utilisateur = u.id_utilisateur
             WHERE ev.id_entreprise = :id
             ORDER BY ev.date_evaluation DESC
         ');
@@ -63,47 +62,47 @@ class EntrepriseModel {
         return $stmt->fetchAll();
     }
 
-    public function modifierEvaluation(int $idEvaluation, int $idEtudiant, int $note, string $commentaire): void {
+    public function modifierEvaluation(int $idEvaluation, int $idUtilisateur, int $note, string $commentaire): void {
         $stmt = $this->pdo->prepare('
             UPDATE EVALUATION_ENTREPRISE
             SET note = :note, commentaire = :commentaire
-            WHERE id_evaluation = :id AND id_etudiant = :etudiant
+            WHERE id_evaluation = :id AND id_utilisateur = :utilisateur
         ');
         $stmt->execute([
             ':note'        => $note,
             ':commentaire' => $commentaire,
             ':id'          => $idEvaluation,
-            ':etudiant'    => $idEtudiant,
+            ':utilisateur' => $idUtilisateur,
         ]);
     }
 
-    public function supprimerEvaluation(int $idEvaluation, int $idEtudiant): void {
+    public function supprimerEvaluation(int $idEvaluation, int $idUtilisateur): void {
         $stmt = $this->pdo->prepare('
             DELETE FROM EVALUATION_ENTREPRISE
-            WHERE id_evaluation = :id AND id_etudiant = :etudiant
+            WHERE id_evaluation = :id AND id_utilisateur = :utilisateur
         ');
-        $stmt->execute([':id' => $idEvaluation, ':etudiant' => $idEtudiant]);
+        $stmt->execute([':id' => $idEvaluation, ':utilisateur' => $idUtilisateur]);
     }
 
-    public function dejaEvalue(int $idEtudiant, int $idEntreprise): bool {
+    public function dejaEvalue(int $idUtilisateur, int $idEntreprise): bool {
         $stmt = $this->pdo->prepare('
             SELECT COUNT(*) FROM EVALUATION_ENTREPRISE
-            WHERE id_etudiant = :etudiant AND id_entreprise = :entreprise
+            WHERE id_utilisateur = :utilisateur AND id_entreprise = :entreprise
         ');
-        $stmt->execute([':etudiant' => $idEtudiant, ':entreprise' => $idEntreprise]);
+        $stmt->execute([':utilisateur' => $idUtilisateur, ':entreprise' => $idEntreprise]);
         return (int) $stmt->fetchColumn() > 0;
     }
 
-    public function evaluer(int $idEtudiant, int $idEntreprise, int $note, string $commentaire): void {
+    public function evaluer(int $idUtilisateur, int $idEntreprise, int $note, string $commentaire): void {
         $stmt = $this->pdo->prepare('
-            INSERT INTO EVALUATION_ENTREPRISE (id_etudiant, id_entreprise, note, commentaire)
-            VALUES (:etudiant, :entreprise, :note, :commentaire)
+            INSERT INTO EVALUATION_ENTREPRISE (id_utilisateur, id_entreprise, note, commentaire)
+            VALUES (:utilisateur, :entreprise, :note, :commentaire)
         ');
         $stmt->execute([
-            ':etudiant'   => $idEtudiant,
-            ':entreprise' => $idEntreprise,
-            ':note'       => $note,
-            ':commentaire'=> $commentaire,
+            ':utilisateur' => $idUtilisateur,
+            ':entreprise'  => $idEntreprise,
+            ':note'        => $note,
+            ':commentaire' => $commentaire,
         ]);
     }
 

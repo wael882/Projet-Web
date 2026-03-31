@@ -168,10 +168,10 @@ CREATE TABLE EVALUATION_ENTREPRISE (
     note            INT      NOT NULL CHECK (note BETWEEN 1 AND 5),
     commentaire     TEXT     NULL,
     date_evaluation DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    id_etudiant     INT      NOT NULL,
+    id_utilisateur  INT      NOT NULL,
     id_entreprise   INT      NOT NULL,
-    CONSTRAINT fk_eval_etudiant
-        FOREIGN KEY (id_etudiant) REFERENCES ETUDIANT(id_etudiant)
+    CONSTRAINT fk_eval_utilisateur
+        FOREIGN KEY (id_utilisateur) REFERENCES UTILISATEUR(id_utilisateur)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
     CONSTRAINT fk_eval_entreprise

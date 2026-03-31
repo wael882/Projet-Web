@@ -63,16 +63,18 @@ class PageController
 
         $nombreParPage  = 10;
         $pageCourante   = max(1, (int) ($_GET['page'] ?? 1));
-        $totalEtudiants = $model->compterEtudiants((int) $pilote['id_pilote']);
+        $recherche      = trim($_GET['recherche'] ?? '');
+        $totalEtudiants = $model->compterEtudiants((int) $pilote['id_pilote'], $recherche);
         $totalPages     = (int) ceil($totalEtudiants / $nombreParPage);
         $decalage       = ($pageCourante - 1) * $nombreParPage;
 
-        $etudiants = $model->getEtudiants((int) $pilote['id_pilote'], $nombreParPage, $decalage);
+        $etudiants = $model->getEtudiants((int) $pilote['id_pilote'], $nombreParPage, $decalage, $recherche);
         echo $this->twig->render('pilote/dashboard.twig', [
             'etudiants'      => $etudiants,
             'totalEtudiants' => $totalEtudiants,
             'pageCourante'   => $pageCourante,
             'totalPages'     => $totalPages,
+            'recherche'      => $recherche,
             'success'        => $_SESSION['success'] ?? null,
             'error'          => $_SESSION['error'] ?? null,
         ]);
@@ -106,11 +108,12 @@ class PageController
     {
         $this->requireRole('pilote');
 
-        $nom    = trim($_POST['nom'] ?? '');
-        $prenom = trim($_POST['prenom'] ?? '');
-        $email  = trim($_POST['email'] ?? '');
-        $ecole  = trim($_POST['ecole'] ?? '');
-        $mdp    = $_POST['password'] ?? '';
+        $nom       = trim($_POST['nom'] ?? '');
+        $prenom    = trim($_POST['prenom'] ?? '');
+        $email     = trim($_POST['email'] ?? '');
+        $ecole     = trim($_POST['ecole'] ?? '');
+        $promotion = trim($_POST['promotion'] ?? '');
+        $mdp       = $_POST['password'] ?? '';
 
         if (!$nom || !$prenom || !$email || !$ecole || !$mdp) {
             $_SESSION['error'] = 'Tous les champs sont obligatoires.';
@@ -127,7 +130,7 @@ class PageController
 
         $model  = new PiloteModel();
         $pilote = $model->findByUtilisateur((int) $_SESSION['user']['id_utilisateur']);
-        $model->creerEtudiant((int) $pilote['id_pilote'], $nom, $prenom, $email, password_hash($mdp, PASSWORD_DEFAULT), $ecole);
+        $model->creerEtudiant((int) $pilote['id_pilote'], $nom, $prenom, $email, password_hash($mdp, PASSWORD_DEFAULT), $ecole, $promotion);
 
         $_SESSION['success'] = 'Compte étudiant créé avec succès.';
         header('Location: /pilote');

@@ -30,6 +30,7 @@
       name="search"
       value="{{ recherche }}"
       placeholder="Rechercher par nom, prénom ou email…"
+      data-recherche-live
       style="flex:1; padding:0.65rem 1rem; border:1px solid var(--ligne); border-radius:8px; font-size:0.9rem; font-family:inherit;"
     >
     <button type="submit" style="padding:0.65rem 1.4rem; background:var(--bleu); color:#fff; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Rechercher</button>
@@ -38,6 +39,7 @@
     {% endif %}
   </form>
 
+  <div id="zone-resultats">
   {# Liste des étudiants #}
   {% if etudiants is empty %}
     <div style="background:var(--blanc); border:1px solid var(--ligne); border-radius:12px; padding:3rem; text-align:center;">
@@ -70,6 +72,7 @@
 
   {% set urlBase = recherche ? '/admin/etudiants?search=' ~ recherche : '/admin/etudiants' %}
   {% include 'partials/pagination.html.twig' with {pageCourante: pageCourante, totalPages: totalPages, urlBase: urlBase} %}
+  </div>
 
 </div>
 {% endblock %}

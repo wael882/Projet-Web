@@ -23,6 +23,7 @@
   {# Recherche #}
   <form method="GET" style="margin-bottom:1.5rem; display:flex; gap:0.75rem;">
     <input type="text" name="search" value="{{ search }}" placeholder="Rechercher par nom ou ville..."
+           data-recherche-live
            style="flex:1; padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
     <button type="submit" class="btn-principal">Rechercher</button>
     {% if search %}
@@ -30,6 +31,7 @@
     {% endif %}
   </form>
 
+  <div id="zone-resultats">
   {# Liste #}
   {% if entreprises is empty %}
     <p style="color:var(--gris);">Aucune entreprise trouvée.</p>
@@ -85,6 +87,7 @@
       {% endfor %}
     </div>
   {% endif %}
+  </div>
 
 </div>
 

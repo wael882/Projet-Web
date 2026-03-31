@@ -32,8 +32,9 @@
         <input type="text"     name="prenom"   placeholder="Prénom"        required style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
         <input type="text"     name="nom"      placeholder="Nom"           required style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
         <input type="email"    name="email"    placeholder="Email"         required style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
-        <input type="text"     name="ecole"    placeholder="École / CESI"  required style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
-        <input type="password" name="password" placeholder="Mot de passe"  required style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+        <input type="text"     name="ecole"     placeholder="École / CESI"  required style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+        <input type="text"     name="promotion" placeholder="CPI A2" style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+        <input type="password" name="password"  placeholder="Mot de passe"  required style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
         <div style="display:flex; gap:.75rem; margin-top:.5rem;">
           <button type="button" onclick="document.getElementById('modal-creer').style.display='none'" style="flex:1; padding:.65rem; border:1px solid var(--ligne); border-radius:8px; background:#fff; color:#333; cursor:pointer;">Annuler</button>
           <button type="submit" class="btn-principal" style="flex:1;">Créer</button>
@@ -42,8 +43,19 @@
     </div>
   </div>
 
+  <form method="GET" action="/pilote" style="margin-bottom:1.25rem;">
+    <div style="display:flex; gap:0.5rem;">
+      <input type="text" name="recherche" value="{{ recherche }}" placeholder="Rechercher par nom, prénom ou email..." data-recherche-live style="flex:1; padding:.6rem 1rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit; font-size:0.9rem;">
+      <button type="submit" class="btn-principal" style="padding:.6rem 1.2rem; font-size:0.9rem;">Rechercher</button>
+      {% if recherche %}
+        <a href="/pilote" style="padding:.6rem 1rem; border:1px solid var(--ligne); border-radius:8px; color:var(--gris); font-size:0.9rem; display:flex; align-items:center;">✕</a>
+      {% endif %}
+    </div>
+  </form>
+
+  <div id="zone-resultats">
   {% if etudiants is empty %}
-    <p class="empty-msg">Aucun étudiant ne vous est assigné pour le moment.</p>
+    <p class="empty-msg">{% if recherche %}Aucun étudiant trouvé pour "{{ recherche }}".{% else %}Aucun étudiant ne vous est assigné pour le moment.{% endif %}</p>
   {% else %}
     <div class="etudiants-list">
       {% for e in etudiants %}
@@ -76,6 +88,7 @@
   {% endif %}
 
   {% include 'partials/pagination.html.twig' with {pageCourante: pageCourante, totalPages: totalPages, urlBase: '/pilote'} %}
+  </div>
 
 </div>
 {% endblock %}

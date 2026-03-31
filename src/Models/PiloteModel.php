@@ -22,14 +22,20 @@ class PiloteModel
         return $stmt->fetch();
     }
 
-    public function compterEtudiants(int $idPilote): int
+    public function compterEtudiants(int $idPilote, string $recherche = ''): int
     {
-        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM ETUDIANT WHERE id_pilote = :id_pilote');
-        $stmt->execute([':id_pilote' => $idPilote]);
+        $sql = 'SELECT COUNT(*) FROM ETUDIANT e JOIN UTILISATEUR u ON e.id_utilisateur = u.id_utilisateur WHERE e.id_pilote = :id_pilote';
+        $params = [':id_pilote' => $idPilote];
+        if ($recherche !== '') {
+            $sql .= ' AND (u.nom LIKE :recherche OR u.prenom LIKE :recherche OR u.email LIKE :recherche)';
+            $params[':recherche'] = '%' . $recherche . '%';
+        }
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return (int) $stmt->fetchColumn();
     }
 
-    public function getEtudiants(int $idPilote, int $limite = 0, int $decalage = 0): array
+    public function getEtudiants(int $idPilote, int $limite = 0, int $decalage = 0, string $recherche = ''): array
     {
         $sql = '
             SELECT e.*, u.nom, u.prenom, u.email,
@@ -38,14 +44,18 @@ class PiloteModel
             JOIN UTILISATEUR u ON e.id_utilisateur = u.id_utilisateur
             LEFT JOIN CANDIDATURE c ON c.id_utilisateur = e.id_utilisateur
             WHERE e.id_pilote = :id_pilote
-            GROUP BY e.id_etudiant
-            ORDER BY u.nom, u.prenom
         ';
+        $params = [':id_pilote' => $idPilote];
+        if ($recherche !== '') {
+            $sql .= ' AND (u.nom LIKE :recherche OR u.prenom LIKE :recherche OR u.email LIKE :recherche)';
+            $params[':recherche'] = '%' . $recherche . '%';
+        }
+        $sql .= ' GROUP BY e.id_etudiant ORDER BY u.nom, u.prenom';
         if ($limite > 0) {
             $sql .= ' LIMIT ' . $limite . ' OFFSET ' . $decalage;
         }
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':id_pilote' => $idPilote]);
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
@@ -117,7 +127,7 @@ class PiloteModel
         return true;
     }
 
-    public function creerEtudiant(int $idPilote, string $nom, string $prenom, string $email, string $motDePasseHash, string $ecole): bool
+    public function creerEtudiant(int $idPilote, string $nom, string $prenom, string $email, string $motDePasseHash, string $ecole, string $promotion = ''): bool
     {
         $stmt = $this->pdo->prepare('
             INSERT INTO UTILISATEUR (nom, prenom, email, mot_de_passe_hash, id_role, ecole)
@@ -133,9 +143,13 @@ class PiloteModel
         $idUtilisateur = (int) $this->pdo->lastInsertId();
 
         $stmt = $this->pdo->prepare('
-            INSERT INTO ETUDIANT (id_utilisateur, id_pilote) VALUES (:id_utilisateur, :id_pilote)
+            INSERT INTO ETUDIANT (id_utilisateur, id_pilote, promotion) VALUES (:id_utilisateur, :id_pilote, :promotion)
         ');
-        $stmt->execute([':id_utilisateur' => $idUtilisateur, ':id_pilote' => $idPilote]);
+        $stmt->execute([
+            ':id_utilisateur' => $idUtilisateur,
+            ':id_pilote'      => $idPilote,
+            ':promotion'      => $promotion ?: null,
+        ]);
         return true;
     }
 

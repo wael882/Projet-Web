@@ -115,7 +115,7 @@ header .navbar {
 nav img,
 header .navbar img,
 header .navbar .logo img {
-  height: 32px;
+  height: 42px;
   object-fit: contain;
   margin-right: 0;
 }
@@ -173,8 +173,9 @@ header .navbar .nav-username {
 nav .nav-cta,
 header .navbar .nav-cta {
   margin-left: auto;
-  background: var(--orange);
-  color: var(--blanc);
+  background: var(--blanc);
+  color: var(--orange);
+  border: 1.5px solid var(--orange);
   padding: 0.45rem 0.8rem;
   border-radius: 6px;
   font-size: 0.8rem;
@@ -185,7 +186,7 @@ header .navbar .nav-cta {
 
 nav .nav-cta:hover,
 header .navbar .nav-cta:hover {
-  background: var(--orange-2);
+  background: var(--orange);
   color: var(--blanc);
 }
 
@@ -649,14 +650,15 @@ footer a:hover {
   nav,
   header .navbar {
     padding: 0 2rem;
-    height: 58px;
-    min-height: 58px;
+    height: 64px;
+    min-height: 64px;
     gap: 0.2rem;
+    justify-content: flex-start;
   }
 
   nav img,
   header .navbar img {
-    height: 34px;
+    height: 48px;
     margin-right: 1.5rem;
   }
 
@@ -672,7 +674,7 @@ footer a:hover {
     align-items: center;
     gap: 0.2rem;
     position: static;
-    width: auto;
+    flex: 1;
     background: transparent;
     padding: 0;
     border-radius: 0;
@@ -899,7 +901,7 @@ footer a:hover {
   }
 
   .footer-top {
-    grid-template-columns: 2fr 1fr 2fr;
+    grid-template-columns: 1fr 2fr;
     gap: 3rem;
   }
 

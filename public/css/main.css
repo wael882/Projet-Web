@@ -791,8 +791,34 @@ footer a:hover {
     align-items: center;
     text-align: center;
   }
-<<<<<<< HEAD
+
+  .timeline-dot {
+    margin-bottom: 1.2rem;
+  }
+
+  #bienvenue {
+    padding: 2.5rem;
+  }
+
+  #bienvenue h1 {
+    font-size: 1.9rem;
+  }
+
+  .footer-inner {
+    padding: 3rem 2rem 1.5rem;
+  }
+
+  .footer-top {
+    grid-template-columns: 1fr 2fr;
+    gap: 3rem;
+  }
+
+  #identite {
+    flex-direction: row;
+    text-align: left;
+  }
 }
+
 /* ===========================================
    ALERTES GLOBALES
    =========================================== */
@@ -807,6 +833,13 @@ footer a:hover {
   font-weight: 500;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   animation: alertSlideIn 0.25s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.alert.alerte-masquee {
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
 }
 
 @keyframes alertSlideIn {
@@ -882,32 +915,3 @@ footer a:hover {
   font-weight: 600;
   color: var(--bleu);
 }
-=======
-
-  .timeline-dot {
-    margin-bottom: 1.2rem;
-  }
-
-  #bienvenue {
-    padding: 2.5rem;
-  }
-
-  #bienvenue h1 {
-    font-size: 1.9rem;
-  }
-
-  .footer-inner {
-    padding: 3rem 2rem 1.5rem;
-  }
-
-  .footer-top {
-    grid-template-columns: 1fr 2fr;
-    gap: 3rem;
-  }
-
-  #identite {
-    flex-direction: row;
-    text-align: left;
-  }
-}
->>>>>>> origin/mathildeduv

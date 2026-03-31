@@ -19,6 +19,11 @@
     </div>
     {% if user and user.role == 'admin' %}
       <button onclick="document.getElementById('modal-creer').style.display='flex'" class="btn-principal">+ Créer une entreprise</button>
+    {% elseif user and user.role == 'pilote' %}
+      <div class="entreprises-header-actions">
+        <a href="/pilote/entreprises" class="btn-modifier">Mes entreprises</a>
+        <a href="/entreprise/inscription" class="btn-soumettre-entreprise">+ Soumettre une entreprise</a>
+      </div>
     {% endif %}
   </div>
 

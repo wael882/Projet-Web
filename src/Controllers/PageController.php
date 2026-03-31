@@ -81,6 +81,18 @@ class PageController
         unset($_SESSION['success'], $_SESSION['error']);
     }
 
+    public function piloteEntreprises(): void {
+        $this->requireRole('pilote');
+        $idUtilisateur = (int) $_SESSION['user']['id_utilisateur'];
+        $entreprises   = (new EntrepriseModel())->getEntreprisesParCreateur($idUtilisateur);
+        echo $this->twig->render('pilote/entreprises.twig', [
+            'entreprises' => $entreprises,
+            'success'     => $_SESSION['success'] ?? null,
+            'error'       => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
     public function piloteEtudiant()
     {
         $this->requireRole('pilote');
@@ -886,9 +898,11 @@ class PageController
             }
         }
 
-        (new EntrepriseModel())->demanderCreation($nom, $description, $email, $telephone, $ville, $siteWeb, $cheminLogo);
+        $idCreateur = (int) ($_SESSION['user']['id_utilisateur'] ?? 0) ?: null;
+        (new EntrepriseModel())->demanderCreation($nom, $description, $email, $telephone, $ville, $siteWeb, $cheminLogo, $idCreateur);
         $_SESSION['success'] = 'Votre demande a bien été envoyée. Un administrateur va l\'examiner.';
-        header('Location: /entreprise/inscription');
+        $redirection = ($_SESSION['user']['role'] ?? '') === 'pilote' ? '/pilote/entreprises' : '/entreprise/inscription';
+        header('Location: ' . $redirection);
         exit;
     }
 

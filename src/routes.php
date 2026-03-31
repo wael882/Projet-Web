@@ -62,7 +62,8 @@ $router->add('POST', '/entreprise/evaluer/supprimer', [$controller, 'entrepriseE
 $router->add('POST', '/favoris',           [$controller, 'favorisPost']);
 $router->add('POST', '/favoris/supprimer', [$controller, 'favorisDelete']);
 $router->add('POST', '/profil',            [$controller, 'profilPost']);
-$router->add('GET',  '/pilote',            [$controller, 'pilote']);
+$router->add('GET',  '/pilote',              [$controller, 'pilote']);
+$router->add('GET',  '/pilote/entreprises', [$controller, 'piloteEntreprises']);
 $router->add('GET',  '/pilote/etudiant',   [$controller, 'piloteEtudiant']);
 $router->add('POST', '/pilote/statut',          [$controller, 'piloteUpdateStatut']);
 $router->add('POST', '/pilote/creer-etudiant',     [$controller, 'piloteCreerEtudiant']);

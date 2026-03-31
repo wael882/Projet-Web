@@ -137,10 +137,10 @@ class EntrepriseModel {
         return $stmt->fetchAll();
     }
 
-    public function demanderCreation(string $nom, string $description, string $email, string $telephone, string $ville, string $siteWeb, ?string $logo = null): void {
+    public function demanderCreation(string $nom, string $description, string $email, string $telephone, string $ville, string $siteWeb, ?string $logo = null, ?int $idCreateur = null): void {
         $stmt = $this->pdo->prepare('
-            INSERT INTO ENTREPRISE (nom, description, email_contact, telephone_contact, ville, site_web, logo, active, statut)
-            VALUES (:nom, :description, :email, :telephone, :ville, :site_web, :logo, FALSE, "en_attente")
+            INSERT INTO ENTREPRISE (nom, description, email_contact, telephone_contact, ville, site_web, logo, active, statut, id_createur)
+            VALUES (:nom, :description, :email, :telephone, :ville, :site_web, :logo, FALSE, "en_attente", :id_createur)
         ');
         $stmt->execute([
             ':nom'         => $nom,
@@ -150,7 +150,18 @@ class EntrepriseModel {
             ':ville'       => $ville,
             ':site_web'    => $siteWeb,
             ':logo'        => $logo,
+            ':id_createur' => $idCreateur,
         ]);
+    }
+
+    public function getEntreprisesParCreateur(int $idUtilisateur): array {
+        $stmt = $this->pdo->prepare('
+            SELECT * FROM ENTREPRISE
+            WHERE id_createur = :id_createur
+            ORDER BY date_creation DESC
+        ');
+        $stmt->execute([':id_createur' => $idUtilisateur]);
+        return $stmt->fetchAll();
     }
 
     public function demanderModification(int $idEntreprise, int $idUtilisateur, string $nom, string $description, string $email, string $telephone, string $ville, string $siteWeb): void {
@@ -231,7 +242,13 @@ class EntrepriseModel {
     }
 
     public function getDemandesEnAttente(int $limite = 0, int $decalage = 0): array {
-        $sql = 'SELECT * FROM ENTREPRISE WHERE statut = "en_attente" ORDER BY date_creation DESC';
+        $sql = '
+            SELECT e.*, u.prenom AS createur_prenom, u.nom AS createur_nom
+            FROM ENTREPRISE e
+            LEFT JOIN UTILISATEUR u ON e.id_createur = u.id_utilisateur
+            WHERE e.statut = "en_attente"
+            ORDER BY e.date_creation DESC
+        ';
         if ($limite > 0) {
             $sql .= ' LIMIT ' . $limite . ' OFFSET ' . $decalage;
         }

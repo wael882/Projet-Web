@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stagio - Mes entreprises{% endblock %}
+
+{% block styles %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ base_url }}css/pages/pilote.css" />
+{% endblock %}
+
+{% block content %}
+<div class="pilote-container">
+
+  <div class="pilote-header">
+    <div>
+      <a href="/pilote" class="btn-retour">← Retour au tableau de bord</a>
+      <h1 style="margin-top:0.5rem;">Mes entreprises</h1>
+      <p>Demandes de création soumises à la validation d'un administrateur</p>
+    </div>
+    <a href="/entreprise/inscription" class="btn-principal">+ Ajouter une entreprise</a>
+  </div>
+
+  {% if success is not null %}
+    <div class="alert alert-success">{{ success }}</div>
+  {% endif %}
+  {% if error is not null %}
+    <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  {% if entreprises is empty %}
+    <div style="background:var(--blanc); border:1px solid var(--ligne); border-radius:12px; padding:3rem; text-align:center;">
+      <p class="empty-msg" style="padding:0; margin-bottom:1.25rem;">Vous n'avez encore soumis aucune demande de création d'entreprise.</p>
+      <a href="/entreprise/inscription" class="btn-principal">Soumettre une entreprise</a>
+    </div>
+  {% else %}
+    <div style="display:flex; flex-direction:column; gap:0.75rem;">
+      {% for e in entreprises %}
+        <div style="background:var(--blanc); border:1px solid var(--ligne); border-radius:10px; padding:1.25rem 1.5rem; display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap;">
+
+          <div style="width:48px; height:48px; background:var(--bleu); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1rem; font-weight:700; color:#fff; flex-shrink:0;">
+            {% if e.logo %}
+              <img src="{{ base_url }}{{ e.logo }}" alt="Logo {{ e.nom }}" style="width:48px; height:48px; object-fit:contain; border-radius:10px;">
+            {% else %}
+              {{ e.nom|slice(0,2)|upper }}
+            {% endif %}
+          </div>
+
+          <div style="flex:1; min-width:180px; display:flex; flex-direction:column; gap:0.2rem;">
+            <span style="font-weight:600; font-size:1rem;">{{ e.nom }}</span>
+            {% if e.ville %}
+              <span style="font-size:0.83rem; color:var(--gris);">
+                <i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ e.ville }}
+              </span>
+            {% endif %}
+            <span style="font-size:0.8rem; color:var(--gris);">Soumis le {{ e.date_creation|date('d/m/Y') }}</span>
+          </div>
+
+          <div style="flex-shrink:0;">
+            {% if e.statut == 'en_attente' %}
+              <span class="statut-badge" style="background:#fefce8; color:#ca8a04; font-size:0.78rem; font-weight:600; padding:0.25rem 0.7rem; border-radius:20px;">En attente</span>
+            {% elseif e.statut == 'approuvee' %}
+              <span class="statut-badge" style="background:#dcfce7; color:#16a34a; font-size:0.78rem; font-weight:600; padding:0.25rem 0.7rem; border-radius:20px;">Approuvée</span>
+            {% elseif e.statut == 'rejetee' %}
+              <span class="statut-badge" style="background:#fef2f2; color:#dc2626; font-size:0.78rem; font-weight:600; padding:0.25rem 0.7rem; border-radius:20px;">Rejetée</span>
+            {% endif %}
+          </div>
+
+          {% if e.statut == 'approuvee' %}
+            <a href="/entreprise?id={{ e.id_entreprise }}" class="btn-secondaire" style="font-size:0.85rem; padding:0.4rem 0.9rem; flex-shrink:0;">Voir la fiche</a>
+          {% endif %}
+
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

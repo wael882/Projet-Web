@@ -36,7 +36,12 @@
             </div>
             <div>
               <div style="font-size:1.1rem; font-weight:700;">{{ d.nom }}</div>
-              <div style="font-size:0.82rem; color:var(--gris);">Soumis le {{ d.date_creation|date('d/m/Y à H:i') }}</div>
+              <div style="font-size:0.82rem; color:var(--gris);">
+                Soumis le {{ d.date_creation|date('d/m/Y à H:i') }}
+                {% if d.createur_prenom %}
+                  · par <strong>{{ d.createur_prenom }} {{ d.createur_nom }}</strong>
+                {% endif %}
+              </div>
             </div>
           </div>
 

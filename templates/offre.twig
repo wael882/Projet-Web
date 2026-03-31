@@ -104,7 +104,7 @@
         {% endif %}
       {% endif %}
 
-      {% if user %}
+      {% if user and user.role not in ['admin', 'pilote'] %}
         {% if offre.id_offre in favorisIds %}
         <form method="POST" action="{{ base_url }}favoris/supprimer">
           <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
@@ -119,7 +119,7 @@
       {% endif %}
 
       {% if user and user.role in ['admin', 'pilote'] %}
-        <a href="/offre/modifier?id={{ offre.id_offre }}" class="btn-retour">Modifier l'offre</a>
+        <a href="/offre/modifier?id={{ offre.id_offre }}" class="btn-modifier-offre">Modifier l'offre</a>
         <form method="POST" action="{{ base_url }}offre/supprimer" onsubmit="return confirm('Confirmer la suppression de cette offre ?')">
           <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
           <button type="submit" class="btn-supprimer">Supprimer l'offre</button>

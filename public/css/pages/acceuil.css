@@ -1,6 +1,7 @@
 #acceuil-layout {
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
 }
 
 .stats-grid {
@@ -11,10 +12,14 @@
 
 .stat-card {
   background: var(--blanc);
-  padding: 1.5rem;
+  padding: 2rem 1.5rem;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .stat-card strong {

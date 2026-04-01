@@ -2,6 +2,16 @@
   margin-top: 1.5rem;
 }
 
+.barre-recherche-principale {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.barre-recherche-principale input {
+  flex: 1;
+}
+
 .filtres-grille {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -22,7 +32,8 @@
 }
 
 .filtre-champ input,
-.filtre-champ select {
+.filtre-champ select,
+.barre-recherche-principale input {
   padding: 0.55rem 0.8rem;
   border: 1.5px solid var(--ligne);
   border-radius: 6px;
@@ -34,7 +45,8 @@
 }
 
 .filtre-champ input:focus,
-.filtre-champ select:focus {
+.filtre-champ select:focus,
+.barre-recherche-principale input:focus {
   border-color: var(--bleu);
 }
 

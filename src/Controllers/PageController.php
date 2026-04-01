@@ -821,6 +821,31 @@ class PageController
         ]);
     }
 
+    public function rechercherApi()
+    {
+        $modeleOffre = new OffreModel();
+        $motCle = trim($_GET['motCle'] ?? '');
+
+        if (strlen($motCle) < 2) {
+            header('Content-Type: application/json');
+            echo json_encode([]);
+            return;
+        }
+
+        $filtres = ['motCle' => $motCle, 'titre' => '', 'entreprise' => '', 'competence' => '', 'remuneration_min' => '', 'remuneration_max' => ''];
+        $offres = $modeleOffre->rechercheAvancee($filtres, 8, 0);
+
+        $resultats = array_map(fn($o) => [
+            'id'          => $o['id_offre'],
+            'titre'       => $o['titre'],
+            'entreprise'  => $o['nom_entreprise'],
+            'description' => mb_substr($o['description'] ?? '', 0, 100) . '...',
+        ], $offres);
+
+        header('Content-Type: application/json');
+        echo json_encode($resultats);
+    }
+
     public function index()
     {
         echo $this->twig->render('index.twig');

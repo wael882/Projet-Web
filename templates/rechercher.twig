@@ -14,9 +14,10 @@
 
       <form method="GET" action="/rechercher">
 
-        <div class="barre-recherche-principale">
-          <input type="text" name="motCle" value="{{ filtres.motCle }}" placeholder="Rechercher une offre, une entreprise..." data-recherche-live>
+        <div class="barre-recherche-principale" style="position:relative;">
+          <input type="text" name="motCle" id="motCle" value="{{ filtres.motCle }}" placeholder="Rechercher une offre, une entreprise..." autocomplete="off">
           <button type="submit">Rechercher</button>
+          <ul id="suggestions-live" class="suggestions-live" hidden></ul>
         </div>
 
         <div class="filtres-grille">

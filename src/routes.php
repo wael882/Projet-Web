@@ -10,6 +10,7 @@ $router->add('GET', '/acceuil',        [$controller, 'acceuil']);
 $router->add('GET', '/identification', [$controller, 'identification']);
 $router->add('GET', '/inscription',    [$controller, 'inscription']);
 $router->add('GET', '/rechercher',     [$controller, 'rechercher']);
+$router->add('GET', '/api/rechercher', [$controller, 'rechercherApi']);
 $router->add('GET', '/offre',          [$controller, 'offre']);
 $router->add('GET', '/entreprise',     [$controller, 'entreprise']);
 $router->add('GET', '/candidature',    [$controller, 'candidature']);

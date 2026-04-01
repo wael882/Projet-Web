@@ -431,6 +431,33 @@ class PiloteModel
         return true;
     }
 
+    public function rattacherEtudiantParEmail(int $idPilote, string $email): string
+    {
+        // Vérifie que l'utilisateur existe et est bien un étudiant (id_role = 3)
+        $stmt = $this->pdo->prepare('
+            SELECT u.id_utilisateur, e.id_etudiant, e.id_pilote
+            FROM UTILISATEUR u
+            JOIN ETUDIANT e ON e.id_utilisateur = u.id_utilisateur
+            WHERE u.email = :email AND u.id_role = 3
+        ');
+        $stmt->execute([':email' => $email]);
+        $etudiant = $stmt->fetch();
+
+        if (!$etudiant) {
+            return 'introuvable';
+        }
+
+        if ((int) $etudiant['id_pilote'] === $idPilote) {
+            return 'deja_rattache';
+        }
+
+        $this->pdo->prepare('
+            UPDATE ETUDIANT SET id_pilote = :id_pilote WHERE id_etudiant = :id
+        ')->execute([':id_pilote' => $idPilote, ':id' => $etudiant['id_etudiant']]);
+
+        return 'ok';
+    }
+
     public function creerEtudiantAdmin(?int $idPilote, string $nom, string $prenom, string $email, string $motDePasseHash, string $ecole): bool
     {
         $stmt = $this->pdo->prepare('

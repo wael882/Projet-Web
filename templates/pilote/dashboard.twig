@@ -17,7 +17,8 @@
     </div>
     <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
       <a href="/offre/creer" class="btn-principal">+ Créer une offre</a>
-      <button class="btn-principal" onclick="document.getElementById('modal-creer').style.display='flex'">+ Ajouter un étudiant</button>
+      <button class="btn-principal" onclick="document.getElementById('modal-rattacher').style.display='flex'">+ Rattacher un étudiant</button>
+      <button class="btn-principal" onclick="document.getElementById('modal-creer').style.display='flex'">+ Créer un étudiant</button>
     </div>
   </div>
 
@@ -27,6 +28,20 @@
   {% if error is not null %}
     <div class="alert alert-error">{{ error }}</div>
   {% endif %}
+
+  <div id="modal-rattacher" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:100; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:12px; padding:2rem; width:100%; max-width:420px;">
+      <h2 style="margin-bottom:0.5rem;">Rattacher un étudiant existant</h2>
+      <p style="margin-bottom:1.25rem; font-size:0.88rem;">Entrez l'email du compte étudiant à ajouter à votre promotion.</p>
+      <form method="POST" action="/pilote/rattacher-etudiant" style="display:flex; flex-direction:column; gap:0.75rem;">
+        <input type="email" name="email" placeholder="Email de l'étudiant" required style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+        <div style="display:flex; gap:.75rem; margin-top:.5rem;">
+          <button type="button" onclick="document.getElementById('modal-rattacher').style.display='none'" style="flex:1; padding:.65rem; border:1px solid var(--ligne); border-radius:8px; background:#fff; color:#333; cursor:pointer;">Annuler</button>
+          <button type="submit" class="btn-principal" style="flex:1; justify-content:center;">Rattacher</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <div id="modal-creer" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:100; align-items:center; justify-content:center;">
     <div style="background:#fff; border-radius:12px; padding:2rem; width:100%; max-width:420px;">

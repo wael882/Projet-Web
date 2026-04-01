@@ -149,6 +149,31 @@ class PageController
         exit;
     }
 
+    public function piloteRattacherEtudiant(): void
+    {
+        $this->requireRole('pilote');
+        $email  = trim($_POST['email'] ?? '');
+
+        if (!$email) {
+            $_SESSION['error'] = 'Veuillez saisir un email.';
+            header('Location: /pilote');
+            exit;
+        }
+
+        $model  = new PiloteModel();
+        $pilote = $model->findByUtilisateur((int) $_SESSION['user']['id_utilisateur']);
+        $resultat = $model->rattacherEtudiantParEmail((int) $pilote['id_pilote'], $email);
+
+        match ($resultat) {
+            'ok'            => $_SESSION['success'] = 'Étudiant rattaché avec succès.',
+            'deja_rattache' => $_SESSION['error']   = 'Cet étudiant est déjà dans votre promotion.',
+            default         => $_SESSION['error']   = 'Aucun compte étudiant trouvé avec cet email.',
+        };
+
+        header('Location: /pilote');
+        exit;
+    }
+
     public function piloteSupprimerEtudiant()
     {
         $this->requireRole('pilote');

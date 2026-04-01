@@ -68,6 +68,7 @@ $router->add('GET',  '/pilote/etudiant',   [$controller, 'piloteEtudiant']);
 $router->add('POST', '/pilote/statut',          [$controller, 'piloteUpdateStatut']);
 $router->add('POST', '/pilote/creer-etudiant',     [$controller, 'piloteCreerEtudiant']);
 $router->add('POST', '/pilote/supprimer-etudiant', [$controller, 'piloteSupprimerEtudiant']);
+$router->add('POST', '/pilote/rattacher-etudiant', [$controller, 'piloteRattacherEtudiant']);
 $router->add('GET',  '/pilote/modifier-etudiant',  [$controller, 'piloteModifierEtudiant']);
 $router->add('POST', '/pilote/modifier-etudiant',  [$controller, 'piloteModifierEtudiantPost']);
 $router->add('GET',  '/offre/creer',       [$controller, 'offreCreer']);

@@ -15,7 +15,10 @@
       <h1>Espace pilote</h1>
       <p>{{ totalEtudiants }} étudiant{{ totalEtudiants > 1 ? 's' : '' }} dans votre promotion</p>
     </div>
-    <button class="btn-principal" onclick="document.getElementById('modal-creer').style.display='flex'">+ Ajouter un étudiant</button>
+    <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+      <a href="/offre/creer" class="btn-principal">+ Créer une offre</a>
+      <button class="btn-principal" onclick="document.getElementById('modal-creer').style.display='flex'">+ Ajouter un étudiant</button>
+    </div>
   </div>
 
   {% if success is not null %}

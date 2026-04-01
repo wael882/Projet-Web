@@ -267,6 +267,53 @@ section {
   text-align: center;
 }
 
+/* ---- Boutons globaux ---- */
+.btn-principal {
+  display: inline-flex;
+  align-items: center;
+  background: var(--orange);
+  color: var(--blanc);
+  padding: 0.4rem 0.9rem;
+  border-radius: 7px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1.4;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.btn-principal:hover {
+  background: var(--orange-2);
+  color: var(--blanc);
+  transform: translateY(-1px);
+}
+
+.btn-secondaire {
+  display: inline-flex;
+  align-items: center;
+  background: var(--blanc);
+  color: var(--bleu);
+  padding: 0.4rem 0.9rem;
+  border-radius: 7px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  font-family: inherit;
+  border: 1.5px solid var(--ligne);
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1.4;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.btn-secondaire:hover {
+  border-color: var(--bleu);
+  background: var(--carte);
+  color: var(--bleu);
+}
+
 #hero .hero-btns a.btn-principal {
   background: var(--orange);
   color: var(--blanc);

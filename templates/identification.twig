@@ -11,35 +11,42 @@
 
 {% block content %}
 
-    <main>
-      <section>
+<main>
+  <section>
 
-        <form method="POST" action="/identification">
-          
+    <form method="POST" action="/identification">
 
-          <h1>S'identifier</h1>
-          <span>Email</span><br />
-          <input
-            name="email"
-            type="email"
-            id="email"
-            placeholder="monstage@monstage.fr"
-          /><br />
-          <span>Mot de passe</span><br />
-          <input name="password" type="password" id="password" /><br />
+      <h1>S'identifier</h1>
 
-          {% if success %}
-           <p>{{ success }}</p>
-          {% endif %}
-          {% if error %}
-          <p>{{ error }}</p>
-          {% endif %}
+      <span>Email</span><br />
+      <input
+        name="email"
+        type="email"
+        id="email"
+        placeholder="monstage@monstage.fr"
+      /><br />
 
-          <button type="submit">S'inscrire</button>
-          <a href="/oubliMdp">Mot de passe oublié ?</a>
-        </form>
+      <span>Mot de passe</span><br />
+      <input name="password" type="password" id="password" /><br />
 
-      </section>
-    </main>
+      {% if success %}
+        <div class="alert alert-success">
+          {{ success }}
+        </div>
+      {% endif %}
+
+      {% if error %}
+        <div class="alert alert-error">
+          {{ error }}
+        </div>
+      {% endif %}
+
+      <button type="submit">Se connecter</button>
+      <a href="/oubliMdp">Mot de passe oublié ?</a>
+
+    </form>
+
+  </section>
+</main>
 
 {% endblock %}

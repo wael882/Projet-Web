@@ -115,7 +115,7 @@ header .navbar {
 nav img,
 header .navbar img,
 header .navbar .logo img {
-  height: 42px;
+  height: 32px;
   object-fit: contain;
   margin-right: 0;
 }
@@ -175,7 +175,6 @@ header .navbar .nav-cta {
   margin-left: auto;
   background: var(--blanc);
   color: var(--orange);
-  border: 1.5px solid var(--orange);
   padding: 0.45rem 0.8rem;
   border-radius: 6px;
   font-size: 0.8rem;
@@ -186,8 +185,23 @@ header .navbar .nav-cta {
 
 nav .nav-cta:hover,
 header .navbar .nav-cta:hover {
+  background: var(--orange-2);
+  color: var(--blanc);
+}
+
+nav .nav-cta[href="/deconnexion"],
+header .navbar .nav-cta[href="/deconnexion"] {
   background: var(--orange);
   color: var(--blanc);
+  border: 1px solid var(--blanc);
+  padding: calc(0.45rem - 1px) calc(0.8rem - 1px);
+}
+
+nav .nav-cta[href="/deconnexion"]:hover,
+header .navbar .nav-cta[href="/deconnexion"]:hover {
+  background: var(--fond);
+  color: var(--orange-2);
+  border-color: var(--orange-2);
 }
 
 .menu-toggle,
@@ -244,7 +258,7 @@ section {
   color: var(--orange);
 }
 
-#hero > p {
+#hero>p {
   max-width: 100%;
   margin: 0 auto 2rem;
   font-size: 1rem;
@@ -265,53 +279,6 @@ section {
   width: 100%;
   max-width: 280px;
   text-align: center;
-}
-
-/* ---- Boutons globaux ---- */
-.btn-principal {
-  display: inline-flex;
-  align-items: center;
-  background: var(--orange);
-  color: var(--blanc);
-  padding: 0.4rem 0.9rem;
-  border-radius: 7px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  font-family: inherit;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  line-height: 1.4;
-  transition: background 0.2s, transform 0.15s;
-}
-
-.btn-principal:hover {
-  background: var(--orange-2);
-  color: var(--blanc);
-  transform: translateY(-1px);
-}
-
-.btn-secondaire {
-  display: inline-flex;
-  align-items: center;
-  background: var(--blanc);
-  color: var(--bleu);
-  padding: 0.4rem 0.9rem;
-  border-radius: 7px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  font-family: inherit;
-  border: 1.5px solid var(--ligne);
-  cursor: pointer;
-  text-decoration: none;
-  line-height: 1.4;
-  transition: border-color 0.2s, background 0.2s;
-}
-
-.btn-secondaire:hover {
-  border-color: var(--bleu);
-  background: var(--carte);
-  color: var(--bleu);
 }
 
 #hero .hero-btns a.btn-principal {
@@ -375,7 +342,7 @@ section {
   gap: 1.5rem;
 }
 
-.chiffres-grid > div {
+.chiffres-grid>div {
   padding: 0;
   border-right: none;
 }
@@ -694,18 +661,18 @@ footer a:hover {
    DESKTOP
    ============================================ */
 @media (min-width: 769px) {
+
   nav,
   header .navbar {
     padding: 0 2rem;
-    height: 64px;
-    min-height: 64px;
+    height: 58px;
+    min-height: 58px;
     gap: 0.2rem;
-    justify-content: flex-start;
   }
 
   nav img,
   header .navbar img {
-    height: 48px;
+    height: 34px;
     margin-right: 1.5rem;
   }
 
@@ -721,7 +688,7 @@ footer a:hover {
     align-items: center;
     gap: 0.2rem;
     position: static;
-    flex: 1;
+    width: auto;
     background: transparent;
     padding: 0;
     border-radius: 0;
@@ -786,7 +753,7 @@ footer a:hover {
     line-height: 1.1;
   }
 
-  #hero > p {
+  #hero>p {
     max-width: 500px;
     margin: 0 auto 2.5rem;
   }
@@ -800,16 +767,16 @@ footer a:hover {
     gap: 0;
   }
 
-  .chiffres-grid > div {
+  .chiffres-grid>div {
     padding: 0 2rem;
     border-right: 1.5px solid var(--ligne);
   }
 
-  .chiffres-grid > div:first-child {
+  .chiffres-grid>div:first-child {
     padding-left: 0;
   }
 
-  .chiffres-grid > div:last-child {
+  .chiffres-grid>div:last-child {
     border-right: none;
   }
 
@@ -856,7 +823,7 @@ footer a:hover {
   }
 
   .footer-top {
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 2fr 1fr 2fr;
     gap: 3rem;
   }
 
@@ -878,20 +845,20 @@ footer a:hover {
   border-radius: 12px;
   font-size: 0.92rem;
   font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   animation: alertSlideIn 0.25s ease;
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.alert.alerte-masquee {
-  opacity: 0;
-  transform: translateY(-8px);
-  pointer-events: none;
 }
 
 @keyframes alertSlideIn {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .alert::before {

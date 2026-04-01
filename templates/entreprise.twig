@@ -17,7 +17,7 @@
 
   <div style="display:flex; justify-content:space-between; align-items:center;">
     <a href="/entreprises" style="color:var(--gris); text-decoration:none; font-size:0.9rem;">← Retour aux entreprises</a>
-    {% if user and entreprise.id_utilisateur == user.id_utilisateur %}
+    {% if user and user.role == 'pilote' and entreprise.id_createur == user.id_utilisateur and entreprise.statut == 'approuvee' %}
       <div style="display:flex; gap:0.75rem;">
         <a href="/entreprise/modifier?id={{ entreprise.id_entreprise }}" class="btn-principal" style="font-size:0.85rem; padding:0.5rem 1rem;">Modifier</a>
         <form method="POST" action="/entreprise/supprimer/demande" onsubmit="return confirm('Demander la suppression de cette entreprise ?');">

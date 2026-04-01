@@ -908,19 +908,30 @@ class PageController
 
     public function entrepriseModifier(): void {
         $this->requireRoles(['admin', 'pilote']);
-        $id         = (int) ($_GET['id'] ?? 0);
-        $model      = new EntrepriseModel();
-        $entreprise = $model->findById($id);
+        $id          = (int) ($_GET['id'] ?? 0);
+        $idUser      = (int) $_SESSION['user']['id_utilisateur'];
+        $role        = $_SESSION['user']['role'];
+        $model       = new EntrepriseModel();
+        $entreprise  = $model->findById($id);
 
         if (!$entreprise) {
             header('Location: /entreprises');
             exit;
         }
 
+        // Un pilote ne peut modifier que les entreprises qu'il a créées
+        if ($role === 'pilote' && (int) $entreprise['id_createur'] !== $idUser) {
+            header('Location: /pilote/entreprises');
+            exit;
+        }
+
+        $dejaEnAttente = $model->aDemandeEnAttente($id, $idUser);
+
         echo $this->twig->render('entreprise-modifier.twig', [
-            'entreprise' => $entreprise,
-            'error'      => $_SESSION['error'] ?? null,
-            'success'    => $_SESSION['success'] ?? null,
+            'entreprise'    => $entreprise,
+            'dejaEnAttente' => $dejaEnAttente,
+            'error'         => $_SESSION['error'] ?? null,
+            'success'       => $_SESSION['success'] ?? null,
         ]);
         unset($_SESSION['error'], $_SESSION['success']);
     }
@@ -941,6 +952,12 @@ class PageController
 
         if (!$entreprise) {
             header('Location: /entreprises');
+            exit;
+        }
+
+        // Un pilote ne peut modifier que les entreprises qu'il a créées
+        if ($_SESSION['user']['role'] === 'pilote' && (int) $entreprise['id_createur'] !== $idUser) {
+            header('Location: /pilote/entreprises');
             exit;
         }
 
@@ -1158,8 +1175,23 @@ class PageController
 
     public function entrepriseDemanderSuppression(): void {
         $this->requireRoles(['admin', 'pilote']);
-        $id = (int) ($_POST['id_entreprise'] ?? 0);
-        $ok = (new EntrepriseModel())->demanderSuppression($id);
+        $id          = (int) ($_POST['id_entreprise'] ?? 0);
+        $idUser      = (int) $_SESSION['user']['id_utilisateur'];
+        $model       = new EntrepriseModel();
+        $entreprise  = $model->findById($id);
+
+        if (!$entreprise) {
+            header('Location: /entreprises');
+            exit;
+        }
+
+        // Un pilote ne peut demander la suppression que de ses propres entreprises
+        if ($_SESSION['user']['role'] === 'pilote' && (int) $entreprise['id_createur'] !== $idUser) {
+            header('Location: /pilote/entreprises');
+            exit;
+        }
+
+        $ok = $model->demanderSuppression($id);
         $_SESSION['success'] = $ok ? 'Demande de suppression envoyée.' : 'Impossible d\'effectuer cette action.';
         header('Location: /entreprise?id=' . $id);
         exit;

@@ -65,7 +65,16 @@
           </div>
 
           {% if e.statut == 'approuvee' %}
-            <a href="/entreprise?id={{ e.id_entreprise }}" class="btn-secondaire" style="font-size:0.85rem; padding:0.4rem 0.9rem; flex-shrink:0;">Voir la fiche</a>
+            <div style="display:flex; gap:0.5rem; flex-shrink:0; flex-wrap:wrap;">
+              <a href="/entreprise?id={{ e.id_entreprise }}" class="btn-secondaire" style="font-size:0.85rem; padding:0.4rem 0.9rem;">Voir la fiche</a>
+              <a href="/entreprise/modifier?id={{ e.id_entreprise }}" class="btn-principal" style="font-size:0.85rem; padding:0.4rem 0.9rem;">Modifier</a>
+              <form method="POST" action="/entreprise/supprimer/demande" onsubmit="return confirm('Demander la suppression de cette entreprise ?');" style="display:inline;">
+                <input type="hidden" name="id_entreprise" value="{{ e.id_entreprise }}">
+                <button type="submit" class="btn-secondaire" style="font-size:0.85rem; padding:0.4rem 0.9rem; border:1px solid #f87171; color:#dc2626; background:none; cursor:pointer;">Demander la suppression</button>
+              </form>
+            </div>
+          {% elseif e.statut == 'suppression_demandee' %}
+            <span class="statut-badge" style="background:#fff7ed; color:#c2410c; font-size:0.78rem; font-weight:600; padding:0.25rem 0.7rem; border-radius:20px; flex-shrink:0;">Suppression en attente</span>
           {% endif %}
 
         </div>

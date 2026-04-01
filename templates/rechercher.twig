@@ -78,7 +78,7 @@
             <div class="recherche-item-meta">{{ offre.duree_stage }}</div>
             <a href="/offre?id={{ offre.id_offre }}">Voir l'offre</a>
 
-            {% if user %}
+            {% if user and user.role not in ['admin', 'pilote'] %}
               {% if offre.id_offre in favorisIds %}
               <form method="POST" action="{{ base_url }}favoris/supprimer">
                   <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">

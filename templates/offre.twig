@@ -126,6 +126,12 @@
         </form>
       {% endif %}
 
+      {% if not user %}
+        <a href="/identification" class="btn-postuler">
+          Se connecter pour postuler / ajouter aux favoris
+        </a>
+      {% endif %}
+
       <a href="/rechercher" class="btn-retour">Retour aux offres</a>
 
     </div>

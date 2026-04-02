@@ -5,24 +5,39 @@
 {% block styles %}
   {{ parent() }}
   <link rel="stylesheet" href="{{ base_url }}css/pages/index.css" />
+  <link rel="stylesheet" href="{{ base_url }}css/pages/rechercher.css" />
 {% endblock %}
 
 {% block content %}
 
-  <section id="offres">
+  <section id="offres" class="recherche-container">
     <h2>Offres récentes</h2>
+
     {% if offres is empty %}
-      <p style="color:var(--gris); text-align:center; padding:2rem 0;">Aucune offre disponible pour le moment.</p>
+      <p style="color:var(--gris); text-align:center; padding:2rem 0;">
+        Aucune offre disponible pour le moment.
+      </p>
     {% else %}
-      <div class="offres-grid">
+      <div class="results-grid">
+
         {% for offre in offres %}
-          <div class="card">
-            <h3>{{ offre.nom_entreprise ?? offre.titre }}</h3>
-            {% if offre.ville %}<p>{{ offre.ville }}</p>{% endif %}
-            {% if offre.duree %}<p>Durée : {{ offre.duree }}</p>{% endif %}
-            <a href="{{ base_url }}identification">Voir l'offre →</a>
+          <div class="recherche-item">
+            <div class="recherche-item-titre">{{ offre.titre }}</div>
+
+            <div class="recherche-item-entreprise">
+              <a href="/entreprise?id={{ offre.id_entreprise }}">{{ offre.nom_entreprise }}</a>
+            </div>
+
+            <div class="recherche-item-desc">{{ offre.description }}</div>
+
+            <div class="recherche-item-meta">{{ offre.date_offre }}</div>
+
+            <div class="recherche-item-meta">{{ offre.duree_stage }}</div>
+
+            <a href="{{ base_url }}offre?id={{ offre.id_offre }}">Voir l'offre</a>
           </div>
         {% endfor %}
+
       </div>
     {% endif %}
   </section>

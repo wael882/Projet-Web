@@ -81,12 +81,12 @@
 
             {% if user and user.role not in ['admin', 'pilote'] %}
               {% if offre.id_offre in favorisIds %}
-              <form method="POST" action="{{ base_url }}favoris/supprimer">
+              <form method="POST" action="{{ base_url }}favoris/supprimer" class="form-favori">
                   <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
                   <button type="submit">&#10084;</button>
               </form>
               {% else %}
-              <form method="POST" action="{{ base_url }}favoris">
+              <form method="POST" action="{{ base_url }}favoris" class="form-favori">
                   <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
                   <button type="submit">&#9825;</button>
               </form>
@@ -106,5 +106,21 @@
       {% endif %}
 
     </div>
+
+    <script>
+  document.querySelectorAll('.form-favori').forEach(form => {
+    form.addEventListener('submit', () => {
+      sessionStorage.setItem('scrollY_recherche', window.scrollY);
+    });
+  });
+
+  window.addEventListener('load', () => {
+    const scrollY = sessionStorage.getItem('scrollY_recherche');
+    if (scrollY !== null) {
+      window.scrollTo(0, parseInt(scrollY, 10));
+      sessionStorage.removeItem('scrollY_recherche');
+    }
+  });
+</script>
 {% endblock %}
 

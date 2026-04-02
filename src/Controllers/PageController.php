@@ -583,34 +583,36 @@ class PageController
     }
 
     public function offre()
-    {
-        $this->requireAuth();
-        $model = new OffreModel();
-        $offre = $model->findById((int) $_GET['id']);
-        if ($offre) {
-            $wishlist    = new WishlistModel();
-            $candidature = new CandidatureModel();
-            $favorisIds  = isset($_SESSION['user']) ? $wishlist->getIdOffres((int) $_SESSION['user']['id_utilisateur']) : [];
-            $dejaPostule = isset($_SESSION['user']['id_utilisateur'])
-                ? $candidature->dejaPostule((int) $_SESSION['user']['id_utilisateur'], (int) $offre['id_offre'])
-                : false;
-            $competences = $model->findCompetencesByOffre((int) $offre['id_offre']);
-            $nbCandidatures = $candidature->compterParOffre((int) $offre['id_offre']);
-            echo $this->twig->render('offre.twig', [
-                'offre'          => $offre,
-                'favorisIds'     => $favorisIds,
-                'dejaPostule'    => $dejaPostule,
-                'competences'    => $competences,
-                'nbCandidatures' => $nbCandidatures,
-                'success'        => $_SESSION['success'] ?? null,
-                'error'          => $_SESSION['error'] ?? null,
-            ]);
-            unset($_SESSION['success'], $_SESSION['error']);
-        } else {
-            $_SESSION['error'] = "Un probleme est survenu au niveau de l'affichage de l'offre";
-            echo $this->twig->render('rechercher.twig', ['offre' => $offre]);
-        }
+{
+    $model = new OffreModel();
+    $offre = $model->findById((int) ($_GET['id'] ?? 0));
+
+    if ($offre) {
+        $wishlist       = new WishlistModel();
+        $candidature    = new CandidatureModel();
+        $user           = $_SESSION['user'] ?? null;
+        $favorisIds     = $user ? $wishlist->getIdOffres((int) $user['id_utilisateur']) : [];
+        $dejaPostule    = $user ? $candidature->dejaPostule((int) $user['id_utilisateur'], (int) $offre['id_offre']) : false;
+        $competences    = $model->findCompetencesByOffre((int) $offre['id_offre']);
+        $nbCandidatures = $candidature->compterParOffre((int) $offre['id_offre']);
+
+        echo $this->twig->render('offre.twig', [
+            'offre'          => $offre,
+            'user'           => $user,
+            'favorisIds'     => $favorisIds,
+            'dejaPostule'    => $dejaPostule,
+            'competences'    => $competences,
+            'nbCandidatures' => $nbCandidatures,
+            'success'        => $_SESSION['success'] ?? null,
+            'error'          => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    } else {
+        $_SESSION['error'] = "Offre introuvable.";
+        header('Location: /offre-index');
+        exit;
     }
+}
 
     public function postuler()
     {

@@ -1,76 +1,76 @@
-{% extends 'base-index.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Admin - Demandes de modification{% endblock %}
 
 {% block content %}
-<div style="max-width:900px; margin:2rem auto;">
+<div class="conteneur--md" style="margin-top:2rem;">
 
-  <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
-    <a href="/admin/entreprises" style="color:var(--gris); font-size:0.9rem; text-decoration:none;">Créations</a>
-    <span style="color:var(--gris);">|</span>
-    <span style="font-size:0.9rem; font-weight:600;">Modifications</span>
-    <span style="color:var(--gris);">|</span>
-    <a href="/admin/suppressions" style="color:var(--gris); font-size:0.9rem; text-decoration:none;">Suppressions</a>
-  </div>
+  <nav class="onglets-nav">
+    <a href="/admin/entreprises" class="onglets-nav__lien">Créations</a>
+    <span class="onglets-nav__separateur">|</span>
+    <span class="onglets-nav__actif">Modifications</span>
+    <span class="onglets-nav__separateur">|</span>
+    <a href="/admin/suppressions" class="onglets-nav__lien">Suppressions</a>
+  </nav>
 
   <h1 style="margin-bottom:0.25rem;">Demandes de modification</h1>
-  <p style="color:var(--gris); font-size:0.9rem; margin-bottom:1.5rem;">{{ demandes|length }} demande{{ demandes|length > 1 ? 's' : '' }} en attente</p>
+  <p style="margin-bottom:1.5rem;">{{ demandes|length }} demande{{ demandes|length > 1 ? 's' : '' }} en attente</p>
 
   {% if success %}
     <div class="alert alert-success" style="margin-bottom:1rem;">{{ success }}</div>
   {% endif %}
 
   {% if demandes is empty %}
-    <p style="color:var(--gris);">Aucune demande de modification en attente.</p>
+    <p>Aucune demande de modification en attente.</p>
   {% else %}
-    <div style="display:flex; flex-direction:column; gap:1.25rem;">
+    <div class="liste-verticale liste-verticale--large">
       {% for d in demandes %}
-        <div style="background:var(--blanc); border:1px solid var(--ligne); border-radius:12px; padding:1.5rem;">
+        <div class="carte">
 
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem;">
             <div>
-              <div style="font-size:0.8rem; color:var(--gris); margin-bottom:0.25rem;">
+              <p style="font-size:0.8rem; margin-bottom:0.25rem;">
                 Demande de <strong>{{ d.prenom }} {{ d.nom_user }}</strong> — {{ d.date_demande|date('d/m/Y à H:i') }}
-              </div>
-              <div style="font-size:0.85rem; color:var(--gris);">
+              </p>
+              <p style="font-size:0.85rem; margin:0;">
                 Entreprise actuelle : <a href="/entreprise?id={{ d.id_entreprise }}" style="color:var(--bleu);">{{ d.nom_actuel }}</a>
-              </div>
+              </p>
             </div>
           </div>
 
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; background:var(--carte, #f9f9f9); border-radius:8px; padding:1rem; margin-bottom:1rem;">
+          <div class="donnees-demande">
             <div>
-              <div style="font-size:0.75rem; color:var(--gris); margin-bottom:0.2rem;">Nom proposé</div>
-              <div style="font-weight:600;">{{ d.nom }}</div>
+              <p class="donnee__libelle">Nom proposé</p>
+              <p class="donnee__valeur">{{ d.nom }}</p>
             </div>
             {% if d.ville %}
             <div>
-              <div style="font-size:0.75rem; color:var(--gris); margin-bottom:0.2rem;">Ville</div>
-              <div>{{ d.ville }}</div>
+              <p class="donnee__libelle">Ville</p>
+              <p class="donnee__valeur">{{ d.ville }}</p>
             </div>
             {% endif %}
             {% if d.email_contact %}
             <div>
-              <div style="font-size:0.75rem; color:var(--gris); margin-bottom:0.2rem;">Email</div>
-              <div>{{ d.email_contact }}</div>
+              <p class="donnee__libelle">Email</p>
+              <p class="donnee__valeur">{{ d.email_contact }}</p>
             </div>
             {% endif %}
             {% if d.telephone_contact %}
             <div>
-              <div style="font-size:0.75rem; color:var(--gris); margin-bottom:0.2rem;">Téléphone</div>
-              <div>{{ d.telephone_contact }}</div>
+              <p class="donnee__libelle">Téléphone</p>
+              <p class="donnee__valeur">{{ d.telephone_contact }}</p>
             </div>
             {% endif %}
             {% if d.site_web %}
             <div style="grid-column:1/-1;">
-              <div style="font-size:0.75rem; color:var(--gris); margin-bottom:0.2rem;">Site web</div>
+              <p class="donnee__libelle">Site web</p>
               <a href="{{ d.site_web }}" target="_blank" style="color:var(--bleu);">{{ d.site_web }}</a>
             </div>
             {% endif %}
             {% if d.description %}
             <div style="grid-column:1/-1;">
-              <div style="font-size:0.75rem; color:var(--gris); margin-bottom:0.2rem;">Description</div>
-              <div style="font-size:0.9rem;">{{ d.description }}</div>
+              <p class="donnee__libelle">Description</p>
+              <p class="donnee__valeur" style="font-weight:400; font-size:0.9rem;">{{ d.description }}</p>
             </div>
             {% endif %}
           </div>
@@ -82,7 +82,7 @@
             </form>
             <form method="POST" action="/admin/modification/rejeter" onsubmit="return confirm('Rejeter cette demande ?');">
               <input type="hidden" name="id_demande" value="{{ d.id_demande }}">
-              <button type="submit" class="btn-secondaire" style="border:1px solid #f87171; color:#dc2626; background:none;">Rejeter</button>
+              <button type="submit" class="btn-danger">Rejeter</button>
             </form>
           </div>
 

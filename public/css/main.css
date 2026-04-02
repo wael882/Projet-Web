@@ -282,7 +282,9 @@ section {
   cursor: pointer;
   text-decoration: none;
   line-height: 1.4;
-  transition: background 0.2s, transform 0.15s;
+  transition:
+    background 0.2s,
+    transform 0.15s;
 }
 
 .btn-principal:hover {
@@ -305,7 +307,9 @@ section {
   cursor: pointer;
   text-decoration: none;
   line-height: 1.4;
-  transition: border-color 0.2s, background 0.2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
 }
 
 .btn-secondaire:hover {
@@ -878,9 +882,11 @@ footer a:hover {
   border-radius: 12px;
   font-size: 0.92rem;
   font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   animation: alertSlideIn 0.25s ease;
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
 }
 
 .alert.alerte-masquee {
@@ -890,8 +896,14 @@ footer a:hover {
 }
 
 @keyframes alertSlideIn {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .alert::before {
@@ -908,7 +920,7 @@ footer a:hover {
 }
 
 .alert-success::before {
-  content: '✓';
+  content: "✓";
   color: #22c55e;
   font-weight: 700;
 }
@@ -921,7 +933,7 @@ footer a:hover {
 }
 
 .alert-error::before {
-  content: '✕';
+  content: "✕";
   color: #ef4444;
   font-weight: 700;
 }
@@ -943,7 +955,9 @@ footer a:hover {
   text-decoration: none;
   font-weight: 600;
   font-size: 0.88rem;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 .pagination-btn:hover {
@@ -961,4 +975,529 @@ footer a:hover {
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--bleu);
+}
+
+/* ===========================================
+   COMPOSANTS PARTAGÉS (admin, pilote, etc.)
+   =========================================== */
+
+/* --- Fix btn-principal sur balise <button> ---
+   La règle globale `button { padding:0.6rem 1.4rem }` avait
+   une spécificité inférieure à `.btn-principal` mais le navigateur
+   pouvait parfois l'appliquer. Ce sélecteur combined (0,1,1) l'écrase. */
+button.btn-principal {
+  padding: 0.35rem 0.8rem;
+  font-size: 0.82rem;
+}
+
+/* --- Conteneurs de page --- */
+.conteneur {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.conteneur--sm {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.conteneur--md {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* --- Bannière (en-tête bleu) --- */
+.banniere {
+  background: var(--bleu);
+  border-radius: 16px;
+  padding: 2rem 2.5rem;
+  margin-bottom: 2rem;
+  color: #fff;
+}
+
+.banniere h1 {
+  color: #fff;
+  font-size: 1.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.banniere p {
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+}
+
+.banniere--avec-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* --- Alerte avertissement (jaune) --- */
+.alert-avertissement {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-left: 4px solid #f59e0b;
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.alert-avertissement p {
+  margin: 0;
+  color: #92400e;
+  font-size: 0.9rem;
+}
+
+.alert-avertissement a {
+  color: #d97706;
+  font-weight: 600;
+}
+
+/* --- Badges --- */
+.badge {
+  display: inline-block;
+  padding: 0.1rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.badge--succes {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.badge--attente {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.badge--erreur {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.badge--info {
+  background: var(--carte);
+  color: var(--bleu);
+}
+
+/* --- Boutons supplémentaires --- */
+.btn-bleu,
+button.btn-bleu {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bleu);
+  color: var(--blanc);
+  padding: 0.4rem 0.9rem;
+  border-radius: 7px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1.4;
+  transition:
+    background 0.2s,
+    transform 0.15s;
+}
+
+.btn-bleu:hover,
+button.btn-bleu:hover {
+  background: var(--bleu-clair);
+  color: var(--blanc);
+  transform: translateY(-1px);
+}
+
+.btn-danger,
+button.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 0.4rem 0.9rem;
+  border-radius: 7px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  font-family: inherit;
+  border: 1px solid #fca5a5;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1.4;
+  transition: background 0.2s;
+}
+
+.btn-danger:hover,
+button.btn-danger:hover {
+  background: #fecaca;
+  color: #b91c1c;
+}
+
+/* --- Cartes --- */
+.carte {
+  background: var(--blanc);
+  border: 1px solid var(--ligne);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.carte--arrondie {
+  border-radius: 14px;
+  padding: 2rem;
+}
+
+.carte-liste {
+  background: var(--blanc);
+  border: 1px solid var(--ligne);
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  text-decoration: none;
+  transition: box-shadow 0.2s;
+}
+
+.carte-liste:hover {
+  box-shadow: 0 4px 12px rgba(28, 55, 91, 0.08);
+}
+
+.carte-vide {
+  background: var(--blanc);
+  border: 1px solid var(--ligne);
+  border-radius: 12px;
+  padding: 3rem;
+  text-align: center;
+}
+
+.carte-gestion {
+  background: var(--blanc);
+  border: 1px solid var(--ligne);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-decoration: none;
+  transition: box-shadow 0.2s;
+}
+
+.carte-gestion:hover {
+  box-shadow: 0 4px 16px rgba(28, 55, 91, 0.1);
+}
+
+.carte-gestion__icone {
+  font-size: 1.6rem;
+  color: var(--bleu);
+}
+
+.carte-gestion__titre {
+  font-weight: 700;
+  color: var(--bleu);
+  font-size: 0.95rem;
+}
+
+.carte-gestion__description {
+  font-size: 0.82rem;
+  color: var(--gris);
+}
+
+/* --- Avatars et logos initiaux --- */
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--carte);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--bleu);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.avatar--grand {
+  width: 56px;
+  height: 56px;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.logo-initiales {
+  width: 52px;
+  height: 52px;
+  background: var(--bleu);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+/* --- Listes verticales --- */
+.liste-verticale {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.liste-verticale--large {
+  gap: 1.25rem;
+}
+
+/* --- Formulaires (pages admin/pilote) --- */
+.formulaire-carte {
+  background: var(--blanc);
+  border: 1px solid var(--ligne);
+  border-radius: 14px;
+  padding: 2rem;
+}
+
+.formulaire-colonne {
+  margin-bottom: 1rem;
+}
+
+.formulaire-grille {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.formulaire-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--bleu);
+  margin-bottom: 0.4rem;
+}
+
+.saisie {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--ligne);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: var(--blanc);
+  color: var(--texte);
+  transition: border-color 0.2s;
+}
+
+.saisie:focus {
+  outline: none;
+  border-color: var(--bleu);
+  box-shadow: 0 0 0 3px rgba(28, 55, 91, 0.08);
+}
+
+.saisie-aide {
+  font-size: 0.78rem;
+  color: var(--gris);
+  margin-top: 0.3rem;
+  margin-bottom: 0;
+}
+
+.formulaire-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+/* --- En-tête de page --- */
+.en-tete-page {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* --- Barre de recherche --- */
+.barre-recherche {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+/* --- Lien retour --- */
+.lien-retour {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--gris);
+  font-size: 0.88rem;
+  margin-bottom: 1.5rem;
+  text-decoration: none;
+}
+
+.lien-retour:hover {
+  color: var(--bleu);
+}
+
+/* --- Onglets de navigation --- */
+.onglets-nav {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.onglets-nav__separateur {
+  color: var(--gris);
+}
+
+.onglets-nav__lien {
+  color: var(--gris);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.onglets-nav__lien:hover {
+  color: var(--bleu);
+}
+
+.onglets-nav__actif {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--bleu);
+}
+
+/* --- Grilles --- */
+.grille-4 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.grille-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+/* --- Profil détails --- */
+.profil-entete {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.profil-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--ligne);
+}
+
+.profil-detail__libelle {
+  font-size: 0.78rem;
+  color: var(--gris);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.2rem;
+}
+
+.profil-detail__valeur {
+  font-weight: 600;
+  color: var(--bleu);
+  margin: 0;
+}
+
+/* --- Modals --- */
+.modal-fond {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-contenu {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-en-tete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-en-tete h2 {
+  margin: 0;
+}
+
+.btn-fermer {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: var(--gris);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+/* --- Données de demande (grille 2 colonnes) --- */
+.donnees-demande {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  background: var(--carte);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.donnee__libelle {
+  font-size: 0.75rem;
+  color: var(--gris);
+  margin-bottom: 0.2rem;
+}
+
+.donnee__valeur {
+  font-weight: 600;
+  color: var(--texte);
+  margin: 0;
+}
+
+/* --- Responsive grilles --- */
+@media (min-width: 769px) {
+  .grille-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .grille-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .formulaire-grille {
+    grid-template-columns: 1fr 1fr;
+  }
 }

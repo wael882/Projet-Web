@@ -3,15 +3,15 @@
 {% block title %}Admin — Étudiants{% endblock %}
 
 {% block content %}
-<div style="max-width:960px; margin:0 auto;">
+<div class="conteneur">
 
-  <div style="background:var(--bleu); border-radius:16px; padding:2rem 2.5rem; margin-bottom:2rem; color:#fff; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+  <div class="banniere banniere--avec-actions">
     <div>
-      <h1 style="color:#fff; font-size:1.8rem; margin-bottom:0.25rem;">Étudiants</h1>
-      <p style="color:rgba(255,255,255,0.65); margin:0;">{{ totalEtudiants }} étudiant{{ totalEtudiants != 1 ? 's' : '' }}{% if recherche %} pour « {{ recherche }} »{% endif %}</p>
+      <h1>Étudiants</h1>
+      <p>{{ totalEtudiants }} étudiant{{ totalEtudiants != 1 ? 's' : '' }}{% if recherche %} pour « {{ recherche }} »{% endif %}</p>
     </div>
     <div style="display:flex; align-items:center; gap:1rem;">
-      <a href="/admin/etudiant/creer" style="background:var(--orange); color:#fff; padding:0.6rem 1.2rem; border-radius:8px; font-weight:600; font-size:0.88rem;">+ Nouvel étudiant</a>
+      <a href="/admin/etudiant/creer" class="btn-principal">+ Nouvel étudiant</a>
       <a href="/admin" style="color:rgba(255,255,255,0.75); font-size:0.88rem;">← Tableau de bord</a>
     </div>
   </div>
@@ -23,33 +23,26 @@
     <div class="alert alert-error" style="margin-bottom:1.5rem;">{{ error }}</div>
   {% endif %}
 
-  {# Barre de recherche #}
-  <form method="GET" action="/admin/etudiants" style="display:flex; gap:0.75rem; margin-bottom:1.5rem;">
-    <input
-      type="text"
-      name="search"
-      value="{{ recherche }}"
-      placeholder="Rechercher par nom, prénom ou email…"
-      data-recherche-live
-      style="flex:1; padding:0.65rem 1rem; border:1px solid var(--ligne); border-radius:8px; font-size:0.9rem; font-family:inherit;"
-    >
-    <button type="submit" style="padding:0.65rem 1.4rem; background:var(--bleu); color:#fff; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Rechercher</button>
+  <form method="GET" action="/admin/etudiants" class="barre-recherche">
+    <input type="text" name="search" value="{{ recherche }}"
+           placeholder="Rechercher par nom, prénom ou email…"
+           data-recherche-live class="saisie">
+    <button type="submit" class="btn-bleu">Rechercher</button>
     {% if recherche %}
-      <a href="/admin/etudiants" style="padding:0.65rem 1rem; border:1px solid var(--ligne); border-radius:8px; color:var(--gris); font-size:0.88rem; display:flex; align-items:center;">Effacer</a>
+      <a href="/admin/etudiants" class="btn-secondaire">Effacer</a>
     {% endif %}
   </form>
 
   <div id="zone-resultats">
-  {# Liste des étudiants #}
   {% if etudiants is empty %}
-    <div style="background:var(--blanc); border:1px solid var(--ligne); border-radius:12px; padding:3rem; text-align:center;">
-      <p style="color:var(--gris);">Aucun étudiant trouvé{% if recherche %} pour « {{ recherche }} »{% endif %}.</p>
+    <div class="carte-vide">
+      <p>Aucun étudiant trouvé{% if recherche %} pour « {{ recherche }} »{% endif %}.</p>
     </div>
   {% else %}
-    <div style="display:flex; flex-direction:column; gap:0.6rem;">
+    <div class="liste-verticale">
       {% for etudiant in etudiants %}
-      <a href="/admin/etudiant?id={{ etudiant.id_etudiant }}" style="background:var(--blanc); border:1px solid var(--ligne); border-radius:10px; padding:1rem 1.5rem; display:flex; align-items:center; gap:1.5rem; text-decoration:none; transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(28,55,91,0.08)'" onmouseout="this.style.boxShadow='none'">
-        <div style="width:40px; height:40px; border-radius:50%; background:var(--carte); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--bleu); font-size:1rem; flex-shrink:0;">
+      <a href="/admin/etudiant?id={{ etudiant.id_etudiant }}" class="carte-liste">
+        <div class="avatar">
           {{ etudiant.prenom|slice(0,1)|upper }}{{ etudiant.nom|slice(0,1)|upper }}
         </div>
         <div style="flex:1; min-width:0;">

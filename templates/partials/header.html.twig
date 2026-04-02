@@ -1,27 +1,34 @@
 <header>
   <nav class="navbar">
-    <a href="{{ base_url }}acceuil" class="logo">
+    <a href="{{ user ? base_url ~ 'acceuil' : base_url }}" class="logo">
       <img src="{{ base_url }}image/logo.webp" alt="Logo Stagio" />
     </a>
 
     <div class="nav-links">
-      {% if user and user.role == 'admin' %}
-        <a href="{{ base_url }}admin">Administration</a>
+      {% if not user %}
+        <a href="{{ base_url }}">Accueil</a>
+        <a href="{{ base_url }}offre-index">Offres</a>
+        <a href="{{ base_url }}entreprises">Entreprises</a>
+        <a href="{{ base_url }}a-propos">À propos</a>
       {% else %}
-        <a href="{{ base_url }}acceuil">Accueil</a>
-      {% endif %}
-      <a href="{{ base_url }}rechercher">Rechercher</a>
-      <a href="{{ base_url }}entreprises">Entreprises</a>
+        {% if user.role == 'admin' %}
+          <a href="{{ base_url }}admin">Administration</a>
+        {% else %}
+          <a href="{{ base_url }}acceuil">Accueil</a>
+        {% endif %}
+        <a href="{{ base_url }}rechercher">Rechercher</a>
+        <a href="{{ base_url }}entreprises">Entreprises</a>
 
-      {% if user and user.role == 'etudiant' %}
-        <a href="{{ base_url }}favoris">Favoris</a>
-        <a href="{{ base_url }}candidature">Mes candidatures</a>
+        {% if user.role == 'etudiant' %}
+          <a href="{{ base_url }}favoris">Favoris</a>
+          <a href="{{ base_url }}candidature">Mes candidatures</a>
+        {% endif %}
+
+        {% if user.role == 'pilote' %}
+          <a href="{{ base_url }}pilote">Espace pilote</a>
+        {% endif %}
       {% endif %}
 
-      {% if user and user.role == 'pilote' %}
-        <a href="{{ base_url }}pilote">Espace pilote</a>
-      {% endif %}
-          
       {% if user %}
         <a href="/deconnexion" class="nav-cta">Se déconnecter</a>
       {% else %}
@@ -30,7 +37,7 @@
     </div>
 
     <button class="menu-toggle" type="button" aria-label="Ouvrir le menu">
-      ☰
+      <i class="fa-solid fa-bars" aria-hidden="true"></i>
     </button>
   </nav>
 </header>

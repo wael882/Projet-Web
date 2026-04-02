@@ -19,11 +19,7 @@
   <body>
 
     {% block header %}
-      {% if user %}
-        {% include 'partials/header.html.twig' %}
-      {% else %}
-        {% include 'partials/header-index.html.twig' %}
-      {% endif %}
+      {% include 'partials/header.html.twig' %}
     {% endblock %}
 
     <main>

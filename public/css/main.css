@@ -282,7 +282,9 @@ section {
   cursor: pointer;
   text-decoration: none;
   line-height: 1.4;
-  transition: background 0.2s, transform 0.15s;
+  transition:
+    background 0.2s,
+    transform 0.15s;
 }
 
 .btn-principal:hover {
@@ -305,7 +307,9 @@ section {
   cursor: pointer;
   text-decoration: none;
   line-height: 1.4;
-  transition: border-color 0.2s, background 0.2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
 }
 
 .btn-secondaire:hover {
@@ -878,9 +882,11 @@ footer a:hover {
   border-radius: 12px;
   font-size: 0.92rem;
   font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   animation: alertSlideIn 0.25s ease;
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
 }
 
 .alert.alerte-masquee {
@@ -890,8 +896,14 @@ footer a:hover {
 }
 
 @keyframes alertSlideIn {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .alert::before {
@@ -908,7 +920,7 @@ footer a:hover {
 }
 
 .alert-success::before {
-  content: '✓';
+  content: "✓";
   color: #22c55e;
   font-weight: 700;
 }
@@ -921,7 +933,7 @@ footer a:hover {
 }
 
 .alert-error::before {
-  content: '✕';
+  content: "✕";
   color: #ef4444;
   font-weight: 700;
 }
@@ -943,7 +955,9 @@ footer a:hover {
   text-decoration: none;
   font-weight: 600;
   font-size: 0.88rem;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 .pagination-btn:hover {
@@ -972,8 +986,8 @@ footer a:hover {
    une spécificité inférieure à `.btn-principal` mais le navigateur
    pouvait parfois l'appliquer. Ce sélecteur combined (0,1,1) l'écrase. */
 button.btn-principal {
-  padding: 0.4rem 0.9rem;
-  font-size: 0.85rem;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.82rem;
 }
 
 /* --- Conteneurs de page --- */
@@ -1090,7 +1104,9 @@ button.btn-bleu {
   cursor: pointer;
   text-decoration: none;
   line-height: 1.4;
-  transition: background 0.2s, transform 0.15s;
+  transition:
+    background 0.2s,
+    transform 0.15s;
 }
 
 .btn-bleu:hover,

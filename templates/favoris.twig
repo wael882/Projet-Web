@@ -12,7 +12,7 @@
 {% block content %}
   <section>
     <h2>Mes favoris</h2>
-    <div class="favoris-grid">
+    <div class="favoris-grid" id="favoris-grid">
       {% for favori in favoris %}
         <div class="card">
           <h3>{{ favori.titre_offre }}</h3>
@@ -27,5 +27,35 @@
         <p>Vous n'avez pas encore de favoris.</p>
       {% endfor %}
     </div>
+
+    <div class="pagination" id="pagination">
+      <button id="btn-precedent" onclick="changerPage(-1)" disabled>&#8592; Précédent</button>
+      <span id="info-page">Page 1 / 1</span>
+      <button id="btn-suivant" onclick="changerPage(1)">Suivant &#8594;</button>
+    </div>
   </section>
+
+  <script>
+    const parPage = 7;
+    let pageCourante = 1;
+    const cards = Array.from(document.querySelectorAll('#favoris-grid .card'));
+    const totalPages = Math.ceil(cards.length / parPage);
+
+    function afficherPage(page) {
+      cards.forEach((card, i) => {
+        card.style.display = (i >= (page - 1) * parPage && i < page * parPage) ? '' : 'none';
+      });
+      document.getElementById('info-page').textContent = 'Page ' + page + ' / ' + totalPages;
+      document.getElementById('btn-precedent').disabled = page === 1;
+      document.getElementById('btn-suivant').disabled = page === totalPages;
+      document.getElementById('pagination').style.display = totalPages <= 1 ? 'none' : 'flex';
+    }
+
+    function changerPage(delta) {
+      pageCourante += delta;
+      afficherPage(pageCourante);
+    }
+
+    afficherPage(1);
+  </script>
 {% endblock %}

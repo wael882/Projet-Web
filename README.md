@@ -20,45 +20,107 @@ Application web MVC en PHP permettant aux étudiants de rechercher des offres de
 ## Structure du projet
 
 ```
-Projet-Web-main/
+Projet-Web/
 ├── config/
-│   └── config.php              ← Constantes globales (BDD, BASE_URL, chemins)
+│   ├── config.php              ← Constantes globales (BDD, BASE_URL, chemins)
+│   └── config.php.exemple      ← Exemple de configuration
 ├── database/
 │   ├── schema.sql              ← Structure de la base de données
-│   └── seed.sql                ← Données de test
+│   ├── seed.sql                ← Données de test
+│   └── migration_*.sql         ← Migrations (wishlist, évaluation, détachement entreprise)
 ├── public/                     ← DocumentRoot Apache (point d'entrée)
 │   ├── index.php               ← Front Controller
+│   ├── .htaccess               ← Redirige tout vers index.php
 │   ├── css/
 │   │   ├── main.css            ← Styles globaux (variables, reset, typographie)
-│   │   ├── components/         ← Composants réutilisables (boutons, cards, formulaires)
+│   │   ├── components/
+│   │   │   └── form.css        ← Styles des formulaires
 │   │   └── pages/              ← Styles spécifiques à chaque page
-│   └── .htaccess               ← Redirige tout vers index.php
+│   ├── js/
+│   │   ├── main.js             ← Script global
+│   │   ├── components/
+│   │   │   └── carrousel.js    ← Composant carrousel
+│   │   └── pages/
+│   │       ├── entreprise.js
+│   │       ├── etudiant-formulaire.js
+│   │       └── offre-formulaire.js
+│   └── image/
+│       ├── logo.webp
+│       └── etudiante.png
 ├── src/
 │   ├── Controllers/
 │   │   └── PageController.php  ← Contrôleur principal
 │   ├── Models/
 │   │   ├── CandidatureModel.php
 │   │   ├── EntrepriseModel.php
+│   │   ├── EtudiantModel.php
 │   │   ├── OffreModel.php
+│   │   ├── PiloteModel.php
 │   │   ├── UtilisateurModel.php
 │   │   └── WishlistModel.php
+│   ├── Test/                   ← Tests unitaires
+│   │   ├── TestCandidatureModel.php
+│   │   ├── TestEntrepriseModel.php
+│   │   ├── TestOffreModel.php
+│   │   ├── TestUtilisateurModel.php
+│   │   └── TestWishlistModel.php
 │   ├── Database.php            ← Connexion PDO singleton
 │   ├── Router.php              ← Routeur HTTP
 │   └── routes.php              ← Définition des routes
 ├── templates/                  ← Templates Twig
-│   ├── base.html.twig          ← Template parent
-│   ├── partials/               ← Composants réutilisables (header, footer, pagination)
-│   ├── acceuil.twig
+│   ├── base.html.twig          ← Template parent (utilisateurs connectés)
+│   ├── base-index.html.twig    ← Template parent (page d'accueil publique)
+│   ├── partials/               ← Composants réutilisables
+│   │   ├── header.html.twig
+│   │   ├── header-index.html.twig
+│   │   ├── footer.html.twig
+│   │   └── pagination.html.twig
+│   ├── admin/                  ← Vues espace administrateur
+│   │   ├── dashboard.twig
+│   │   ├── etudiants.twig
+│   │   ├── etudiant.twig
+│   │   ├── etudiant-creer.twig
+│   │   ├── etudiant-modifier.twig
+│   │   ├── pilotes.twig
+│   │   ├── pilote.twig
+│   │   ├── pilote-creer.twig
+│   │   ├── pilote-modifier.twig
+│   │   ├── entreprises.twig
+│   │   ├── entreprises-gerer.twig
+│   │   ├── entreprise-modifier.twig
+│   │   ├── modifications.twig
+│   │   └── suppressions.twig
+│   ├── pilote/                 ← Vues espace pilote
+│   │   ├── dashboard.twig
+│   │   ├── acceuil.twig
+│   │   ├── etudiant.twig
+│   │   ├── etudiant-modifier.twig
+│   │   └── entreprises.twig
+│   ├── index.twig              ← Page d'accueil publique
+│   ├── acceuil.twig            ← Accueil connecté
 │   ├── rechercher.twig
 │   ├── offre.twig
+│   ├── offre-index.twig
+│   ├── offre-creer.twig
+│   ├── offre-modifier.twig
+│   ├── offre-statistiques.twig
 │   ├── entreprise.twig
+│   ├── entreprises.twig
+│   ├── entreprise-inscription.twig
+│   ├── entreprise-modifier.twig
+│   ├── mes-entreprises.twig
 │   ├── candidature.twig
+│   ├── postuler.twig
 │   ├── profil.twig
 │   ├── favoris.twig
 │   ├── identification.twig
-│   └── inscription.twig
+│   ├── inscription.twig
+│   ├── oubli-mdp.twig
+│   ├── reinit-mdp.twig
+│   └── a-propos.twig
 ├── vendor/                     ← Dépendances Composer (ignoré par git)
 ├── composer.json
+├── Makefile
 └── .gitignore
 ```
 

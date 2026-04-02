@@ -3,15 +3,15 @@
 {% block title %}Admin — {{ etudiant.prenom }} {{ etudiant.nom }}{% endblock %}
 
 {% block content %}
-<div style="max-width:860px; margin:0 auto;">
+<div class="conteneur--md">
 
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-    <a href="/admin/etudiants" style="display:inline-flex; align-items:center; gap:0.4rem; color:var(--gris); font-size:0.88rem;">← Retour aux étudiants</a>
+  <div class="en-tete-page">
+    <a href="/admin/etudiants" class="lien-retour" style="margin-bottom:0;">← Retour aux étudiants</a>
     <div style="display:flex; gap:0.75rem;">
-      <a href="/admin/etudiant/modifier?id={{ etudiant.id_etudiant }}" style="background:var(--orange); color:#fff; padding:0.55rem 1.2rem; border-radius:8px; font-weight:600; font-size:0.88rem;">Modifier</a>
+      <a href="/admin/etudiant/modifier?id={{ etudiant.id_etudiant }}" class="btn-principal">Modifier</a>
       <form method="POST" action="/admin/etudiant/supprimer" onsubmit="return confirm('Supprimer définitivement le compte de {{ etudiant.prenom }} {{ etudiant.nom }} ?');">
         <input type="hidden" name="id_etudiant" value="{{ etudiant.id_etudiant }}">
-        <button type="submit" style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; padding:0.55rem 1.2rem; border-radius:8px; font-weight:600; font-size:0.88rem; cursor:pointer;">Supprimer</button>
+        <button type="submit" class="btn-danger">Supprimer</button>
       </form>
     </div>
   </div>
@@ -24,28 +24,28 @@
   {% endif %}
 
   {# Fiche étudiant #}
-  <div style="background:var(--blanc); border:1px solid var(--ligne); border-radius:14px; padding:2rem; margin-bottom:2rem;">
-    <div style="display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
-      <div style="width:56px; height:56px; border-radius:50%; background:var(--carte); display:flex; align-items:center; justify-content:center; font-weight:800; color:var(--bleu); font-size:1.4rem; flex-shrink:0;">
+  <div class="carte carte--arrondie" style="margin-bottom:2rem;">
+    <div class="profil-entete">
+      <div class="avatar avatar--grand">
         {{ etudiant.prenom|slice(0,1)|upper }}{{ etudiant.nom|slice(0,1)|upper }}
       </div>
       <div>
         <h1 style="font-size:1.5rem; margin-bottom:0.2rem;">{{ etudiant.prenom }} {{ etudiant.nom }}</h1>
-        <p style="color:var(--gris); margin:0;">{{ etudiant.email }}</p>
+        <p style="margin:0;">{{ etudiant.email }}</p>
       </div>
     </div>
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:1rem; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--ligne);">
+    <div class="profil-details">
       <div>
-        <p style="font-size:0.78rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.2rem;">École</p>
-        <p style="font-weight:600; color:var(--bleu); margin:0;">{{ etudiant.ecole ?: '—' }}</p>
+        <p class="profil-detail__libelle">École</p>
+        <p class="profil-detail__valeur">{{ etudiant.ecole ?: '—' }}</p>
       </div>
       <div>
-        <p style="font-size:0.78rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.2rem;">Promotion</p>
-        <p style="font-weight:600; color:var(--bleu); margin:0;">{{ etudiant.promotion ?: '—' }}</p>
+        <p class="profil-detail__libelle">Promotion</p>
+        <p class="profil-detail__valeur">{{ etudiant.promotion ?: '—' }}</p>
       </div>
       <div>
-        <p style="font-size:0.78rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.2rem;">Pilote référent</p>
-        <p style="font-weight:600; color:var(--bleu); margin:0;">
+        <p class="profil-detail__libelle">Pilote référent</p>
+        <p class="profil-detail__valeur">
           {% if etudiant.pilote_nom %}
             {{ etudiant.pilote_prenom }} {{ etudiant.pilote_nom }}
           {% else %}
@@ -54,16 +54,16 @@
         </p>
       </div>
       <div>
-        <p style="font-size:0.78rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.2rem;">Recherche de stage</p>
-        <p style="font-weight:600; color:var(--bleu); margin:0;">{{ etudiant.statut_recherche_stage ?: '—' }}</p>
+        <p class="profil-detail__libelle">Recherche de stage</p>
+        <p class="profil-detail__valeur">{{ etudiant.statut_recherche_stage ?: '—' }}</p>
       </div>
       <div>
-        <p style="font-size:0.78rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.2rem;">Candidatures</p>
-        <p style="font-weight:600; color:var(--bleu); margin:0;">{{ etudiant.nb_candidatures }}</p>
+        <p class="profil-detail__libelle">Candidatures</p>
+        <p class="profil-detail__valeur">{{ etudiant.nb_candidatures }}</p>
       </div>
       <div>
-        <p style="font-size:0.78rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.2rem;">Membre depuis</p>
-        <p style="font-weight:600; color:var(--bleu); margin:0;">{{ etudiant.date_creation|date('d/m/Y') }}</p>
+        <p class="profil-detail__libelle">Membre depuis</p>
+        <p class="profil-detail__valeur">{{ etudiant.date_creation|date('d/m/Y') }}</p>
       </div>
     </div>
   </div>
@@ -71,13 +71,13 @@
   {# Historique des candidatures #}
   <h2 style="margin-bottom:1rem;">Candidatures ({{ candidatures|length }})</h2>
   {% if candidatures is empty %}
-    <div style="background:var(--blanc); border:1px solid var(--ligne); border-radius:12px; padding:2rem; text-align:center;">
-      <p style="color:var(--gris);">Cet étudiant n'a pas encore de candidatures.</p>
+    <div class="carte-vide">
+      <p>Cet étudiant n'a pas encore de candidatures.</p>
     </div>
   {% else %}
-    <div style="display:flex; flex-direction:column; gap:0.5rem;">
+    <div class="liste-verticale" style="gap:0.5rem;">
       {% for candidature in candidatures %}
-      <div style="background:var(--blanc); border:1px solid var(--ligne); border-radius:10px; padding:1rem 1.5rem; display:flex; align-items:center; gap:1rem;">
+      <div class="carte-liste">
         <div style="flex:1; min-width:0;">
           <p style="font-weight:600; color:var(--bleu); margin:0;">{{ candidature.titre_offre }}</p>
           <p style="font-size:0.83rem; color:var(--gris); margin:0;">{{ candidature.nom_entreprise }} · {{ candidature.date_candidature|date('d/m/Y') }}</p>

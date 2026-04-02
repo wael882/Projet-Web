@@ -3,76 +3,74 @@
 {% block title %}Admin - Modifier {{ entreprise.nom }}{% endblock %}
 
 {% block content %}
-<div style="max-width:640px; margin:2rem auto;">
+<div class="conteneur--sm" style="margin-top:2rem;">
 
-  <a href="/entreprise?id={{ entreprise.id_entreprise }}" style="color:var(--gris); text-decoration:none; font-size:0.9rem;">← Retour à la fiche</a>
+  <a href="/entreprise?id={{ entreprise.id_entreprise }}" class="lien-retour">← Retour à la fiche</a>
 
-  <h1 style="margin:1.5rem 0 0.25rem;">Modifier l'entreprise</h1>
-  <p style="color:var(--gris); font-size:0.9rem; margin-bottom:1.5rem;">Modification directe — les changements sont appliqués immédiatement.</p>
+  <h1 style="margin-bottom:0.25rem;">Modifier l'entreprise</h1>
+  <p style="margin-bottom:1.5rem;">Modification directe — les changements sont appliqués immédiatement.</p>
 
   {% if error %}
     <div class="alert alert-error" style="margin-bottom:1rem;">{{ error }}</div>
   {% endif %}
 
-  <form method="POST" action="/admin/entreprise/modifier" enctype="multipart/form-data" style="background:var(--blanc); border:1px solid var(--ligne); border-radius:12px; padding:2rem; display:flex; flex-direction:column; gap:1.1rem;">
-    <input type="hidden" name="id_entreprise" value="{{ entreprise.id_entreprise }}">
+  <div class="formulaire-carte">
+    <form method="POST" action="/admin/entreprise/modifier" enctype="multipart/form-data"
+          style="display:flex; flex-direction:column; gap:1.1rem;">
+      <input type="hidden" name="id_entreprise" value="{{ entreprise.id_entreprise }}">
 
-    <div style="display:flex; flex-direction:column; gap:0.3rem;">
-      <label style="font-weight:600; font-size:0.9rem;">Nom <span style="color:red;">*</span></label>
-      <input type="text" name="nom" required value="{{ entreprise.nom }}"
-             style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
-    </div>
-
-    <div style="display:flex; flex-direction:column; gap:0.3rem;">
-      <label style="font-weight:600; font-size:0.9rem;">Description</label>
-      <textarea name="description" rows="5" style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit; resize:vertical;">{{ entreprise.description }}</textarea>
-    </div>
-
-    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-      <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1; min-width:200px;">
-        <label style="font-weight:600; font-size:0.9rem;">Email de contact</label>
-        <input type="email" name="email_contact" value="{{ entreprise.email_contact }}"
-               style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+      <div>
+        <label class="formulaire-label">Nom <span style="color:red;">*</span></label>
+        <input type="text" name="nom" required value="{{ entreprise.nom }}" class="saisie">
       </div>
-      <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1; min-width:200px;">
-        <label style="font-weight:600; font-size:0.9rem;">Téléphone</label>
-        <input type="tel" name="telephone_contact" value="{{ entreprise.telephone_contact }}"
-               style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
-      </div>
-    </div>
 
-    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-      <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1; min-width:200px;">
-        <label style="font-weight:600; font-size:0.9rem;">Ville</label>
-        <input type="text" name="ville" value="{{ entreprise.ville }}"
-               style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
+      <div>
+        <label class="formulaire-label">Description</label>
+        <textarea name="description" rows="5" class="saisie" style="resize:vertical;">{{ entreprise.description }}</textarea>
       </div>
-      <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1; min-width:200px;">
-        <label style="font-weight:600; font-size:0.9rem;">Site web</label>
-        <input type="url" name="site_web" value="{{ entreprise.site_web }}"
-               style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit;">
-      </div>
-    </div>
 
-    <div style="display:flex; flex-direction:column; gap:0.5rem;">
-      <label style="font-weight:600; font-size:0.9rem;">Logo <span style="color:var(--gris); font-weight:400;">optionnel — laisser vide pour conserver l'actuel</span></label>
-      {% if entreprise.logo %}
-        <div style="display:flex; align-items:center; gap:1rem;">
-          <img src="{{ base_url }}{{ entreprise.logo }}" alt="Logo actuel" style="width:64px; height:64px; object-fit:contain; border:1px solid var(--ligne); border-radius:8px; padding:4px;">
-          <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.9rem; color:#dc2626; cursor:pointer; font-weight:500;">
-            <input type="checkbox" name="supprimer_logo" value="1"> Supprimer le logo actuel
-          </label>
+      <div class="formulaire-grille">
+        <div>
+          <label class="formulaire-label">Email de contact</label>
+          <input type="email" name="email_contact" value="{{ entreprise.email_contact }}" class="saisie">
         </div>
-      {% endif %}
-      <input type="file" name="logo" accept="image/jpeg,image/png,image/webp"
-             style="padding:.6rem .9rem; border:1px solid var(--ligne); border-radius:8px; font-family:inherit; background:var(--blanc); cursor:pointer;">
-    </div>
+        <div>
+          <label class="formulaire-label">Téléphone</label>
+          <input type="tel" name="telephone_contact" value="{{ entreprise.telephone_contact }}" class="saisie">
+        </div>
+      </div>
 
-    <div style="display:flex; justify-content:flex-end; margin-top:0.5rem;">
-      <button type="submit" class="btn-principal">Enregistrer</button>
-    </div>
+      <div class="formulaire-grille">
+        <div>
+          <label class="formulaire-label">Ville</label>
+          <input type="text" name="ville" value="{{ entreprise.ville }}" class="saisie">
+        </div>
+        <div>
+          <label class="formulaire-label">Site web</label>
+          <input type="url" name="site_web" value="{{ entreprise.site_web }}" class="saisie">
+        </div>
+      </div>
 
-  </form>
+      <div>
+        <label class="formulaire-label">Logo <span class="saisie-aide" style="display:inline;">optionnel — laisser vide pour conserver l'actuel</span></label>
+        {% if entreprise.logo %}
+          <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.5rem;">
+            <img src="{{ base_url }}{{ entreprise.logo }}" alt="Logo actuel"
+                 style="width:64px; height:64px; object-fit:contain; border:1px solid var(--ligne); border-radius:8px; padding:4px;">
+            <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.9rem; color:#dc2626; cursor:pointer; font-weight:500;">
+              <input type="checkbox" name="supprimer_logo" value="1"> Supprimer le logo actuel
+            </label>
+          </div>
+        {% endif %}
+        <input type="file" name="logo" accept="image/jpeg,image/png,image/webp" class="saisie">
+      </div>
+
+      <div class="formulaire-actions">
+        <button type="submit" class="btn-principal">Enregistrer</button>
+      </div>
+
+    </form>
+  </div>
 
 </div>
 {% endblock %}

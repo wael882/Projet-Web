@@ -23,50 +23,44 @@
     <div class="alert alert-error">{{ error }}</div>
   {% endif %}
 
-  <div style="background:var(--blanc); border:1px solid var(--ligne); border-radius:14px; padding:2rem; max-width:560px;">
+  <div class="formulaire-carte" style="max-width:560px;">
     <form method="POST" action="/pilote/modifier-etudiant">
       <input type="hidden" name="id_etudiant" value="{{ etudiant.id_etudiant }}">
 
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+      <div class="formulaire-grille">
         <div>
-          <label style="display:block; font-size:0.85rem; font-weight:600; color:var(--bleu); margin-bottom:0.4rem;">Prénom <span style="color:var(--orange);">*</span></label>
-          <input type="text" name="prenom" value="{{ etudiant.prenom }}" required
-            style="width:100%; padding:0.65rem 1rem; border:1px solid var(--ligne); border-radius:8px; font-size:0.9rem; font-family:inherit;">
+          <label class="formulaire-label">Prénom <span style="color:var(--orange);">*</span></label>
+          <input type="text" name="prenom" value="{{ etudiant.prenom }}" required class="saisie">
         </div>
         <div>
-          <label style="display:block; font-size:0.85rem; font-weight:600; color:var(--bleu); margin-bottom:0.4rem;">Nom <span style="color:var(--orange);">*</span></label>
-          <input type="text" name="nom" value="{{ etudiant.nom }}" required
-            style="width:100%; padding:0.65rem 1rem; border:1px solid var(--ligne); border-radius:8px; font-size:0.9rem; font-family:inherit;">
+          <label class="formulaire-label">Nom <span style="color:var(--orange);">*</span></label>
+          <input type="text" name="nom" value="{{ etudiant.nom }}" required class="saisie">
         </div>
       </div>
 
-      <div style="margin-bottom:1rem;">
-        <label style="display:block; font-size:0.85rem; font-weight:600; color:var(--bleu); margin-bottom:0.4rem;">Email <span style="color:var(--orange);">*</span></label>
-        <input type="email" name="email" value="{{ etudiant.email }}" required
-          style="width:100%; padding:0.65rem 1rem; border:1px solid var(--ligne); border-radius:8px; font-size:0.9rem; font-family:inherit;">
+      <div class="formulaire-colonne">
+        <label class="formulaire-label">Email <span style="color:var(--orange);">*</span></label>
+        <input type="email" name="email" value="{{ etudiant.email }}" required class="saisie">
       </div>
 
-      <div style="margin-bottom:1rem;">
-        <label style="display:block; font-size:0.85rem; font-weight:600; color:var(--bleu); margin-bottom:0.4rem;">École</label>
-        <input type="text" name="ecole" value="{{ etudiant.ecole }}"
-          style="width:100%; padding:0.65rem 1rem; border:1px solid var(--ligne); border-radius:8px; font-size:0.9rem; font-family:inherit;">
+      <div class="formulaire-colonne">
+        <label class="formulaire-label">École</label>
+        <input type="text" name="ecole" value="{{ etudiant.ecole }}" class="saisie">
       </div>
 
-      <div style="margin-bottom:1rem;">
-        <label style="display:block; font-size:0.85rem; font-weight:600; color:var(--bleu); margin-bottom:0.4rem;">Promotion</label>
-        <input type="text" name="promotion" value="{{ etudiant.promotion }}"
-          style="width:100%; padding:0.65rem 1rem; border:1px solid var(--ligne); border-radius:8px; font-size:0.9rem; font-family:inherit;">
+      <div class="formulaire-colonne">
+        <label class="formulaire-label">Promotion</label>
+        <input type="text" name="promotion" value="{{ etudiant.promotion }}" class="saisie">
       </div>
 
-      <div style="margin-bottom:2rem;">
-        <label style="display:block; font-size:0.85rem; font-weight:600; color:var(--bleu); margin-bottom:0.4rem;">Nouveau mot de passe</label>
-        <input type="password" name="mot_de_passe" minlength="8"
-          style="width:100%; padding:0.65rem 1rem; border:1px solid var(--ligne); border-radius:8px; font-size:0.9rem; font-family:inherit;">
-        <p style="font-size:0.78rem; color:var(--gris); margin-top:0.3rem;">Laisser vide pour ne pas modifier le mot de passe.</p>
+      <div class="formulaire-colonne" style="margin-bottom:2rem;">
+        <label class="formulaire-label">Nouveau mot de passe</label>
+        <input type="password" name="mot_de_passe" minlength="8" class="saisie">
+        <p class="saisie-aide">Laisser vide pour ne pas modifier le mot de passe.</p>
       </div>
 
-      <div style="display:flex; gap:0.75rem; justify-content:flex-end;">
-        <a href="/pilote/etudiant?id={{ etudiant.id_etudiant }}" style="padding:0.65rem 1.4rem; border:1px solid var(--ligne); border-radius:8px; color:var(--gris); font-size:0.9rem;">Annuler</a>
+      <div class="formulaire-actions">
+        <a href="/pilote/etudiant?id={{ etudiant.id_etudiant }}" class="btn-secondaire">Annuler</a>
         <button type="submit" class="btn-principal">Enregistrer</button>
       </div>
 

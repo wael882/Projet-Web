@@ -3,18 +3,18 @@
 {% block title %}Admin - Demandes entreprises{% endblock %}
 
 {% block content %}
-<div style="max-width:900px; margin:2rem auto;">
+<div class="conteneur--md" style="margin-top:2rem;">
 
-  <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
-    <span style="font-size:0.9rem; font-weight:600;">Créations</span>
-    <span style="color:var(--gris);">|</span>
-    <a href="/admin/modifications" style="color:var(--gris); font-size:0.9rem; text-decoration:none;">Modifications</a>
-    <span style="color:var(--gris);">|</span>
-    <a href="/admin/suppressions" style="color:var(--gris); font-size:0.9rem; text-decoration:none;">Suppressions</a>
-  </div>
+  <nav class="onglets-nav">
+    <span class="onglets-nav__actif">Créations</span>
+    <span class="onglets-nav__separateur">|</span>
+    <a href="/admin/modifications" class="onglets-nav__lien">Modifications</a>
+    <span class="onglets-nav__separateur">|</span>
+    <a href="/admin/suppressions" class="onglets-nav__lien">Suppressions</a>
+  </nav>
 
   <h1 style="margin-bottom:0.25rem;">Demandes de création d'entreprise</h1>
-  <p style="color:var(--gris); font-size:0.9rem; margin-bottom:1.5rem;">{{ totalDemandes }} demande{{ totalDemandes > 1 ? 's' : '' }} en attente</p>
+  <p style="margin-bottom:1.5rem;">{{ totalDemandes }} demande{{ totalDemandes > 1 ? 's' : '' }} en attente</p>
 
   {% if success %}
     <div class="alert alert-success" style="margin-bottom:1rem;">{{ success }}</div>
@@ -24,24 +24,22 @@
   {% endif %}
 
   {% if demandes is empty %}
-    <p style="color:var(--gris);">Aucune demande en attente.</p>
+    <p>Aucune demande en attente.</p>
   {% else %}
-    <div style="display:flex; flex-direction:column; gap:1.25rem;">
+    <div class="liste-verticale liste-verticale--large">
       {% for d in demandes %}
-        <div style="background:var(--blanc); border:1px solid var(--ligne); border-radius:12px; padding:1.5rem;">
+        <div class="carte">
 
           <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
-            <div style="width:52px; height:52px; background:var(--bleu); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:700; color:#fff; flex-shrink:0;">
-              {{ d.nom|slice(0,2)|upper }}
-            </div>
+            <div class="logo-initiales">{{ d.nom|slice(0,2)|upper }}</div>
             <div>
-              <div style="font-size:1.1rem; font-weight:700;">{{ d.nom }}</div>
-              <div style="font-size:0.82rem; color:var(--gris);">
+              <p style="font-size:1.1rem; font-weight:700; margin:0;">{{ d.nom }}</p>
+              <p style="font-size:0.82rem; margin:0;">
                 Soumis le {{ d.date_creation|date('d/m/Y à H:i') }}
                 {% if d.createur_prenom %}
                   · par <strong>{{ d.createur_prenom }} {{ d.createur_nom }}</strong>
                 {% endif %}
-              </div>
+              </p>
             </div>
           </div>
 
@@ -50,13 +48,13 @@
               <p style="margin:0; font-size:0.9rem;">{{ d.description }}</p>
             {% endif %}
             {% if d.ville %}
-              <p style="margin:0; font-size:0.85rem; color:var(--gris);"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ d.ville }}</p>
+              <p style="margin:0; font-size:0.85rem;"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ d.ville }}</p>
             {% endif %}
             {% if d.email_contact %}
-              <p style="margin:0; font-size:0.85rem; color:var(--gris);"><i class="fa-solid fa-envelope" aria-hidden="true"></i> {{ d.email_contact }}</p>
+              <p style="margin:0; font-size:0.85rem;"><i class="fa-solid fa-envelope" aria-hidden="true"></i> {{ d.email_contact }}</p>
             {% endif %}
             {% if d.telephone_contact %}
-              <p style="margin:0; font-size:0.85rem; color:var(--gris);"><i class="fa-solid fa-phone" aria-hidden="true"></i> {{ d.telephone_contact }}</p>
+              <p style="margin:0; font-size:0.85rem;"><i class="fa-solid fa-phone" aria-hidden="true"></i> {{ d.telephone_contact }}</p>
             {% endif %}
             {% if d.site_web %}
               <p style="margin:0; font-size:0.85rem;"><a href="{{ d.site_web }}" target="_blank" style="color:var(--bleu);">{{ d.site_web }}</a></p>
@@ -70,7 +68,7 @@
             </form>
             <form method="POST" action="/admin/entreprise/rejeter" onsubmit="return confirm('Rejeter cette demande ?');">
               <input type="hidden" name="id_entreprise" value="{{ d.id_entreprise }}">
-              <button type="submit" class="btn-secondaire" style="border:1px solid #f87171; color:#dc2626; background:none;">Rejeter</button>
+              <button type="submit" class="btn-danger">Rejeter</button>
             </form>
           </div>
 
